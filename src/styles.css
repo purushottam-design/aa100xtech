@@ -1,0 +1,247 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * AA100XTech design system — dark "engineering studio".
+ * Single warm accent (ember) + cool signal accent, editorial type.
+ * All colors are oklch semantic tokens. Never hardcode colors in components.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-glow: var(--primary-glow);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.16 0.012 250);
+  --foreground: oklch(0.97 0.004 250);
+
+  --surface: oklch(0.2 0.014 250);
+  --surface-2: oklch(0.24 0.016 250);
+
+  --card: oklch(0.2 0.014 250);
+  --card-foreground: oklch(0.97 0.004 250);
+  --popover: oklch(0.2 0.014 250);
+  --popover-foreground: oklch(0.97 0.004 250);
+
+  --primary: oklch(0.74 0.17 55);
+  --primary-foreground: oklch(0.19 0.02 55);
+  --primary-glow: oklch(0.84 0.15 78);
+
+  --secondary: oklch(0.26 0.016 250);
+  --secondary-foreground: oklch(0.97 0.004 250);
+
+  --muted: oklch(0.24 0.014 250);
+  --muted-foreground: oklch(0.71 0.014 250);
+
+  --accent: oklch(0.28 0.02 250);
+  --accent-foreground: oklch(0.97 0.004 250);
+
+  --signal: oklch(0.78 0.12 195);
+  --signal-foreground: oklch(0.18 0.02 195);
+
+  --destructive: oklch(0.62 0.21 25);
+  --destructive-foreground: oklch(0.98 0.003 250);
+
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.74 0.17 55);
+
+  --chart-1: oklch(0.74 0.17 55);
+  --chart-2: oklch(0.78 0.12 195);
+  --chart-3: oklch(0.84 0.15 78);
+  --chart-4: oklch(0.65 0.14 280);
+  --chart-5: oklch(0.7 0.16 150);
+
+  --sidebar: oklch(0.18 0.013 250);
+  --sidebar-foreground: oklch(0.97 0.004 250);
+  --sidebar-primary: oklch(0.74 0.17 55);
+  --sidebar-primary-foreground: oklch(0.19 0.02 55);
+  --sidebar-accent: oklch(0.26 0.016 250);
+  --sidebar-accent-foreground: oklch(0.97 0.004 250);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.74 0.17 55);
+
+  --gradient-ember: linear-gradient(135deg, var(--primary), var(--primary-glow));
+  --gradient-surface: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--surface) 92%, var(--primary) 8%),
+    var(--surface)
+  );
+  --shadow-elevated: 0 24px 60px -28px color-mix(in oklab, var(--primary) 45%, transparent);
+  --shadow-soft: 0 12px 40px -24px oklch(0 0 0 / 80%);
+}
+
+.dark {
+  --background: oklch(0.16 0.012 250);
+  --foreground: oklch(0.97 0.004 250);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 40%, transparent);
+  }
+}
+
+@utility text-gradient-ember {
+  background-image: var(--gradient-ember);
+  background-clip: text;
+  color: transparent;
+}
+
+@utility surface-card {
+  background-image: var(--gradient-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+}
+
+@utility glow-ring {
+  box-shadow: var(--shadow-elevated);
+}
+
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility marquee-track {
+  animation: aa-marquee 32s linear infinite;
+}
+
+/* Brand logo: drops the solid black plate on dark surfaces and adds an ember glow. */
+@utility brand-logo {
+  filter: drop-shadow(0 2px 6px color-mix(in oklab, var(--primary) 22%, transparent));
+  transition:
+    filter 400ms ease,
+    transform 400ms ease;
+}
+
+@utility brand-logo-wrap {
+  position: relative;
+  display: inline-flex;
+  isolation: isolate;
+}
+
+@utility brand-logo-wrap-glow {
+  position: absolute;
+  inset: -60% -25%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 60% at 20% 50%,
+    color-mix(in oklab, var(--primary) 26%, transparent),
+    transparent 72%
+  );
+  opacity: 0.5;
+  filter: blur(26px);
+  transition: opacity 400ms ease;
+  animation: aa-logo-breathe 6s ease-in-out infinite;
+}
+
+.brand-logo-wrap:hover .brand-logo {
+  filter: drop-shadow(0 0 14px color-mix(in oklab, var(--primary) 55%, transparent));
+  transform: translateY(-1px);
+}
+
+.brand-logo-wrap:hover .brand-logo-wrap-glow {
+  opacity: 0.9;
+}
+
+@keyframes aa-logo-breathe {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+@keyframes aa-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+
+.date-input-white-icon::-webkit-calendar-picker-indicator,
+.time-input-white-icon::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 1;
+}
