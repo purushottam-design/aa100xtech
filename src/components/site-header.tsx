@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { ChevronDown, Megaphone, Menu } from "lucide-react";
 import { useState } from "react";
 import { CurrencySelector } from "@/components/currency-selector";

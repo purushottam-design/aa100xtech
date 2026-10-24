@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 
 import { AdminPanelShell, DataTable, StatGrid } from "@/components/admin-panel-shell";

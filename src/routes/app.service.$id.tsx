@@ -1,5 +1,8 @@
+"use client";
+
+import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 
 import { AppEmpty, AppError, AppLoading, AppShell } from "@/components/app-shell";
 import { Badge } from "@/components/ui/badge";
@@ -10,22 +13,10 @@ const title = "Service details — AA100XTech App";
 const description =
   "View full details for an AA100XTech service, including category, description and how to book a consultation.";
 
-export const Route = createFileRoute("/app/service/$id")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AppServiceDetail,
-});
+export default AppServiceDetail;
 
 function AppServiceDetail() {
-  const { id } = useParams({ from: "/app/service/$id" });
+  const { id } = useParams<{ id: string }>();
   const { data, isLoading, error } = useQuery({
     queryKey: ["app", "catalog"],
     queryFn: () => listCatalogItems(),

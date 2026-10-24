@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
+
 import { Download, Share, Smartphone } from "lucide-react";
 
 import { AppShell } from "@/components/app-shell";
@@ -9,19 +11,7 @@ const title = "Install the AA100XTech App";
 const description =
   "Install the AA100XTech App on your phone for one-tap access to services, consultations and your account.";
 
-export const Route = createFileRoute("/app/install")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AppInstall,
-});
+export default AppInstall;
 
 function AppInstall() {
   const { canInstall, installed, install } = usePwaInstall();

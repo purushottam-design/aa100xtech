@@ -1,7 +1,3 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { redirect } from "next/navigation";
 
-export const Route = createFileRoute("/app/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/app/home" });
-  },
-});
+export default function AppIndex() { redirect("/app/home"); }

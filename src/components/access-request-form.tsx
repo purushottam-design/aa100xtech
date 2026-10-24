@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -10,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { signUpAccount } from "@/lib/accounts.functions";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/navigation";
 
 const optionalText = (max: number) =>
   z

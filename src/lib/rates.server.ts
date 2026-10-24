@@ -1,3 +1,4 @@
+import "server-only";
 export type RatesPayload = {
   base: string;
   rates: Record<string, number>;

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import {
   ArrowRight,
   BadgeCheck,
@@ -22,21 +22,7 @@ const title = "Influencer Marketing Services for Brands | AA100XTech";
 const description =
   "AA100XTech runs end-to-end influencer marketing campaigns: creator discovery, vetting, campaign management, content rights and transparent performance reporting.";
 
-export const Route = createFileRoute("/influencer-marketing")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.com/influencer-marketing" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.com/influencer-marketing" }],
-  }),
-  component: InfluencerMarketingPage,
-});
+export default InfluencerMarketingPage;
 
 const services = [
   {

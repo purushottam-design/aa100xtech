@@ -1,3 +1,5 @@
+"use client";
+
 import {
   createContext,
   useCallback,
@@ -16,7 +18,7 @@ import {
   ShieldCheck,
   XCircle,
 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -188,7 +190,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
         },
       });
       if (!res.ok) {
-        if (import.meta.env.DEV) {
+        if (process.env.NODE_ENV === "development") {
           console.error("Razorpay order creation failed", { code: res.code, message: res.error });
         }
         toast.error(res.error);
@@ -203,7 +205,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
       });
       setStep("summary");
     } catch (err) {
-      if (import.meta.env.DEV) console.error("Consultation payment initialization failed", err);
+      if (process.env.NODE_ENV === "development") console.error("Consultation payment initialization failed", err);
       toast.error(err instanceof Error ? err.message : "Could not start the payment.");
     } finally {
       setCreating(false);
@@ -216,7 +218,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
     const ok = await loadRazorpay();
     if (!ok) {
       setPaying(false);
-      if (import.meta.env.DEV) console.error("Razorpay Checkout SDK failed to load");
+      if (process.env.NODE_ENV === "development") console.error("Razorpay Checkout SDK failed to load");
       toast.error("Could not load the secure checkout. Check your connection and try again.");
       return;
     }
@@ -231,7 +233,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
     ).Razorpay;
     if (!RazorpayCtor) {
       setPaying(false);
-      if (import.meta.env.DEV)
+      if (process.env.NODE_ENV === "development")
         console.error("Razorpay Checkout SDK loaded without window.Razorpay");
       toast.error("Secure checkout could not be initialized. Please try again.");
       return;
@@ -270,7 +272,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
           setPaymentId(result.paymentId ?? response.razorpay_payment_id);
           setStep("success");
         } catch (err) {
-          if (import.meta.env.DEV) console.error("Razorpay payment verification failed", err);
+          if (process.env.NODE_ENV === "development") console.error("Razorpay payment verification failed", err);
           toast.error(err instanceof Error ? err.message : "Payment verification failed.");
           setStep("failed");
         } finally {

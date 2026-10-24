@@ -1,4 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+"use client";
+
+import { Link, useNavigate } from "@/lib/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -15,20 +17,7 @@ const title = "Sign in — AA100XTech App";
 const description =
   "Sign in to the AA100XTech mobile app with your existing AA100XTech account to view services, your profile and consultations.";
 
-export const Route = createFileRoute("/app/login")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: AppLogin,
-});
+export default AppLogin;
 
 function AppLogin() {
   const navigate = useNavigate();

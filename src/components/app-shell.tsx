@@ -1,4 +1,6 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+"use client";
+
+import { Link, useNavigate, useRouterState } from "@/lib/navigation";
 import { Bell, CalendarClock, Home, LayoutGrid, LogOut, Settings, User } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 

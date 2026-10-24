@@ -1,4 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { Link } from "@/lib/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
@@ -21,32 +24,12 @@ const title = "Apply — Influencer Partnership Program | AA100XTech";
 const description =
   "Apply for entry into the AA100XTech 30-level influencer partnership ladder — from affiliate commissions to territory rights, academy building and full global partnership.";
 
-export const Route = createFileRoute("/partners/apply")({
-  validateSearch: (
-    search: Record<string, unknown>,
-  ): { plan?: string; opportunity?: "paid-promotion" } => ({
-    ...(typeof search["plan"] === "string" ? { plan: search["plan"] } : {}),
-    ...(search["opportunity"] === "paid-promotion"
-      ? { opportunity: "paid-promotion" as const }
-      : {}),
-  }),
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.lovable.app/partners/apply" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.lovable.app/partners/apply" }],
-  }),
-  component: PartnerApplyPage,
-});
+export default PartnerApplyPage;
 
 function PartnerApplyPage() {
-  const { plan: planFromUrl, opportunity } = Route.useSearch();
+  const searchParams = useSearchParams();
+  const planFromUrl = searchParams.get("plan") ?? undefined;
+  const opportunity = searchParams.get("opportunity") === "paid-promotion" ? "paid-promotion" : undefined;
   const paidPromotion = opportunity === "paid-promotion";
   const [submitting, setSubmitting] = useState(false);
   const [level, setLevel] = useState("");

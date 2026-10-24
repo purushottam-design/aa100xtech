@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useMemo, useState, type FormEvent } from "react";
@@ -18,22 +20,7 @@ import {
   upsertCatalogItem,
 } from "@/lib/affiliate.functions";
 
-export const Route = createFileRoute("/_authenticated/affiliate-admin")({
-  head: () => ({
-    meta: [
-      { title: "Affiliate control center — AA100XTech admin" },
-      {
-        name: "description",
-        content: "Manage the unified catalog, affiliates, links, coupons, conversions and payouts.",
-      },
-      { property: "og:title", content: "Affiliate control center — AA100XTech admin" },
-      { property: "og:description", content: "One panel for the whole affiliate program." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AffiliateAdminPage,
-});
+export default AffiliateAdminPage;
 
 const TABS = ["Analytics", "Catalog", "Affiliates", "Links & coupons", "Conversions", "Payouts"] as const;
 type Tab = (typeof TABS)[number];

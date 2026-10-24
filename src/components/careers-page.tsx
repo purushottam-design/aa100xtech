@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { ArrowRight, Check, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

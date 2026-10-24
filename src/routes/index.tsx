@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowRight, Check, Minus, Sparkles, Star, Zap } from "lucide-react";
 import { LogoMarquee } from "@/components/logo-marquee";
 import { SectionHeading } from "@/components/section-heading";
@@ -16,17 +16,7 @@ const title = "AA100XTech — Web, App & Digital Marketing Studio in Patna";
 const description =
   "Absolute Advancement 100X Tech builds high-performance websites, mobile apps, AI solutions and growth marketing for ambitious brands. Transparent INR pricing from ₹7,999.";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
-  component: HomePage,
-});
+export default HomePage;
 
 function HomePage() {
   return (

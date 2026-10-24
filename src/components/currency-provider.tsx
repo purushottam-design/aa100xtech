@@ -1,5 +1,6 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { BASE_CURRENCY, currencyByCode, type Currency } from "@/data/currencies";
@@ -30,7 +31,7 @@ function roundNice(value: number) {
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
   const [code, setCode] = useState(BASE_CURRENCY);
-  const fetchRates = useServerFn(getExchangeRates);
+  const fetchRates = getExchangeRates;
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);

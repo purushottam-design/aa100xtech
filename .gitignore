@@ -8,6 +8,10 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.next/
+.npm-cache/
+.migration/
+*.tsbuildinfo
 dist
 dist-ssr
 .output

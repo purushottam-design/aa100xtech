@@ -1,5 +1,7 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowRight } from "lucide-react";
 
 import { AppEmpty, AppError, AppLoading, AppShell } from "@/components/app-shell";
@@ -10,19 +12,7 @@ const title = "Services — AA100XTech App";
 const description =
   "Browse the live AA100XTech service catalogue from the app: web, mobile, AI, cloud and growth marketing offerings.";
 
-export const Route = createFileRoute("/app/services")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AppServices,
-});
+export default AppServices;
 
 function AppServices() {
   const { data, isLoading, error } = useQuery({

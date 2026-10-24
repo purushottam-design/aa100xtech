@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowRight, Check, Trophy } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import {
@@ -15,21 +15,7 @@ const title = "Influencer Partnership Program — 30 Levels | AA100XTech";
 const description =
   "Join the AA100XTech Influencer Partnership Program: 30 levels from basic affiliate to full global company partnership, with commissions, overrides, territory rights and an academy track.";
 
-export const Route = createFileRoute("/partners/")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.lovable.app/partners" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.lovable.app/partners" }],
-  }),
-  component: PartnersPage,
-});
+export default PartnersPage;
 
 function PartnersPage() {
   return (

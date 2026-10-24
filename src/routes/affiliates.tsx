@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart3, Coins, Link2, Rocket, ShieldCheck, Ticket } from "lucide-react";
 
@@ -11,19 +13,7 @@ const title = "Affiliate & Partner Program — Promote everything | AA100XTech";
 const description =
   "One affiliate account to promote every AA100XTech website, app, product and service. Unique links, personal coupon codes, unified dashboard and fast payouts.";
 
-export const Route = createFileRoute("/affiliates")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AffiliatesPage,
-});
+export default AffiliatesPage;
 
 const perks = [
   { icon: Link2, title: "One account, every product", body: "Sign up once and promote every website, app, product and service in the catalog — no separate registration per item." },

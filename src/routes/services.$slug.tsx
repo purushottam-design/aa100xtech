@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowLeft, Check } from "lucide-react";
 import { ServiceDemos } from "@/components/service-demos";
 import { Button } from "@/components/ui/button";
@@ -6,32 +6,9 @@ import { demosForSlug } from "@/data/demos";
 import { serviceBySlug, services } from "@/data/services";
 import { Price } from "@/components/currency-provider";
 
-export const Route = createFileRoute("/services/$slug")({
-  loader: ({ params }) => {
-    const service = serviceBySlug(params.slug);
-    if (!service) throw notFound();
-    return { service };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Service not found — AA100XTech" }, { name: "robots", content: "noindex" }] };
-    }
-    const t = `${loaderData.service.title} — AA100XTech`;
-    const d = loaderData.service.short;
-    return {
-      meta: [
-        { title: t },
-        { name: "description", content: d },
-        { property: "og:title", content: t },
-        { property: "og:description", content: d },
-      ],
-    };
-  },
-  component: ServiceDetail,
-});
+export default ServiceDetail;
 
-function ServiceDetail() {
-  const { service } = Route.useLoaderData();
+function ServiceDetail({ service }: { service: NonNullable<ReturnType<typeof serviceBySlug>> }) {
   const demos = demosForSlug(service.slug);
   const others = services.filter((s) => s.slug !== service.slug).slice(0, 4);
 

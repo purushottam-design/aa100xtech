@@ -1,0 +1,2176 @@
+{
+  "baseline": "1be2be529d782c19896503d2091f19d0acbb9c5a",
+  "markup": {
+    "src/components/access-request-form.tsx": "ea1e54eb2a8968e2fc66a05bd54d22c324f50cf6776da994aefd80fd2c9a490a",
+    "src/components/admin-cms.tsx": "1c68f52a254c122ccca07ac29039efa7e9430336e1c348bc4b441f4f17d59902",
+    "src/components/admin-dashboard-analytics.tsx": "daa2f167875b2aeb90a19db84409627c020dd983307f5d481a5841438c0c2e39",
+    "src/components/admin-management.tsx": "f2726c98815c54f9027b820e71d7b62448223d176a1dbd705bdfaf641d82593a",
+    "src/components/admin-nav.tsx": "cfe4f9dff63c11472bfa58e890076f6ae480ebe55b36051e167533627f961e49",
+    "src/components/admin-notifications.tsx": "475eeaa4f0772376a54c024d57dec77dbd87e3ff1ab8eb8a62c02ae3eba1b258",
+    "src/components/admin-panel-page.tsx": "e0abbb3adb75e80623b5797e4ebcf6274a040962093b844805b419b0966ca24f",
+    "src/components/admin-panel-shell.tsx": "067a662bf876a8cd7928e096dc95c42b1eb3ad5996f6c7c4add3705e2d6e2f75",
+    "src/components/admin-reports.tsx": "62efac2bd788f5b73ac64ea84439c049190566b33defd37d135b5b55d42c8ebe",
+    "src/components/admin-roles.tsx": "1cd46e230d6827361ec614f1b31fac69c49648944369991f886dc25ed8b3e9d9",
+    "src/components/admin-security.tsx": "cf6305bfddf5179369ea2a93ea1ebd2960dd0c3d2ff3675e2ee50c5c5e528718",
+    "src/components/admin-sessions.tsx": "e39754a508373938bf6d6c597832478daa9ade6eb4d6d3cae5ccbbb1cc6613c0",
+    "src/components/admin-support.tsx": "d718b4eb1c6bd1d74b528df95e9c7a39396d5639b8d33671fe0601a4d1dd1566",
+    "src/components/admin-two-factor.tsx": "3385c446bd85941ad96b9083e478ad0781fa1882d2c6e559219d615666fbaea5",
+    "src/components/app-shell.tsx": "8661815f705f3f9e407bb7f6139a3b76208855016f181ea169ce9bc1230edf13",
+    "src/components/careers-page.tsx": "0b92b03ac64107496781ec5ed84e76cfe8db660c9f818b735bd781c46b6283a8",
+    "src/components/consultation-booking.tsx": "4e190d2c9964bbadefdaf4c74d24f62554bba0e2a15f234bb0cf5b4d941c4ea2",
+    "src/components/currency-provider.tsx": "cc704fffa0bffddfe9205571b27dee399ca6d999d0e26b012ebe6dfe24301060",
+    "src/components/currency-selector.tsx": "1597619e6f746c5006de0f48e6457e54bcf089632148b4da95a3bbbddbb67d4e",
+    "src/components/dashboard-login-dialog.tsx": "a81357ec1f993e19af0cd575e5deca13f6a16ac5c23b8ab7a69523e6a8a4f626",
+    "src/components/legal-page.tsx": "5564ad6b3871bcba91c355135e5c8e9e6741c3a78fa0191a859c92c355423716",
+    "src/components/logo-marquee.tsx": "fea889bfe60209a447ee1dbe891e13c6d240d7f3b0defdcd14497ab83783382e",
+    "src/components/section-heading.tsx": "62f99c83949dc7b5b4e42ae9f2f64ca4af8e18ac4bdbc1dc8d047867c7b2f1c5",
+    "src/components/service-demos.tsx": "89c819af605718b6d6d2b05dacddb68d9c7e6e306ba3318036a39f30e6c270cf",
+    "src/components/settings-form.tsx": "628d2d6ba25ea2992b3caa76d2bc6581707bde31650382889f5a3c34aa053e58",
+    "src/components/site-footer.tsx": "23ff0daf37bc0da7525556f2aaffd894f27bc9365ee6d1e3bf9c92195961afef",
+    "src/components/site-header.tsx": "202f05838c3d0482f9f5bb9179f072357faa3701b999427a13e2e79998abd700",
+    "src/components/stat-counter.tsx": "32a3282f96f81a4b69bdc4a629ba7bd172dfbd7906e514d7ab16eb1b991a0024",
+    "src/components/super-admin-console.tsx": "a6bc74eb8199c34215e092b0f8e3c483cbb0e4e59ac4cfc1ff762b501fbc1ba5",
+    "src/components/super-admin-overview.tsx": "60026ffd3d163606a64b6adac4ebe40656165fd36dc617be77828aae68782225",
+    "src/components/support-widget.tsx": "676ce36f8f5664a52869eb7c6b6ea03de780e4fa4b3daa1fbab64ad35b682446",
+    "src/components/technology-stack.tsx": "414f5355c22d9d301a822bb8d60c6c1823822559e79956291449c9edfd8ad46b",
+    "src/components/theme-toggle.tsx": "512bfdfea2a1d210d3793e142d3879d49b88cee7e235773a201d6a5c3a34f1cb",
+    "src/components/ui/accordion.tsx": "ae9cce8c870ae5a4c71593a30489b3ea3d543affcdba4123482b9c0c425adf00",
+    "src/components/ui/alert-dialog.tsx": "4741b86fa9471a84def8d3d20044201f91a824a8a44311183016381090976103",
+    "src/components/ui/alert.tsx": "5149c76bd09621c5692ceb14e795fca5718bd556e584d1c901fbb2a20b2ecf92",
+    "src/components/ui/aspect-ratio.tsx": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "src/components/ui/avatar.tsx": "b3471992d93de0af383df20dea15ecb368a2959ffd28bc91af346b58d5a64433",
+    "src/components/ui/badge.tsx": "39a7fb9aaa7b1b77d1143c7dd3698c17169cc4f31df8b7af6d1311c5ca788e36",
+    "src/components/ui/breadcrumb.tsx": "d96edf0c7c52ec86f26eb535e339486ed51bf3e17cf4581836e863b80051f7b4",
+    "src/components/ui/button.tsx": "6ed95e57a9646b5770d28ff874bcb651eb498435e1596fba47809a35b9085dc9",
+    "src/components/ui/calendar.tsx": "2dac9909bf075d3b11614734a2c2c7a5c78965bcfdf5d8b1002d2a6b78b8f6a9",
+    "src/components/ui/card.tsx": "042377da6068264e676c80d792a22ca5e1aa7d5832972c5b3c63ed2824eef01c",
+    "src/components/ui/carousel.tsx": "6bb1eb8c221756452a5352dc90041cf9a0dbdf48ba669a246a0eb64e6df75713",
+    "src/components/ui/chart.tsx": "4997e70adbf051bbd91f2d6343192e310adb85f411d091dabb783e80d27064d2",
+    "src/components/ui/checkbox.tsx": "2fe8be80fb22d1c3423057506d8a97d1327121bc1275b3be32a88d79f89098e3",
+    "src/components/ui/collapsible.tsx": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "src/components/ui/command.tsx": "478fb35c57e66590dfa78cdf7e70130fcb8206568d0fe2a0bc4aa83d1e5d44ff",
+    "src/components/ui/context-menu.tsx": "68584eb16f4906492df94a5f082a71b5d2af34ece0ed9cf8a97b203fb9e7e03a",
+    "src/components/ui/dialog.tsx": "5fb8126d389284fe68568d2c3837a2a92712d446ca7647fb68c5aea11d9ae07c",
+    "src/components/ui/drawer.tsx": "6f7c07436c8594cad6593d18a1abbc325cbafa0fcf587f48ab61d1e7a290880f",
+    "src/components/ui/dropdown-menu.tsx": "a683c669fce4487d6fa335e16c821f1bc5b7560576d68e4d1b92758d3acaa724",
+    "src/components/ui/form.tsx": "24b5d37d29901dd0503949043c72be7bf158be0e0d08dcbd4facd5720dc28856",
+    "src/components/ui/hover-card.tsx": "1b6777f88f01eb2b2c585036d3dfd05c047ecb85e7b6da499795d9ea582e098f",
+    "src/components/ui/input-otp.tsx": "f84bda293622189bd6f149635635ccbfd09980ed75308da32e43d5f419c2dd09",
+    "src/components/ui/input.tsx": "c47da51ec1636373b8f860b9e59aafd3588a077d246df68410889a6dd30d5aa0",
+    "src/components/ui/label.tsx": "be6fa8b812be2a70cb531c423c1d19016e6c121dff44aa9fc103a6a213eb9f50",
+    "src/components/ui/menubar.tsx": "5883c495726628f78ebb4d13f2227c6dd4d03120c00b8c8d93e8e20d207acb46",
+    "src/components/ui/navigation-menu.tsx": "e133544abc7ac2bbf14f2a9fffb442bf6e4568c8b1b680684bd4a93f125fb4c9",
+    "src/components/ui/pagination.tsx": "c6168cb746ed940f98451d76ea6d3aef6d511a43456a989de9f34a61b3bc1a78",
+    "src/components/ui/popover.tsx": "36480f81871c950eb817732a3e32e3231ad541dfe85d43c52f13bed9f9a95639",
+    "src/components/ui/progress.tsx": "deaaa8896c8d77f744a93dda866c8904c8f861038d32c99ddb81eb9d181a6ac6",
+    "src/components/ui/radio-group.tsx": "81a906d9e47a96759b8dc6c80149fe6bea273a066579be1179047778b1cfd4fd",
+    "src/components/ui/resizable.tsx": "06fc19b6adb7a138aa57fd6a35a4a4e9b1c2255c1fe48c6fd649fd7604dad12b",
+    "src/components/ui/scroll-area.tsx": "96f7e120c90f5c92282b8fb2c863f43cf0a9d8b6e39fc68a04166f576f66bcc5",
+    "src/components/ui/select.tsx": "4c5403ee4fc029e1f938262bf27369e64847e440a47a679028cd06b3a3c457d9",
+    "src/components/ui/separator.tsx": "a7d2c00fcba2f467a9e48229af65eb22dbb13e91aea78b105cef6fb1ec19280b",
+    "src/components/ui/sheet.tsx": "7d4c123d6b02fadfc721acec7985ef2bdd4b8c82370b5c96078ff4f4312c4f6b",
+    "src/components/ui/sidebar.tsx": "f11436e10b544a55d468143815f4e31b77fc417503e821d309ab14208e756dce",
+    "src/components/ui/skeleton.tsx": "4afe3b8f4dbfd8f3bf3d77a0a4d19d67f66c4f4f0f06109224fc3df1dda66ce7",
+    "src/components/ui/slider.tsx": "0275392571aed8e67628ba07127121b10735b17a70b547a91be976fcf825b9d4",
+    "src/components/ui/sonner.tsx": "8a2e2aae7256821a0e118ac80e485e064d684fcc735397a845f5ef165dedc919",
+    "src/components/ui/switch.tsx": "1ce7ee2e643b583e81c5ff11f02d57193b57c60a1ca6e69e27f04d0ea5c09380",
+    "src/components/ui/table.tsx": "d93b5e0386479790c62d82af438cf54c782dd28237db834d1472b3e0d53f010f",
+    "src/components/ui/tabs.tsx": "f6426dd8468ff4044c3b0419035850c110ee69dc660dba62cb4e1e1e5b616b50",
+    "src/components/ui/textarea.tsx": "af4acb6a4a5d5bc22ab60b4eec24cd296c7183e031e50b01e04d77b25651ab54",
+    "src/components/ui/toggle-group.tsx": "07fc692c0d3c02a6b4656eb426168906b39d5ec3dbb4e6cdd1dbbf90b3c6b452",
+    "src/components/ui/toggle.tsx": "adb140a8df4ffa5247015fcb7b2028ff5b59550faae4d3c5f11dd95adf333226",
+    "src/components/ui/tooltip.tsx": "d9931547d007fbabcdfa208895de6cfe53405331037c03d6d44f35a944b5ed63",
+    "src/routes/_authenticated/admin.admins.tsx": "a879d20a4200182c5b9ba95cefa895ed5c2bcc6e8864c0f7380e2ff1ab332aee",
+    "src/routes/_authenticated/admin.business.tsx": "0dae3b7f5f03f85b21bd1e203d6387267a48529d25ca462e255f68ee4bc03b31",
+    "src/routes/_authenticated/admin.company.tsx": "95b15dcbacda2cdc5b52105d3fad545734e6f387db15b32a5d0957e13aa00448",
+    "src/routes/_authenticated/admin.index.tsx": "c4488e33ab0743fdbc555a2c7a783ad9b55be209d761efd13fe8bab46f76fabb",
+    "src/routes/_authenticated/admin.interview.tsx": "6a5bbafe642c27cc42b30134f7e386d85dc764adc2add9a4289691cbf852d92e",
+    "src/routes/_authenticated/admin.marketing.tsx": "b3247a8e3d206bbe7e36758d43975f7ff1989f973c9d96a4dacd2d4db55b4d1a",
+    "src/routes/_authenticated/admin.security.tsx": "e91dae9de01bf087790470195d53a863c975215f10948964b78f570dc3c8ef88",
+    "src/routes/_authenticated/admin.settings.email.tsx": "17b48c464ea36b63ffd72ece77dc5b208b100616c0d79311b910d2aa5d21788e",
+    "src/routes/_authenticated/admin.settings.general.tsx": "3e90606185682a7265718ea01d9e8cc6713ed2472b29e729329920fba524aed9",
+    "src/routes/_authenticated/admin.settings.website.tsx": "5455012514b020965c6d3251ba00b7b42f78949138b60071f90a261079b8ee6d",
+    "src/routes/_authenticated/admin.super.tsx": "765c693026dcd5616bff808ea407bfb0b638c3b5959fb1f0c0e8780783a34f53",
+    "src/routes/_authenticated/affiliate-admin.tsx": "9583e80049d52fcd6a20831be32f3eade89c0e12ecdabbab27d088594444fca0",
+    "src/routes/_authenticated/affiliate.tsx": "dce25ed1803c0abeed89b73519ab811baf82ba57b67693dd5d8ded3cbe0b0aca",
+    "src/routes/_authenticated/dashboard.tsx": "58d7bd4835cda66cc57706ab1ad06a551f011d1a6c5b9affb281985e0427a5b6",
+    "src/routes/_authenticated/team.tsx": "e170014d987e836587820700a6687b2164b022ef285ca7ada0345c982b58b7d3",
+    "src/routes/about.tsx": "7bdbda0b01e36a99c7462a21e369538af3466241354e0722a0d20920f99c55f8",
+    "src/routes/admin-guide.tsx": "8528c149209bccef4d6e56f3e470a868e653030c6fa0320cbc89b438a4e0bb44",
+    "src/routes/admin.select.tsx": "0ccba4a9ab18a74ee5d95104544f08f020dee8445cdbe5959183ceadc1d0ebb8",
+    "src/routes/affiliates.tsx": "01bb376373e6bc45fa7a8f2db89b46ff4ebc6e7dfb7725058462e74a5c5e9f1d",
+    "src/routes/app.admin.tsx": "9035f414cdc31560c739c3fe2e8aafdd1c545bf95d8ab976b6f8dc325b19b1df",
+    "src/routes/app.book-consultation.tsx": "1b5a97803e0fb86f92aa0a3c76cd4d5a7036d2816a0d1bf7f1e9657cb58f751f",
+    "src/routes/app.home.tsx": "b99a9c4e429c70e23e7413079c1c6a9c15bcf294749e26a611936fe8db042136",
+    "src/routes/app.install.tsx": "fd30f22be3f8aaab51247180cfd15e92e55185ccf9368049168be4edcb11ae27",
+    "src/routes/app.login.tsx": "8009037b9f3a720326a84e7aebb175182be7a396a0c0ca63b2f48837af5cd1eb",
+    "src/routes/app.notifications.tsx": "2c6e6c041a605ffe4919d9fb3b4bd7f653456b2e442b51fd5db4e563cfc3ab2a",
+    "src/routes/app.profile.tsx": "4635abeb60a578435dd4ad2c1b674ef934a10951c00c679fbe4d3ef310879b30",
+    "src/routes/app.service.$id.tsx": "ba714b954e009f443335d52a1100ecbb9d7afc7caddac3c1ba0db25d7c83451c",
+    "src/routes/app.services.tsx": "5f26e2bec20f75cd40e7f511ecd37945ccd09cc778db5fbb9646361fda6682c2",
+    "src/routes/app.settings.tsx": "6c034631dc3675277d44f507357978d34bafec7950e7d50d990a79146c4ebb5c",
+    "src/routes/auth.tsx": "a182812d8a4c638752480d1ee12682b1dad8ad608350d2779b34c90c6774465f",
+    "src/routes/be-the-one.tsx": "39d4bcf79f362f180fdd17f5d82d19cd615f964372ae84a03b96ce7a1279b644",
+    "src/routes/careers.apply.tsx": "827e9e3c87baade88b0634f0a735eea6308fc8c90ab4790778b751dcc893c88a",
+    "src/routes/careers.index.tsx": "01829d76ff1a0512f2281e6d5b1610b57db3baa462503b755e18d46b145bd55e",
+    "src/routes/careers.london.tsx": "074a0e687cde049f13531922ebbc77477f28b4f5096c8b966d3adc5a043e3c79",
+    "src/routes/clients.tsx": "badd62ced4ba4fe86b63cf38370fce322b7805dd2309a22e599e8a985ed48d96",
+    "src/routes/consultation.tsx": "13e8df95e8ab2b3a06ee2f3ec17b83ddc65dce42d44e59c3650376d306f87af9",
+    "src/routes/contact.tsx": "a97adf2f8e8c09c9ffa9022375e02a61686306a99301947f9a7b3638638ea031",
+    "src/routes/cookie-policy.tsx": "f3e72d395814e3af9cc3cdb89ff682dd17e98624401216cb867d0d36c0f6adfe",
+    "src/routes/creator-moves-365.tsx": "9f99a71f8bbb09918714bc8811711ffc0c63f63111ac204df6f3c08f83fb2f40",
+    "src/routes/disclaimer.tsx": "2853b744dc76ad99e71b0ac7176a24082ea3f1cbf55c2ca3a4b8829ec6193871",
+    "src/routes/founders.tsx": "900082e4b06871692d4b78b34a77d607ab09afdfe1d13d30d327c1207b967f72",
+    "src/routes/index.tsx": "f219b811bfef5e3bdad58fcd3943324612ffdeca3238b17e0b50db06c46a7f48",
+    "src/routes/influencer-marketing.tsx": "1a3e4ebe873b9140578c342d7617a1efa4b56f33b0ec64582688908886ae8f3b",
+    "src/routes/influencer-success-program.tsx": "4b8e10a5086457c2306f3dfbfb5ccd97c1acd06d187974b9f5ca8e6a981fa1f6",
+    "src/routes/partners.apply.tsx": "876506e4b34c4ca9576dd69725e24a95c00b05a2f9fc24062bbde99de8743756",
+    "src/routes/partners.index.tsx": "bc6bf7287f339eec7fea72c58b4b32162a3234a56eb496d5afca80267c582974",
+    "src/routes/partners.plans.tsx": "c9ffd44c6dc57ffb99d1a073a122939ea318c0dbc3c8a128949bf081f2631ea6",
+    "src/routes/portfolio.tsx": "44bdded4f46fb7ea84f5f8f7863cf45f05239f5dbe9f2340acbd8e0104999ce2",
+    "src/routes/privacy-policy.tsx": "ce4cde1aa0bd0a4bd914c2c996e1f7236a7ace10e813c3478147f53f336b46df",
+    "src/routes/real-estate.tsx": "f16195a1a46f87e45ef3c6c3f837baa6664c689f464ae7f138cb8a8d5177e392",
+    "src/routes/refund-policy.tsx": "37895a14bef7e31046010b3abef975d344da93cebbeec8b4bbd8208f85738dcb",
+    "src/routes/request-access.tsx": "cc03ab79c841eecd5b3880da5c1fa6786f1b6c8fbca097e4cc54b020d22a9b74",
+    "src/routes/services.$slug.tsx": "8570f526d873d9ab3298cb85b079b23e7b4def1f183f68a6ce0adc4f593f1ddb",
+    "src/routes/services.explore.$slug.tsx": "fbddabbbe972027cab10dd34ac32fcb5e13bd6c24ec43e4a32f71538b308b23a",
+    "src/routes/services.explore.index.tsx": "1ac2f50432675eec269b8d3f776ed779efcebc9741ae2ef93d1c7f8d322dde0b",
+    "src/routes/services.index.tsx": "563bfbca3444b1fb943405528203509c9dbd4444719456cf572e467cce623fb8",
+    "src/routes/shipping-policy.tsx": "2f6141960e2cf109de8a151cbbd36106c94e6fd02b599560cfbb305dbe055a80",
+    "src/routes/terms-and-conditions.tsx": "64eeabf8e3138411b321f63103d9f4783695bf23945d78deb81d52085929bfef"
+  },
+  "files": {
+    "public/aa-affiliate.js": {
+      "hash": "8ebfd2bd64ff5c0fcd81ef59e28482b8242b640685bc4b7b3d00b0d9b838be7e",
+      "text": true
+    },
+    "public/app-icon-512.png": {
+      "hash": "57cb1c607508c1569f17d051fd03fdb87793ca37fb7e5e68f8f98fabedda1540",
+      "text": false
+    },
+    "public/favicon.png": {
+      "hash": "2cc7a9ae5b404dd84b7a29e0418b8717aa531c37c7592d79af64dc7d801334e5",
+      "text": false
+    },
+    "public/guide/admins.png": {
+      "hash": "2f77a9129aabdf0de443f1bd161208954e31ff2924abd7bdb17b25169e641b28",
+      "text": false
+    },
+    "public/guide/app-admin2.png": {
+      "hash": "cf00975078210da220b849eb6698729c63538f369b95ab7ec4c3fcf8eeabd263",
+      "text": false
+    },
+    "public/guide/auth.png": {
+      "hash": "30207d1b1a3dcdbdc001484819277a9a41b300b9038542910e80ae6f2787a2b2",
+      "text": false
+    },
+    "public/guide/roles.png": {
+      "hash": "358757233ca8432fcbae1240200f5f3902475526b00e58761e1f331b83400579",
+      "text": false
+    },
+    "public/guide/super.png": {
+      "hash": "5f18e702b850032d147a6f466ac323a0ca92e73eeb8133ded48ac8e5a6caa887",
+      "text": false
+    },
+    "public/logo.png": {
+      "hash": "a27132183790bb1c52610682745b935fe04f4c850ed364c2f8aa5398341b2d03",
+      "text": false
+    },
+    "public/manifest.webmanifest": {
+      "hash": "6ae24f2fdaf24b80c497fe2e70befcce82d468f0a2066b00429dd7eaa477b047",
+      "text": true
+    },
+    "public/robots.txt": {
+      "hash": "0f3b8a69fafc0d7f8cd5519bd565a7cfd52d719fbfd7abfdf58692e73c4bcbe1",
+      "text": true
+    },
+    "src/data/careers.ts": {
+      "hash": "3759a45725cc66710e6621d49a2d7d94a7d4d73a79ceaffa4fb4bfc885a08e76",
+      "text": true
+    },
+    "src/data/consultations.ts": {
+      "hash": "396b0a3d9c06330355e148c3bf18b217af01093f317d36cb6d94747ac22a4129",
+      "text": true
+    },
+    "src/data/currencies.ts": {
+      "hash": "fe0c9220b9ce24a6888f1ad6ec7b2a216213cbee02bf2f7bec895250b362e7a9",
+      "text": true
+    },
+    "src/data/demos.ts": {
+      "hash": "b0839332a127f8d2f5abe7c184076714159ecc98d54e9b6846c17898dbd38727",
+      "text": true
+    },
+    "src/data/legal.ts": {
+      "hash": "9d47e4f73269f0fe7409b58330b51f8e6eca8e0fb78e0d71f79c7f610a4511d8",
+      "text": true
+    },
+    "src/data/partner-plans.ts": {
+      "hash": "2184eaf499d6e85c2a2b9ce7aef2ca9daee4aa3e21b07e3241d741542bdbaa25",
+      "text": true
+    },
+    "src/data/partnership.ts": {
+      "hash": "f069993db9b1439d72a882cf7149fce870ce490cde6ce00f49394f0fca309db2",
+      "text": true
+    },
+    "src/data/portfolio.ts": {
+      "hash": "2ac7c29bc019e9fe8e4283604ca44550749a859371dc21e935b6c2bfcd92b4fa",
+      "text": true
+    },
+    "src/data/pricing.ts": {
+      "hash": "d87d7f7270e9ea630aae763798b819a465164c86a444fbe4dd7b3293b00f43a2",
+      "text": true
+    },
+    "src/data/service-types.ts": {
+      "hash": "1188227874debe7663bb1878012989bfaceb1a7f53cc0666d87337a9ddbe5a4f",
+      "text": true
+    },
+    "src/data/services-ai.ts": {
+      "hash": "aaf61acfbd56dad6a21428b3e4036e7d945a672f56c6a620d7bf096311314496",
+      "text": true
+    },
+    "src/data/services.ts": {
+      "hash": "50650bcdeb8a0d04893c02c0872dc0f97740d6d5c942b3eabf93001824e1f612",
+      "text": true
+    },
+    "src/data/site.ts": {
+      "hash": "f1c0ef92fff09b3ff9f67412284b0355a4af490b530086dc300f2322fa15ae7e",
+      "text": true
+    },
+    "src/data/technologies.ts": {
+      "hash": "c46659a4594b075e5013af9336427b4c4e91eea285a25999e7e21fb55f3722a9",
+      "text": true
+    },
+    "src/styles.css": {
+      "hash": "eb39c27f3769aa3915772aaca1f694bdbebdc5607aaf3fe4ccc7a3ea49215aef",
+      "text": true
+    }
+  },
+  "metadata": [
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.admins.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Admin management — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Create admins, set status and grant granular module permissions."
+          },
+          {
+            "property": "og:title",
+            "content": "Admin management — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Super admin control over every admin account."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.business.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Business Admin dashboard — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Business admin dashboard: consultation bookings, customers and booking revenue."
+          },
+          {
+            "property": "og:title",
+            "content": "Business Admin dashboard — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Business scope administration for AA100XTech."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.company.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Company Admin dashboard — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Company admin dashboard: member accounts, access requests and company bookings."
+          },
+          {
+            "property": "og:title",
+            "content": "Company Admin dashboard — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Company scope administration for AA100XTech."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.index.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Admin console — AA100XTech accounts"
+          },
+          {
+            "name": "description",
+            "content": "Supreme user console: approve access requests and allot member credentials."
+          },
+          {
+            "property": "og:title",
+            "content": "Admin console — AA100XTech accounts"
+          },
+          {
+            "property": "og:description",
+            "content": "Approve requests and issue portal accounts."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.interview.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Interview Admin dashboard — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Interview admin dashboard: candidates, submissions and interview requests."
+          },
+          {
+            "property": "og:title",
+            "content": "Interview Admin dashboard — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Interview scope administration for AA100XTech."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.marketing.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Marketing Admin dashboard — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Marketing admin dashboard: leads, partner applications, affiliates and conversions."
+          },
+          {
+            "property": "og:title",
+            "content": "Marketing Admin dashboard — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Marketing scope administration for AA100XTech."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.security.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Admin security — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Admin activity log and login history for the AA100XTech administration system."
+          },
+          {
+            "property": "og:title",
+            "content": "Admin security — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Activity log and sign-in history for admins."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.settings.email.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Email settings — AA100XTech admin"
+          },
+          {
+            "name": "description",
+            "content": "Set the sender identity for AA100XTech emails and choose which events trigger an internal notification."
+          },
+          {
+            "property": "og:title",
+            "content": "Email settings — AA100XTech admin"
+          },
+          {
+            "property": "og:description",
+            "content": "Set the sender identity for AA100XTech emails and choose which events trigger an internal notification."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.settings.general.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "General settings — AA100XTech admin"
+          },
+          {
+            "name": "description",
+            "content": "Control how AA100XTech behaves: default currency, timezone, sign-ups, bookings, careers and the affiliate program."
+          },
+          {
+            "property": "og:title",
+            "content": "General settings — AA100XTech admin"
+          },
+          {
+            "property": "og:description",
+            "content": "Control how AA100XTech behaves: default currency, timezone, sign-ups, bookings, careers and the affiliate program."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.settings.website.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Website settings — AA100XTech admin"
+          },
+          {
+            "name": "description",
+            "content": "Manage the public identity of AA100XTech: site name, contact details, business hours and site-wide announcements."
+          },
+          {
+            "property": "og:title",
+            "content": "Website settings — AA100XTech admin"
+          },
+          {
+            "property": "og:description",
+            "content": "Manage the public identity of AA100XTech: site name, contact details, business hours and site-wide announcements."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__admin.super.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Super admin console — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Complete control centre for AA100XTech: users, admins, permissions, bookings, partners, affiliates and security."
+          },
+          {
+            "property": "og:title",
+            "content": "Super admin console — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "One console for every module of the website."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__affiliate-admin.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Affiliate control center — AA100XTech admin"
+          },
+          {
+            "name": "description",
+            "content": "Manage the unified catalog, affiliates, links, coupons, conversions and payouts."
+          },
+          {
+            "property": "og:title",
+            "content": "Affiliate control center — AA100XTech admin"
+          },
+          {
+            "property": "og:description",
+            "content": "One panel for the whole affiliate program."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__affiliate.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Affiliate portal — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Your unified affiliate dashboard: links, coupon codes, conversions and payouts."
+          },
+          {
+            "property": "og:title",
+            "content": "Affiliate portal — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Links, coupons, stats and payouts in one place."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__dashboard.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "My account — AA100XTech portal"
+          },
+          {
+            "name": "description",
+            "content": "Your AA100XTech portal account: profile details, role and password settings."
+          },
+          {
+            "property": "og:title",
+            "content": "My account — AA100XTech portal"
+          },
+          {
+            "property": "og:description",
+            "content": "Your AA100XTech portal account overview."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/_authenticated__team.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Company team — AA100XTech portal"
+          },
+          {
+            "name": "description",
+            "content": "Internal AA100XTech team directory: each person's profile, time in the company, target achieved and employee of the month."
+          },
+          {
+            "property": "og:title",
+            "content": "Company team — AA100XTech portal"
+          },
+          {
+            "property": "og:description",
+            "content": "Internal team directory for AA100XTech members."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/about.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "About AA100XTech — IT Services Company in Patna"
+          },
+          {
+            "name": "description",
+            "content": "Absolute Advancement 100X Tech is an Indian IT services company in Patna delivering websites, mobile apps, AI, cloud and digital marketing for 100x business growth."
+          },
+          {
+            "property": "og:title",
+            "content": "About AA100XTech — IT Services Company in Patna"
+          },
+          {
+            "property": "og:description",
+            "content": "Absolute Advancement 100X Tech is an Indian IT services company in Patna delivering websites, mobile apps, AI, cloud and digital marketing for 100x business growth."
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/admin-guide.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Admin guide — how to open Super Admin & Admin | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on the website and in the phone app."
+          },
+          {
+            "property": "og:title",
+            "content": "Admin guide — how to open Super Admin & Admin | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on the website and in the phone app."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/admin.select.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Continue as — AA100XTech admin"
+          },
+          {
+            "name": "description",
+            "content": "Choose which AA100XTech admin dashboard to open with your assigned roles."
+          },
+          {
+            "property": "og:title",
+            "content": "Continue as — AA100XTech admin"
+          },
+          {
+            "property": "og:description",
+            "content": "Select an admin role to continue."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/affiliates.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Affiliate & Partner Program — Promote everything | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "One affiliate account to promote every AA100XTech website, app, product and service. Unique links, personal coupon codes, unified dashboard and fast payouts."
+          },
+          {
+            "property": "og:title",
+            "content": "Affiliate & Partner Program — Promote everything | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "One affiliate account to promote every AA100XTech website, app, product and service. Unique links, personal coupon codes, unified dashboard and fast payouts."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.admin.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Admin panels — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "Open the AA100XTech admin dashboards assigned to your account from the mobile app: company, interview, marketing, business or super admin."
+          },
+          {
+            "property": "og:title",
+            "content": "Admin panels — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "Open the AA100XTech admin dashboards assigned to your account from the mobile app: company, interview, marketing, business or super admin."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.book-consultation.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Book a consultation — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "Book a paid AA100XTech consultation from your phone. Secure payment runs through the existing AA100XTech checkout."
+          },
+          {
+            "property": "og:title",
+            "content": "Book a consultation — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "Book a paid AA100XTech consultation from your phone. Secure payment runs through the existing AA100XTech checkout."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.home.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "App home — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Your AA100XTech mobile dashboard: services, consultations and your account, powered by your existing AA100XTech login."
+          },
+          {
+            "property": "og:title",
+            "content": "App home — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Your AA100XTech mobile dashboard: services, consultations and your account, powered by your existing AA100XTech login."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.install.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Install the AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "Install the AA100XTech App on your phone for one-tap access to services, consultations and your account."
+          },
+          {
+            "property": "og:title",
+            "content": "Install the AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "Install the AA100XTech App on your phone for one-tap access to services, consultations and your account."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.login.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Sign in — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "Sign in to the AA100XTech mobile app with your existing AA100XTech account to view services, your profile and consultations."
+          },
+          {
+            "property": "og:title",
+            "content": "Sign in — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "Sign in to the AA100XTech mobile app with your existing AA100XTech account to view services, your profile and consultations."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.notifications.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Notifications — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "Turn on push alerts and read every AA100XTech announcement, booking update and admin message inside the mobile app."
+          },
+          {
+            "property": "og:title",
+            "content": "Notifications — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "Turn on push alerts and read every AA100XTech announcement, booking update and admin message inside the mobile app."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.profile.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Your profile — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "View your AA100XTech account details: name, contact information, department and assigned roles."
+          },
+          {
+            "property": "og:title",
+            "content": "Your profile — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "View your AA100XTech account details: name, contact information, department and assigned roles."
+          },
+          {
+            "property": "og:type",
+            "content": "profile"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.service.id.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Service details — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "View full details for an AA100XTech service, including category, description and how to book a consultation."
+          },
+          {
+            "property": "og:title",
+            "content": "Service details — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "View full details for an AA100XTech service, including category, description and how to book a consultation."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.services.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Services — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "Browse the live AA100XTech service catalogue from the app: web, mobile, AI, cloud and growth marketing offerings."
+          },
+          {
+            "property": "og:title",
+            "content": "Services — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "Browse the live AA100XTech service catalogue from the app: web, mobile, AI, cloud and growth marketing offerings."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/app.settings.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Settings — AA100XTech App"
+          },
+          {
+            "name": "description",
+            "content": "Update your AA100XTech contact details and sign out of the mobile app. Changes are saved to your existing account."
+          },
+          {
+            "property": "og:title",
+            "content": "Settings — AA100XTech App"
+          },
+          {
+            "property": "og:description",
+            "content": "Update your AA100XTech contact details and sign out of the mobile app. Changes are saved to your existing account."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/auth.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Sign up or sign in — AA100XTech accounts"
+          },
+          {
+            "name": "description",
+            "content": "Request an AA100XTech portal account or sign in as an existing member. New employee, customer, partner and job-seeker accounts are issued after approval by the supreme user."
+          },
+          {
+            "property": "og:title",
+            "content": "Sign up or sign in — AA100XTech accounts"
+          },
+          {
+            "property": "og:description",
+            "content": "Create an account request or sign in to the AA100XTech portal for employees, customers, partners and job seekers."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/be-the-one.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Be The One — Personal Brand, Website, App & Social Identity | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Be The One: one identity for one person on planet earth. We build your personal brand, website, mobile app, social media presence and the marketing that makes your entrance to the global stage unforgettable."
+          },
+          {
+            "property": "og:title",
+            "content": "Be The One — Personal Brand, Website, App & Social Identity | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Be The One: one identity for one person on planet earth. We build your personal brand, website, mobile app, social media presence and the marketing that makes your entrance to the global stage unforgettable."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/be-the-one"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/be-the-one"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/careers.apply.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Candidate Task Submission — Careers | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Interviewing with AA100XTech? Submit your brief plan here: the task you are taking on, hours needed, availability, your cost, deliverables and your work files."
+          },
+          {
+            "property": "og:title",
+            "content": "Candidate Task Submission — Careers | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Interviewing with AA100XTech? Submit your brief plan here: the task you are taking on, hours needed, availability, your cost, deliverables and your work files."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/careers/apply"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/careers/apply"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/careers.index.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Careers — AA100XTech | 30 remote seats, one real brief"
+          },
+          {
+            "name": "description",
+            "content": "AA100XTech is hiring 30 remote builders across 11 product lines. No interview rounds — one real client brief, 10 days to ship it, decision on day 10."
+          },
+          {
+            "property": "og:title",
+            "content": "Careers — AA100XTech | 30 remote seats, one real brief"
+          },
+          {
+            "property": "og:description",
+            "content": "AA100XTech is hiring 30 remote builders across 11 product lines. No interview rounds — one real client brief, 10 days to ship it, decision on day 10."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/careers.london.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "London cohort — AA100XTech Careers | 12 UK seats"
+          },
+          {
+            "name": "description",
+            "content": "AA100XTech is opening a London studio with 12 remote UK seats. No interview rounds — one real client brief, 10 days to ship it, decision on day 10."
+          },
+          {
+            "property": "og:title",
+            "content": "London cohort — AA100XTech Careers | 12 UK seats"
+          },
+          {
+            "property": "og:description",
+            "content": "AA100XTech is opening a London studio with 12 remote UK seats. No interview rounds — one real client brief, 10 days to ship it, decision on day 10."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/clients.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Our Top Clients — Brands Built & Scaled by AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Meet the brands we build for: real-estate platforms, AI products, e-commerce storefronts and lifestyle labels engineered and scaled by AA100XTech."
+          },
+          {
+            "property": "og:title",
+            "content": "Our Top Clients — Brands Built & Scaled by AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Meet the brands we build for: real-estate platforms, AI products, e-commerce storefronts and lifestyle labels engineered and scaled by AA100XTech."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/consultation.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Book IT Consultation | Expert Technology Consulting"
+          },
+          {
+            "name": "description",
+            "content": "Book a 1-on-1 consultation with our IT experts for website development, software, mobile apps, AI, cloud, architecture and digital transformation."
+          },
+          {
+            "property": "og:title",
+            "content": "Book IT Consultation | Expert Technology Consulting"
+          },
+          {
+            "property": "og:description",
+            "content": "Book a 1-on-1 consultation with our IT experts for website development, software, mobile apps, AI, cloud, architecture and digital transformation."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/contact.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Contact AA100XTech — Patna IT & Digital Agency"
+          },
+          {
+            "name": "description",
+            "content": "Talk to AA100XTech about your website, app, AI or marketing project. Email customer.care@aa100xtech.com, call +91 90318 38342, or visit our Kidwaipuri, Patna office."
+          },
+          {
+            "property": "og:title",
+            "content": "Contact AA100XTech — Patna IT & Digital Agency"
+          },
+          {
+            "property": "og:description",
+            "content": "Talk to AA100XTech about your website, app, AI or marketing project. Email customer.care@aa100xtech.com, call +91 90318 38342, or visit our Kidwaipuri, Patna office."
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/cookie-policy.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Cookie Policy — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Which cookies and browser storage AA100XTech uses, why they are needed for sign-in, how third-party embeds behave, and how you can manage cookies in your browser."
+          },
+          {
+            "name": "robots",
+            "content": "noindex, follow"
+          },
+          {
+            "property": "og:title",
+            "content": "Cookie Policy — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Which cookies and browser storage AA100XTech uses, why they are needed for sign-in, how third-party embeds behave, and how you can manage cookies in your browser."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/cookie-policy"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/cookie-policy"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/creator-moves-365.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Creator Moves 365 — Learn How to Grow on Social Media | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Creator Moves 365 is a daily learning program for social media creators: content strategy, hooks, editing, analytics and monetisation — one actionable move every day for 365 days."
+          },
+          {
+            "property": "og:title",
+            "content": "Creator Moves 365 — Learn How to Grow on Social Media | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Creator Moves 365 is a daily learning program for social media creators: content strategy, hooks, editing, analytics and monetisation — one actionable move every day for 365 days."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.com/creator-moves-365"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/creator-moves-365"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/disclaimer.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Disclaimer — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "General, informational and no-guarantee-of-results disclaimers for the AA100XTech website, including accuracy of information and third-party links."
+          },
+          {
+            "name": "robots",
+            "content": "noindex, follow"
+          },
+          {
+            "property": "og:title",
+            "content": "Disclaimer — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "General, informational and no-guarantee-of-results disclaimers for the AA100XTech website, including accuracy of information and third-party links."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/disclaimer"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/disclaimer"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/founders.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Founder of AA100XTech — Aman, Absolute Advancement 100X Tech"
+          },
+          {
+            "name": "description",
+            "content": "Meet the founder and lead developer of Absolute Advancement 100X Tech — his work, projects delivered, company details and social profiles."
+          },
+          {
+            "property": "og:title",
+            "content": "Founder of AA100XTech — Aman, Absolute Advancement 100X Tech"
+          },
+          {
+            "property": "og:description",
+            "content": "Meet the founder and lead developer of Absolute Advancement 100X Tech — his work, projects delivered, company details and social profiles."
+          },
+          {
+            "property": "og:type",
+            "content": "profile"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/index.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "AA100XTech — Web, App & Digital Marketing Studio in Patna"
+          },
+          {
+            "name": "description",
+            "content": "Absolute Advancement 100X Tech builds high-performance websites, mobile apps, AI solutions and growth marketing for ambitious brands. Transparent INR pricing from ₹7,999."
+          },
+          {
+            "property": "og:title",
+            "content": "AA100XTech — Web, App & Digital Marketing Studio in Patna"
+          },
+          {
+            "property": "og:description",
+            "content": "Absolute Advancement 100X Tech builds high-performance websites, mobile apps, AI solutions and growth marketing for ambitious brands. Transparent INR pricing from ₹7,999."
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/influencer-marketing.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Influencer Marketing Services for Brands | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "AA100XTech runs end-to-end influencer marketing campaigns: creator discovery, vetting, campaign management, content rights and transparent performance reporting."
+          },
+          {
+            "property": "og:title",
+            "content": "Influencer Marketing Services for Brands | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "AA100XTech runs end-to-end influencer marketing campaigns: creator discovery, vetting, campaign management, content rights and transparent performance reporting."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.com/influencer-marketing"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/influencer-marketing"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/influencer-success-program.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Influencer Success Program — Grow, Partner & Earn | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "The AA100XTech Influencer Success Program helps social media creators grow faster with strategy, brand collaborations, campaign support and real income milestones."
+          },
+          {
+            "property": "og:title",
+            "content": "Influencer Success Program — Grow, Partner & Earn | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "The AA100XTech Influencer Success Program helps social media creators grow faster with strategy, brand collaborations, campaign support and real income milestones."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.com/influencer-success-program"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/influencer-success-program"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/partners.apply.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Apply — Influencer Partnership Program | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Apply for entry into the AA100XTech 30-level influencer partnership ladder — from affiliate commissions to territory rights, academy building and full global partnership."
+          },
+          {
+            "property": "og:title",
+            "content": "Apply — Influencer Partnership Program | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Apply for entry into the AA100XTech 30-level influencer partnership ladder — from affiliate commissions to territory rights, academy building and full global partnership."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/partners/apply"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/partners/apply"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/partners.index.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Influencer Partnership Program — 30 Levels | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Join the AA100XTech Influencer Partnership Program: 30 levels from basic affiliate to full global company partnership, with commissions, overrides, territory rights and an academy track."
+          },
+          {
+            "property": "og:title",
+            "content": "Influencer Partnership Program — 30 Levels | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Join the AA100XTech Influencer Partnership Program: 30 levels from basic affiliate to full global company partnership, with commissions, overrides, territory rights and an academy track."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/partners"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/partners"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/partners.plans.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "30 Influencer Partnership Plans — Affiliate to Global | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Choose from 30 influencer partnership plans at AA100XTech — affiliate marketing, referrals, UGC, whitelisting, reselling, territory licences and global company partnership. Every signup is approved by the super admin."
+          },
+          {
+            "property": "og:title",
+            "content": "30 Influencer Partnership Plans — Affiliate to Global | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Choose from 30 influencer partnership plans at AA100XTech — affiliate marketing, referrals, UGC, whitelisting, reselling, territory licences and global company partnership. Every signup is approved by the super admin."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/partners/plans"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/partners/plans"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/portfolio.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Portfolio — Websites, Apps & Platforms by AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Selected work from AA100XTech: real-estate platforms, AI products, e-commerce storefronts and growth campaigns built with MERN, Next.js and TypeScript."
+          },
+          {
+            "property": "og:title",
+            "content": "Portfolio — Websites, Apps & Platforms by AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Selected work from AA100XTech: real-estate platforms, AI products, e-commerce storefronts and growth campaigns built with MERN, Next.js and TypeScript."
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/privacy-policy.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Privacy Policy — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "How AA100XTech collects, uses, stores and shares information submitted through aa100xtech.com, including account data, form submissions, cookies and your privacy rights."
+          },
+          {
+            "name": "robots",
+            "content": "noindex, follow"
+          },
+          {
+            "property": "og:title",
+            "content": "Privacy Policy — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "How AA100XTech collects, uses, stores and shares information submitted through aa100xtech.com, including account data, form submissions, cookies and your privacy rights."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/privacy-policy"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/privacy-policy"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/real-estate.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Real Estate AI Video & Avatar Walkthroughs — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Turn property photos into cinematic listing videos and AI avatar walkthroughs. Real estate marketing that sells listings faster — from ₹4,999."
+          },
+          {
+            "property": "og:title",
+            "content": "Real Estate AI Video & Avatar Walkthroughs — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Turn property photos into cinematic listing videos and AI avatar walkthroughs. Real estate marketing that sells listings faster — from ₹4,999."
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/refund-policy.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Refund & Cancellation Policy — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "How cancellations and refunds work for AA100XTech engagements: eligibility, non-refundable costs, duplicate and failed payments, and how to raise a refund request."
+          },
+          {
+            "name": "robots",
+            "content": "noindex, follow"
+          },
+          {
+            "property": "og:title",
+            "content": "Refund & Cancellation Policy — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "How cancellations and refunds work for AA100XTech engagements: eligibility, non-refundable costs, duplicate and failed payments, and how to raise a refund request."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/refund-policy"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/refund-policy"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/request-access.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Request an account — AA100XTech portal access"
+          },
+          {
+            "name": "description",
+            "content": "Employees, customers, partners and job seekers can request an AA100XTech portal account. The company verifies your email and phone, then issues your credentials."
+          },
+          {
+            "property": "og:title",
+            "content": "Request an account — AA100XTech portal access"
+          },
+          {
+            "property": "og:description",
+            "content": "Submit your details and the company will approve and issue your login."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/services.slug.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Parity service — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Original service description"
+          },
+          {
+            "property": "og:title",
+            "content": "Parity service — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Original service description"
+          }
+        ]
+      },
+      "input": {
+        "title": "Parity service",
+        "short": "Original service description"
+      },
+      "missing": {
+        "meta": [
+          {
+            "title": "Service not found — AA100XTech"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/services.explore.slug.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Parity service type — How It Works & Pricing | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Original service type description"
+          },
+          {
+            "property": "og:title",
+            "content": "Parity service type — How It Works & Pricing | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Original service type description"
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      },
+      "input": {
+        "title": "Parity service type",
+        "description": "Original service type description"
+      },
+      "missing": {
+        "meta": [
+          {
+            "title": "Service type not found — AA100XTech"
+          },
+          {
+            "name": "robots",
+            "content": "noindex"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/services.explore.index.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Explore Every Service Type — Websites, Apps, Design, AI & Content | AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Browse every type of website, mobile app, graphic design, music, AI automation and social media service we deliver — open any type to see the full working, modules, process, timeline and pricing."
+          },
+          {
+            "property": "og:title",
+            "content": "Explore Every Service Type — Websites, Apps, Design, AI & Content | AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Browse every type of website, mobile app, graphic design, music, AI automation and social media service we deliver — open any type to see the full working, modules, process, timeline and pricing."
+          },
+          {
+            "property": "og:type",
+            "content": "website"
+          },
+          {
+            "name": "twitter:card",
+            "content": "summary_large_image"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/services.index.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "IT Services & Transparent Pricing — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "Websites, e-commerce, mobile apps, AI, cloud, cybersecurity, SEO and marketing with transparent starting prices in INR — from ₹1,499 design work to full enterprise platforms."
+          },
+          {
+            "property": "og:title",
+            "content": "IT Services & Transparent Pricing — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "Websites, e-commerce, mobile apps, AI, cloud, cybersecurity, SEO and marketing with transparent starting prices in INR — from ₹1,499 design work to full enterprise platforms."
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/shipping-policy.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Digital Delivery Policy — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "AA100XTech delivers digital services, not physical goods. This policy explains how deliverables and access are released, timelines, delays and re-delivery of files."
+          },
+          {
+            "name": "robots",
+            "content": "noindex, follow"
+          },
+          {
+            "property": "og:title",
+            "content": "Digital Delivery Policy — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "AA100XTech delivers digital services, not physical goods. This policy explains how deliverables and access are released, timelines, delays and re-delivery of files."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/shipping-policy"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/shipping-policy"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/lib/page-metadata/terms-and-conditions.ts",
+      "legacy": {
+        "meta": [
+          {
+            "title": "Terms & Conditions — AA100XTech"
+          },
+          {
+            "name": "description",
+            "content": "The terms governing use of the AA100XTech website and services: eligibility, company-issued accounts, pricing, intellectual property, liability and governing law."
+          },
+          {
+            "name": "robots",
+            "content": "noindex, follow"
+          },
+          {
+            "property": "og:title",
+            "content": "Terms & Conditions — AA100XTech"
+          },
+          {
+            "property": "og:description",
+            "content": "The terms governing use of the AA100XTech website and services: eligibility, company-issued accounts, pricing, intellectual property, liability and governing law."
+          },
+          {
+            "property": "og:type",
+            "content": "article"
+          },
+          {
+            "property": "og:url",
+            "content": "https://aa100xtech.lovable.app/terms-and-conditions"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.lovable.app/terms-and-conditions"
+          }
+        ]
+      }
+    }
+  ]
+}

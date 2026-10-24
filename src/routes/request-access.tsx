@@ -1,30 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { useState } from "react";
 
 import { AccessRequestForm } from "@/components/access-request-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const Route = createFileRoute("/request-access")({
-  head: () => ({
-    meta: [
-      { title: "Request an account — AA100XTech portal access" },
-      {
-        name: "description",
-        content:
-          "Employees, customers, partners and job seekers can request an AA100XTech portal account. The company verifies your email and phone, then issues your credentials.",
-      },
-      { property: "og:title", content: "Request an account — AA100XTech portal access" },
-      {
-        property: "og:description",
-        content: "Submit your details and the company will approve and issue your login.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: RequestAccessPage,
-});
+export default RequestAccessPage;
 
 function RequestAccessPage() {
   const [done, setDone] = useState(false);

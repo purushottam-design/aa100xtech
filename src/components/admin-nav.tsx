@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

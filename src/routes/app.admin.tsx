@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { useState } from "react";
 
 import { DashboardLoginDialog } from "@/components/dashboard-login-dialog";
@@ -16,20 +18,7 @@ const title = "Admin panels — AA100XTech App";
 const description =
   "Open the AA100XTech admin dashboards assigned to your account from the mobile app: company, interview, marketing, business or super admin.";
 
-export const Route = createFileRoute("/app/admin")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: AppAdmin,
-});
+export default AppAdmin;
 
 const CONSOLE_SECTIONS = [
   { section: "overview", label: "Dashboard" },

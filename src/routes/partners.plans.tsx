@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { ArrowRight, BadgeCheck, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
@@ -11,21 +13,7 @@ const title = "30 Influencer Partnership Plans — Affiliate to Global | AA100XT
 const description =
   "Choose from 30 influencer partnership plans at AA100XTech — affiliate marketing, referrals, UGC, whitelisting, reselling, territory licences and global company partnership. Every signup is approved by the super admin.";
 
-export const Route = createFileRoute("/partners/plans")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.lovable.app/partners/plans" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.lovable.app/partners/plans" }],
-  }),
-  component: PartnerPlansPage,
-});
+export default PartnerPlansPage;
 
 function PartnerPlansPage() {
   const [filter, setFilter] = useState<string>("All");

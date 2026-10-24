@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { ArrowRight, Clock, Globe, Music, PenTool, Share2, Smartphone, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { SectionHeading } from "@/components/section-heading";
@@ -16,19 +18,7 @@ const title = "Explore Every Service Type — Websites, Apps, Design, AI & Conte
 const description =
   "Browse every type of website, mobile app, graphic design, music, AI automation and social media service we deliver — open any type to see the full working, modules, process, timeline and pricing.";
 
-export const Route = createFileRoute("/services/explore/")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: ExploreServices,
-});
+export default ExploreServices;
 
 const icons: Record<string, typeof Globe> = {
   Globe,

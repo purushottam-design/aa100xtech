@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { SectionHeading } from "@/components/section-heading";
 import { StatCounter } from "@/components/stat-counter";
 import { Button } from "@/components/ui/button";
@@ -8,17 +8,7 @@ const title = "About AA100XTech — IT Services Company in Patna";
 const description =
   "Absolute Advancement 100X Tech is an Indian IT services company in Patna delivering websites, mobile apps, AI, cloud and digital marketing for 100x business growth.";
 
-export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
-  component: AboutPage,
-});
+export default AboutPage;
 
 const stats = [
   { value: 2, suffix: "+", label: "Years in business" },

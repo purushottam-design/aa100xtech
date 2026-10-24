@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { SectionHeading } from "@/components/section-heading";
@@ -10,17 +12,7 @@ const title = "Portfolio — Websites, Apps & Platforms by AA100XTech";
 const description =
   "Selected work from AA100XTech: real-estate platforms, AI products, e-commerce storefronts and growth campaigns built with MERN, Next.js and TypeScript.";
 
-export const Route = createFileRoute("/portfolio")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
-  component: PortfolioPage,
-});
+export default PortfolioPage;
 
 function PortfolioPage() {
   const [filter, setFilter] = useState("All");

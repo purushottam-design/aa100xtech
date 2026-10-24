@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
 
-import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+
+
+import { Link } from "@/lib/navigation";
 
 import { AppEmpty, AppError, AppLoading, AppShell, RequireAppAuth, SignOutButton } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
@@ -13,24 +15,11 @@ const title = "Your profile — AA100XTech App";
 const description =
   "View your AA100XTech account details: name, contact information, department and assigned roles.";
 
-export const Route = createFileRoute("/app/profile")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "profile" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: () => (
+export default () => (
     <RequireAppAuth>
       <AppProfile />
     </RequireAppAuth>
-  ),
-});
+  );
 
 function AppProfile() {
   const { data, isLoading, error } = useQuery({

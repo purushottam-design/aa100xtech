@@ -1,4 +1,6 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+"use client";
+
+import { Link, useNavigate } from "@/lib/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 

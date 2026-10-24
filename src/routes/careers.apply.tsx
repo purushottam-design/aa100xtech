@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { ArrowLeft, Loader2, Upload } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
@@ -20,22 +22,7 @@ const title = "Candidate Task Submission — Careers | AA100XTech";
 const description =
   "Interviewing with AA100XTech? Submit your brief plan here: the task you are taking on, hours needed, availability, your cost, deliverables and your work files.";
 
-export const Route = createFileRoute("/careers/apply")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.lovable.app/careers/apply" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.lovable.app/careers/apply" }],
-  }),
-  component: CandidateApplyPage,
-});
+export default CandidateApplyPage;
 
 function CandidateApplyPage() {
   const [submitting, setSubmitting] = useState(false);

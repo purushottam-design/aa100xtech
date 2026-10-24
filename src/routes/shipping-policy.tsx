@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
 import { deliverySections, legalDates } from "@/data/legal";
 
@@ -7,21 +6,7 @@ const description =
   "AA100XTech delivers digital services, not physical goods. This policy explains how deliverables and access are released, timelines, delays and re-delivery of files.";
 const url = "https://aa100xtech.lovable.app/shipping-policy";
 
-export const Route = createFileRoute("/shipping-policy")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { name: "robots", content: "noindex, follow" },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "article" },
-      { property: "og:url", content: url },
-    ],
-    links: [{ rel: "canonical", href: url }],
-  }),
-  component: DeliveryPolicyPage,
-});
+export default DeliveryPolicyPage;
 
 function DeliveryPolicyPage() {
   return (

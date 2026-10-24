@@ -1,3 +1,4 @@
+import "server-only";
 /**
  * Server-only helpers for the environment-configured admin account.
  * ADMIN_EMAIL / ADMIN_PASSWORD are read from process.env at call time and are
@@ -12,8 +13,8 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 export function matchesEnvAdmin(email: string, password: string): boolean {
-  const adminEmail = process.env['ADMIN_EMAIL'];
-  const adminPassword = process.env['ADMIN_PASSWORD'];
+  const adminEmail = process.env["ADMIN_EMAIL"];
+  const adminPassword = process.env["ADMIN_PASSWORD"];
   if (!adminEmail || !adminPassword) return false;
   return (
     timingSafeEqual(email.trim().toLowerCase(), adminEmail.trim().toLowerCase()) &&
@@ -27,7 +28,7 @@ export function matchesEnvAdmin(email: string, password: string): boolean {
  * has not yet been provisioned; callers must supply a server-validated user ID.
  */
 export async function isEnvAdminUser(userId: string): Promise<boolean> {
-  const configuredEmail = process.env['ADMIN_EMAIL'];
+  const configuredEmail = process.env["ADMIN_EMAIL"];
   if (!configuredEmail) return false;
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -47,8 +48,8 @@ export async function isEnvAdminUser(userId: string): Promise<boolean> {
  * supreme_admin role + profile row.
  */
 export async function syncEnvAdminAccount(): Promise<void> {
-  const configuredEmail = process.env['ADMIN_EMAIL'];
-  const adminPassword = process.env['ADMIN_PASSWORD'];
+  const configuredEmail = process.env["ADMIN_EMAIL"];
+  const adminPassword = process.env["ADMIN_PASSWORD"];
   if (!configuredEmail || !adminPassword) {
     throw new Error("Administrator credentials are not configured.");
   }

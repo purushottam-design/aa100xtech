@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { useState } from "react";
 
 import { DashboardLoginDialog } from "@/components/dashboard-login-dialog";
@@ -8,20 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useMyAdminRoles } from "@/components/admin-panel-shell";
 import { ADMIN_PANELS, PANEL_LABEL, type AdminPanel } from "@/lib/admin-panels";
 
-export const Route = createFileRoute("/admin/select")({
-  head: () => ({
-    meta: [
-      { title: "Continue as — AA100XTech admin" },
-      { name: "description", content: "Choose which AA100XTech admin dashboard to open with your assigned roles." },
-      { property: "og:title", content: "Continue as — AA100XTech admin" },
-      { property: "og:description", content: "Select an admin role to continue." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: SelectRolePage,
-});
+export default SelectRolePage;
 
 const panelBlurb: Record<string, string> = {
   super: "Full control: users, roles and all scopes.",

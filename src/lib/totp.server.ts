@@ -1,3 +1,4 @@
+import "server-only";
 /**
  * Minimal RFC 6238 TOTP implementation (SHA-1, 6 digits, 30s step) plus the
  * signed "2FA unlocked" cookie used to gate the super admin console.
@@ -68,7 +69,10 @@ export function otpauthUrl(secret: string, account: string, issuer = "AA100XTech
 
 export function generateRecoveryCodes(count = 8): string[] {
   return Array.from({ length: count }, () =>
-    randomBytes(5).toString("hex").toUpperCase().replace(/(.{5})/, "$1-"),
+    randomBytes(5)
+      .toString("hex")
+      .toUpperCase()
+      .replace(/(.{5})/, "$1-"),
   );
 }
 

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import {
   Briefcase,
   Code2,
@@ -30,18 +30,7 @@ const title = "Founder of AA100XTech — Aman, Absolute Advancement 100X Tech";
 const description =
   "Meet the founder and lead developer of Absolute Advancement 100X Tech — his work, projects delivered, company details and social profiles.";
 
-export const Route = createFileRoute("/founders")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "profile" },
-    ],
-  }),
-  component: FoundersPage,
-});
+export default FoundersPage;
 
 const companyStats = [
   { value: 200, suffix: "+", label: "Projects completed" },

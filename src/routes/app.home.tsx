@@ -1,5 +1,7 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowRight, CalendarClock, LayoutGrid, User } from "lucide-react";
 
 import {
@@ -19,24 +21,11 @@ const title = "App home — AA100XTech";
 const description =
   "Your AA100XTech mobile dashboard: services, consultations and your account, powered by your existing AA100XTech login.";
 
-export const Route = createFileRoute("/app/home")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: () => (
+export default () => (
     <RequireAppAuth>
       <AppHome />
     </RequireAppAuth>
-  ),
-});
+  );
 
 function AppHome() {
   const account = useQuery({ queryKey: ["app", "account"], queryFn: () => getMyAccount() });

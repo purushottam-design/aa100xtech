@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import {
   ArrowRight,
   Bot,
@@ -42,19 +44,7 @@ const title = "Book IT Consultation | Expert Technology Consulting";
 const description =
   "Book a 1-on-1 consultation with our IT experts for website development, software, mobile apps, AI, cloud, architecture and digital transformation.";
 
-export const Route = createFileRoute("/consultation")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: ConsultationPage,
-});
+export default ConsultationPage;
 
 function scrollToPlans() {
   document.getElementById("plans")?.scrollIntoView({ behavior: "smooth", block: "start" });

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { SectionHeading } from "@/components/section-heading";
 import { cn } from "@/lib/utils";

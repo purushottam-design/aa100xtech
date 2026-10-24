@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
 import { disclaimerSections, legalDates } from "@/data/legal";
 
@@ -7,21 +6,7 @@ const description =
   "General, informational and no-guarantee-of-results disclaimers for the AA100XTech website, including accuracy of information and third-party links.";
 const url = "https://aa100xtech.lovable.app/disclaimer";
 
-export const Route = createFileRoute("/disclaimer")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { name: "robots", content: "noindex, follow" },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "article" },
-      { property: "og:url", content: url },
-    ],
-    links: [{ rel: "canonical", href: url }],
-  }),
-  component: DisclaimerPage,
-});
+export default DisclaimerPage;
 
 function DisclaimerPage() {
   return (

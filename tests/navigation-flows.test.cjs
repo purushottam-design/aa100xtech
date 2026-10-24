@@ -21,6 +21,7 @@ function load(relativePath, mocks = {}, globals = {}) {
       if (name.startsWith("@/components/") || name === "lucide-react") return components;
       throw new Error("Unexpected test import: " + name);
     },
+    URLSearchParams,
     ...globals,
   });
   return exports;
@@ -53,12 +54,9 @@ for (const kind of ["global", "london", "influencer", "partnership"]) {
           error: (...args) => errors.push(args),
         },
       },
-      "@tanstack/react-router": {
-        Link: "Link",
-        createFileRoute: () => (options) => ({
-          ...options,
-          useSearch: () => (kind === "influencer" ? { opportunity: "paid-promotion" } : {}),
-        }),
+      "@/lib/navigation": { Link: "Link" },
+      "next/navigation": {
+        useSearchParams: () => new URLSearchParams(kind === "influencer" ? "opportunity=paid-promotion" : ""),
       },
       "@/integrations/supabase/client": {
         supabase: {
@@ -93,7 +91,7 @@ for (const kind of ["global", "london", "influencer", "partnership"]) {
       ? module.CareersPage({
           cohort: kind === "global" ? cohorts.globalCohort : cohorts.londonCohort,
         })
-      : module.Route.component();
+      : module.default();
     const form = findAll(tree, (node) => node.type === "form")[0];
     assert.ok(form);
     if (!jobs) {

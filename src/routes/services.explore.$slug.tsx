@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowLeft, ArrowRight, Check, Clock, Layers } from "lucide-react";
 import { ServiceDemos } from "@/components/service-demos";
 import { Badge } from "@/components/ui/badge";
@@ -11,39 +11,9 @@ import {
   serviceTypes,
 } from "@/data/service-types";
 
-export const Route = createFileRoute("/services/explore/$slug")({
-  loader: ({ params }) => {
-    const type = serviceTypeBySlug(params.slug);
-    if (!type) throw notFound();
-    return { type };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return {
-        meta: [
-          { title: "Service type not found — AA100XTech" },
-          { name: "robots", content: "noindex" },
-        ],
-      };
-    }
-    const t = `${loaderData.type.title} — How It Works & Pricing | AA100XTech`;
-    const d = loaderData.type.description.slice(0, 155);
-    return {
-      meta: [
-        { title: t },
-        { name: "description", content: d },
-        { property: "og:title", content: t },
-        { property: "og:description", content: d },
-        { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-    };
-  },
-  component: ServiceTypeDetail,
-});
+export default ServiceTypeDetail;
 
-function ServiceTypeDetail() {
-  const { type } = Route.useLoaderData();
+function ServiceTypeDetail({ type }: { type: NonNullable<ReturnType<typeof serviceTypeBySlug>> }) {
   const category = serviceCategories.find((c) => c.id === type.category);
   const demos = demosForSlug(type.demoKey ?? type.serviceSlug ?? type.slug);
   const related = serviceTypes

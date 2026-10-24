@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Copy, Loader2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
@@ -17,22 +19,7 @@ import {
   requestPayout,
 } from "@/lib/affiliate.functions";
 
-export const Route = createFileRoute("/_authenticated/affiliate")({
-  head: () => ({
-    meta: [
-      { title: "Affiliate portal — AA100XTech" },
-      {
-        name: "description",
-        content: "Your unified affiliate dashboard: links, coupon codes, conversions and payouts.",
-      },
-      { property: "og:title", content: "Affiliate portal — AA100XTech" },
-      { property: "og:description", content: "Links, coupons, stats and payouts in one place." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AffiliatePortal,
-});
+export default AffiliatePortal;
 
 function money(value: number) {
   return `₹${Number(value || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;

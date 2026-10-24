@@ -1,3 +1,4 @@
+import "server-only";
 import { createHmac, timingSafeEqual, randomBytes } from "crypto";
 
 type RazorpayErrorPayload = {

@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -25,22 +27,7 @@ import {
 import { SuperAdminOverview } from "@/components/super-admin-overview";
 import { listPartnerApplications, reviewPartnerApplication } from "@/lib/partners.functions";
 
-export const Route = createFileRoute("/_authenticated/admin/")({
-  head: () => ({
-    meta: [
-      { title: "Admin console — AA100XTech accounts" },
-      {
-        name: "description",
-        content: "Supreme user console: approve access requests and allot member credentials.",
-      },
-      { property: "og:title", content: "Admin console — AA100XTech accounts" },
-      { property: "og:description", content: "Approve requests and issue portal accounts." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AdminPage,
-});
+export default AdminPage;
 
 type AccessRequest = {
   id: string;

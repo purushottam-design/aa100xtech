@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowRight, Check, Film, Home, UserRound, Video } from "lucide-react";
 import { ServiceDemos } from "@/components/service-demos";
 import { SectionHeading } from "@/components/section-heading";
@@ -13,17 +13,7 @@ const description =
 
 const realEstateSlugs = ["real-estate-photo-to-video", "ai-avatar-property-walkthrough"] as const;
 
-export const Route = createFileRoute("/real-estate")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
-  component: RealEstatePage,
-});
+export default RealEstatePage;
 
 function RealEstatePage() {
   const services = realEstateSlugs.map((slug) => serviceBySlug(slug)).filter(Boolean);

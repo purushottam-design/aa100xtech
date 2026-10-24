@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { Download, FileSpreadsheet, FileText, TrendingDown, TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";

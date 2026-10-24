@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
+
 import { BellRing } from "lucide-react";
 import { toast } from "sonner";
 
@@ -12,24 +14,11 @@ const title = "Notifications — AA100XTech App";
 const description =
   "Turn on push alerts and read every AA100XTech announcement, booking update and admin message inside the mobile app.";
 
-export const Route = createFileRoute("/app/notifications")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: () => (
+export default () => (
     <RequireAppAuth>
       <AppNotifications />
     </RequireAppAuth>
-  ),
-});
+  );
 
 function AppNotifications() {
   const push = usePushNotifications();

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import {
   ArrowRight,
   BarChart3,
@@ -25,21 +25,7 @@ const title = "Creator Moves 365 — Learn How to Grow on Social Media | AA100XT
 const description =
   "Creator Moves 365 is a daily learning program for social media creators: content strategy, hooks, editing, analytics and monetisation — one actionable move every day for 365 days.";
 
-export const Route = createFileRoute("/creator-moves-365")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.com/creator-moves-365" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.com/creator-moves-365" }],
-  }),
-  component: CreatorMoves365Page,
-});
+export default CreatorMoves365Page;
 
 const skills = [
   {

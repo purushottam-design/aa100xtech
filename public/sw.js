@@ -1,9 +1,12 @@
-const CACHE = "aa100x-app-v2";
+const CACHE = "aa100x-app-next-v3";
 const SHELL = ["/app/home", "/app-icon-512.png", "/favicon.png", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(SHELL).catch(() => undefined)).then(() => self.skipWaiting()),
+    caches
+      .open(CACHE)
+      .then((c) => c.addAll(SHELL).catch(() => undefined))
+      .then(() => self.skipWaiting()),
   );
 });
 
@@ -21,15 +24,38 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  // Next.js uses the same page URLs for HTML and React Server Component data.
+  // Never cache those data requests or API responses as an offline HTML page.
+  if (
+    (url.pathname.startsWith("/_next/") && !url.pathname.startsWith("/_next/static/")) ||
+    url.pathname.startsWith("/api/") ||
+    url.searchParams.has("_rsc") ||
+    req.headers.get("RSC") === "1" ||
+    req.headers.has("Next-Router-Prefetch")
+  )
+    return;
 
   event.respondWith(
     fetch(req)
       .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => undefined);
+        if (res.ok && !res.headers.get("content-type")?.includes("text/x-component")) {
+          const copy = res.clone();
+          caches
+            .open(CACHE)
+            .then((c) => c.put(req, copy))
+            .catch(() => undefined);
+        }
         return res;
       })
-      .catch(() => caches.match(req).then((hit) => hit || caches.match("/app/home"))),
+      .catch(async () => {
+        const hit = await caches.match(req);
+        if (hit) return hit;
+        if (req.mode === "navigate") {
+          const shell = await caches.match("/app/home");
+          if (shell) return shell;
+        }
+        return Response.error();
+      }),
   );
 });
 

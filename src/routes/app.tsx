@@ -1,5 +1,3 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
-export const Route = createFileRoute("/app")({
-  component: () => <Outlet />,
-});
+export default function Layout({ children }: { children: ReactNode }) { return <>{children}</>; }

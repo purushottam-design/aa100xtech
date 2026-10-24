@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { ArrowRight, Check } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { Badge } from "@/components/ui/badge";
@@ -11,17 +11,7 @@ const title = "IT Services & Transparent Pricing — AA100XTech";
 const description =
   "Websites, e-commerce, mobile apps, AI, cloud, cybersecurity, SEO and marketing with transparent starting prices in INR — from ₹1,499 design work to full enterprise platforms.";
 
-export const Route = createFileRoute("/services/")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-    ],
-  }),
-  component: ServicesPage,
-});
+export default ServicesPage;
 
 function ServicesPage() {
   return (

@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -10,23 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { listTeam, updateTeamMember } from "@/lib/accounts.functions";
 
-export const Route = createFileRoute("/_authenticated/team")({
-  head: () => ({
-    meta: [
-      { title: "Company team — AA100XTech portal" },
-      {
-        name: "description",
-        content:
-          "Internal AA100XTech team directory: each person's profile, time in the company, target achieved and employee of the month.",
-      },
-      { property: "og:title", content: "Company team — AA100XTech portal" },
-      { property: "og:description", content: "Internal team directory for AA100XTech members." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: TeamPage,
-});
+export default TeamPage;
 
 type Member = {
   id: string;

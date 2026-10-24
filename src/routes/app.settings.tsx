@@ -1,5 +1,7 @@
+"use client";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -15,24 +17,11 @@ const title = "Settings — AA100XTech App";
 const description =
   "Update your AA100XTech contact details and sign out of the mobile app. Changes are saved to your existing account.";
 
-export const Route = createFileRoute("/app/settings")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: () => (
+export default () => (
     <RequireAppAuth>
       <AppSettings />
     </RequireAppAuth>
-  ),
-});
+  );
 
 function AppSettings() {
   const queryClient = useQueryClient();

@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import { Link } from "@/lib/navigation";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { SectionHeading } from "@/components/section-heading";
@@ -11,19 +13,7 @@ const title = "Our Top Clients — Brands Built & Scaled by AA100XTech";
 const description =
   "Meet the brands we build for: real-estate platforms, AI products, e-commerce storefronts and lifestyle labels engineered and scaled by AA100XTech.";
 
-export const Route = createFileRoute("/clients")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: ClientsPage,
-});
+export default ClientsPage;
 
 function ClientsPage() {
   const [filter, setFilter] = useState("All");

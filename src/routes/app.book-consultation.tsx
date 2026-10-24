@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
+
 import { Check } from "lucide-react";
 
 import { AppShell } from "@/components/app-shell";
@@ -11,19 +13,7 @@ const title = "Book a consultation — AA100XTech App";
 const description =
   "Book a paid AA100XTech consultation from your phone. Secure payment runs through the existing AA100XTech checkout.";
 
-export const Route = createFileRoute("/app/book-consultation")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AppBookConsultation,
-});
+export default AppBookConsultation;
 
 function AppBookConsultation() {
   const { open } = useConsultationBooking();

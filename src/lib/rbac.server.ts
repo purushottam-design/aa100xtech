@@ -1,3 +1,4 @@
+import "server-only";
 /**
  * Single source of truth for "what may this account do?".
  *
@@ -80,7 +81,8 @@ export async function resolveAccess(userId: string): Promise<AdminAccess> {
     for (const p of rolePerms ?? []) permissions.add(p.permission as string);
   }
 
-  const status = (profile?.status as string) ?? (profile?.is_active === false ? "inactive" : "active");
+  const status =
+    (profile?.status as string) ?? (profile?.is_active === false ? "inactive" : "active");
 
   return {
     userId,
@@ -111,7 +113,8 @@ export async function authorize(userId: string, permission?: string): Promise<Ad
   if (access.status !== "active") {
     throw new AccessError("Your admin account is not active.");
   }
-  const isAdmin = access.roles.some((r) => BUILTIN_ADMIN_ROLES.includes(r)) || access.roleIds.length > 0;
+  const isAdmin =
+    access.roles.some((r) => BUILTIN_ADMIN_ROLES.includes(r)) || access.roleIds.length > 0;
   if (!isAdmin) throw new AccessError("Admin access only.");
   if (permission && !access.permissions.includes(permission)) {
     throw new AccessError("You do not have permission to perform this action.");

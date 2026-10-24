@@ -1,4 +1,8 @@
 node_modules
+.next
+.migration
+.npm-cache
+next-env.d.ts
 dist
 .output
 .vinxi

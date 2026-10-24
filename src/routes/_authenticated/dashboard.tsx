@@ -1,4 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+"use client";
+
+import { Link, useNavigate } from "@/lib/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,22 +17,7 @@ import { getMyAccount } from "@/lib/accounts.functions";
 import { useMyAdminRoles } from "@/components/admin-panel-shell";
 import { PANEL_LABEL, PANEL_PATH } from "@/lib/admin-panels";
 
-export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({
-    meta: [
-      { title: "My account — AA100XTech portal" },
-      {
-        name: "description",
-        content: "Your AA100XTech portal account: profile details, role and password settings.",
-      },
-      { property: "og:title", content: "My account — AA100XTech portal" },
-      { property: "og:description", content: "Your AA100XTech portal account overview." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: DashboardPage,
-});
+export default DashboardPage;
 
 const roleLabels: Record<string, string> = {
   supreme_admin: "Supreme user",

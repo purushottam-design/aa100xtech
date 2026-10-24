@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import {
   ArrowRight,
   Award,
@@ -23,21 +23,7 @@ const title = "Influencer Success Program — Grow, Partner & Earn | AA100XTech"
 const description =
   "The AA100XTech Influencer Success Program helps social media creators grow faster with strategy, brand collaborations, campaign support and real income milestones.";
 
-export const Route = createFileRoute("/influencer-success-program")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.com/influencer-success-program" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.com/influencer-success-program" }],
-  }),
-  component: InfluencerSuccessProgramPage,
-});
+export default InfluencerSuccessProgramPage;
 
 const pillars = [
   {

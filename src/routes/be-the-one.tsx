@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@/lib/navigation";
 import {
   ArrowRight,
   Fingerprint,
@@ -18,21 +18,7 @@ const title = "Be The One — Personal Brand, Website, App & Social Identity | A
 const description =
   "Be The One: one identity for one person on planet earth. We build your personal brand, website, mobile app, social media presence and the marketing that makes your entrance to the global stage unforgettable.";
 
-export const Route = createFileRoute("/be-the-one")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://aa100xtech.lovable.app/be-the-one" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://aa100xtech.lovable.app/be-the-one" }],
-  }),
-  component: BeTheOnePage,
-});
+export default BeTheOnePage;
 
 const pillars = [
   {

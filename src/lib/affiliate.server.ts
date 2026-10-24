@@ -1,3 +1,4 @@
+import "server-only";
 import { createHash, randomBytes } from "crypto";
 
 export type CommissionRule = {
@@ -36,10 +37,11 @@ export function buildAffiliateCode(): string {
 
 /** Coupon code: AA100-<NAME><random> e.g. AA100-JOHN25 */
 export function buildCouponCode(fullName: string): string {
-  const name = (fullName || "PARTNER")
-    .toUpperCase()
-    .replace(/[^A-Z]/g, "")
-    .slice(0, 6) || "PARTNER";
+  const name =
+    (fullName || "PARTNER")
+      .toUpperCase()
+      .replace(/[^A-Z]/g, "")
+      .slice(0, 6) || "PARTNER";
   return `AA100-${name}${randomToken(3)}`;
 }
 
@@ -78,8 +80,12 @@ export function calculateCommission(input: {
   return Math.max(0, Math.round(amount * 100) / 100);
 }
 
-export function jsonResponse(body: unknown, status = 200, extraHeaders: Record<string, string> = {}) {
-  return new Response(JSON.stringify(body), {
+export function jsonResponse(
+  body: unknown,
+  status = 200,
+  extraHeaders: Record<string, string> = {},
+) {
+  return new Response(status === 204 ? null : JSON.stringify(body), {
     status,
     headers: {
       "content-type": "application/json",
@@ -97,6 +103,7 @@ export function isValidApiKey(request: Request): boolean {
   const provided = request.headers.get("x-api-key") ?? "";
   if (provided.length !== expected.length) return false;
   let diff = 0;
-  for (let i = 0; i < expected.length; i += 1) diff |= provided.charCodeAt(i) ^ expected.charCodeAt(i);
+  for (let i = 0; i < expected.length; i += 1)
+    diff |= provided.charCodeAt(i) ^ expected.charCodeAt(i);
   return diff === 0;
 }

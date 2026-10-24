@@ -1,10 +1,12 @@
+"use client";
+
 /**
  * Shared dashboard login popup — identical behaviour on the website and in
  * the phone app. It only collects the credentials; every check (dashboard,
  * role, permissions) happens on the server in `dashboardLogin`.
  */
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
