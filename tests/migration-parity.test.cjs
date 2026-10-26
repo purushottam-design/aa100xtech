@@ -10,7 +10,9 @@ const fixture = require("./fixtures/migration-parity.json");
 const root = path.join(__dirname, "..");
 const hash = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
-// Captured from the original Git commit before migration. Normalizing through
+// Captured from the original Git commit before migration, then updated only
+// for the requested influencer and payment additions.
+// Normalizing through
 // the JSX compiler ignores formatting while retaining text, classes, attributes,
 // event handlers, component order, and conditional rendering.
 function markup(source, file) {
@@ -34,7 +36,7 @@ function markup(source, file) {
   return result;
 }
 
-test("all 58 migrated page templates preserve the original rendered JSX", () => {
+test("all 58 existing page templates match the approved rendered JSX baseline", () => {
   const pages = Object.entries(fixture.markup).filter(([file]) => file.startsWith("src/routes/"));
   assert.equal(pages.length, 58);
   for (const [file, expected] of pages) {
@@ -43,7 +45,7 @@ test("all 58 migrated page templates preserve the original rendered JSX", () => 
   }
 });
 
-test("all 79 original shared components preserve their rendered JSX", () => {
+test("all 79 existing shared components match the approved rendered JSX baseline", () => {
   const components = Object.entries(fixture.markup).filter(([file]) => file.startsWith("src/components/"));
   assert.equal(components.length, 79);
   for (const [file, expected] of components) {

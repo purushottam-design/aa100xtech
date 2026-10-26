@@ -35,7 +35,7 @@ function findAll(node, predicate) {
 
 const cohorts = load("src/data/careers.ts");
 
-for (const kind of ["global", "london", "influencer", "partnership"]) {
+for (const kind of ["global", "london", "partnership"]) {
   test(`${kind}: success requires a completed insert; errors retain the application`, async () => {
     let complete;
     let insertResult = new Promise((resolve) => {
@@ -154,7 +154,7 @@ for (const kind of ["global", "london", "influencer", "partnership"]) {
 
 test("header destinations and reversible authentication visibility", () => {
   const site = load("src/data/site.ts");
-  assert.equal(site.showAuthButtons, false);
+  assert.equal(site.showAuthButtons, true);
   assert.ok(
     !site.headerNavLinks.some((item) => ["/careers", "/creator-moves-365"].includes(item.to)),
   );
@@ -165,8 +165,9 @@ test("header destinations and reversible authentication visibility", () => {
   );
   assert.deepEqual(
     Array.from(site.joinUsLinks, (item) => item.label),
-    ["Jobs", "Influencer"],
+    ["Jobs", "Influencer Partners"],
   );
   assert.equal(site.marketingLinks[0].params.slug, "social-media-marketing");
   assert.equal(site.marketingLinks[1].to, "/influencer-marketing");
+  assert.equal(site.joinUsLinks[1].to, "/influencers");
 });

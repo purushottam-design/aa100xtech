@@ -30,11 +30,11 @@ export const headerNavLinks = navLinks.filter(
 );
 
 // Re-enable navigation account controls without changing authentication routes.
-export const showAuthButtons = false;
+export const showAuthButtons = true;
 
 export const joinUsLinks = [
   { to: "/careers", label: "Jobs" },
-  { to: "/partners/apply", search: { opportunity: "paid-promotion" }, label: "Influencer" },
+  { to: "/influencers", label: "Influencer Partners" },
 ] as const;
 
 export const marketingLinks = [

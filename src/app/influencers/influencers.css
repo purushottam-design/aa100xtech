@@ -1,0 +1,186 @@
+.influencer-program {
+  --ip-gold: #ffd24a;
+  --ip-orange: #ff8a3d;
+  background: #0b0b0f;
+  color: #f4f6ff;
+}
+html:has(.influencer-program) {
+  scroll-behavior: smooth;
+}
+/* Keep the shared footer's long contact address within tablet columns on
+   these routes, without changing the footer component or unrelated pages. */
+html:has(.influencer-program, .influencer-application) footer a[href^="mailto:"] {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.influencer-program .ip-container {
+  width: min(100%, 1280px);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+.influencer-program .ip-heading {
+  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+.influencer-program .ip-eyebrow {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  color: var(--ip-gold);
+}
+.influencer-program .ip-gradient-text {
+  color: var(--ip-gold);
+  background: linear-gradient(110deg, var(--ip-gold), var(--ip-orange));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.influencer-program .ip-cta {
+  background: linear-gradient(110deg, var(--ip-gold), var(--ip-orange));
+  color: #1a1206;
+  box-shadow: 0 6px 30px #ff8a3d15;
+}
+.influencer-program .ip-hero-glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 75% 40%, #ff8a3d12, transparent 55%),
+    radial-gradient(ellipse at 5% 95%, #ffd24a09, transparent 50%);
+}
+.influencer-program .ip-editorial {
+  height: 540px;
+}
+.influencer-program .ip-photo-main {
+  position: absolute;
+  width: 65%;
+  height: 89%;
+  left: 11%;
+  top: 2%;
+  overflow: hidden;
+  border-radius: 180px 180px 20px 20px;
+  border: 1px solid #ffffff25;
+  transform: rotate(-5deg);
+}
+.influencer-program .ip-photo-small {
+  position: absolute;
+  width: 43%;
+  height: 44%;
+  right: 0;
+  bottom: 1%;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 6px solid #0b0b0f;
+  transform: rotate(7deg);
+}
+.influencer-program .ip-social {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid #ffffff25;
+  background: #1a1a24ee;
+  box-shadow: 0 12px 36px #0005;
+  animation: ip-float 7s ease-in-out infinite;
+}
+.influencer-program .ip-social-one {
+  top: 13%;
+  right: 13%;
+  color: #ffaa91;
+  transform: rotate(12deg);
+}
+.influencer-program .ip-social-two {
+  top: 51%;
+  left: 1%;
+  color: #ff735d;
+  animation-delay: -2s;
+}
+.influencer-program .ip-social-three {
+  bottom: 45%;
+  right: 1%;
+  color: #a3bfff;
+  animation-delay: -4s;
+}
+.influencer-program .ip-note {
+  position: absolute;
+  bottom: -4%;
+  left: 2%;
+  max-width: 70%;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 20px;
+  background: #1a1a24f5;
+  border: 1px solid #ffffff20;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px #0004;
+}
+.influencer-program .ip-benefit {
+  transition:
+    transform 0.25s,
+    border-color 0.25s;
+}
+.influencer-program .ip-benefit:hover {
+  transform: translateY(-5px);
+  border-color: #ffd24a55;
+}
+.influencer-program .ip-final-cta {
+  background: radial-gradient(ellipse at right, #ff8a3d18, transparent 65%), #131319;
+}
+.influencer-program .ip-enter {
+  animation: ip-enter 0.7s ease-out both;
+}
+@keyframes ip-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -9px;
+  }
+}
+@keyframes ip-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 1023px) {
+  .influencer-program .ip-editorial {
+    max-width: 470px;
+    height: 470px;
+  }
+}
+@media (max-width: 480px) {
+  .influencer-program .ip-editorial {
+    height: 375px;
+  }
+  .influencer-program .ip-note {
+    padding: 12px;
+    bottom: -4%;
+  }
+  .influencer-program .ip-social {
+    width: 46px;
+    height: 46px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.influencer-program) {
+    scroll-behavior: auto;
+  }
+  .influencer-program *,
+  .influencer-program *::before,
+  .influencer-program *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AdminPanelShell, DataTable, StatGrid } from "@/components/admin-panel-shell";
 import { type AdminPanel } from "@/lib/admin-panels";
 import { getPanelDashboard } from "@/lib/admin-panels.functions";
+import { PaymentManagement } from "@/components/payment-management";
 
 /**
  * Renders one role dashboard from real database data. Every fetch is
@@ -38,6 +39,11 @@ export function AdminPanelPage({
           {(data.data?.tables ?? []).map((t: any) => (
             <DataTable key={t.title} title={t.title} columns={t.columns} rows={t.rows} />
           ))}
+          {panel === "business" ? (
+            <div className="mt-8">
+              <PaymentManagement />
+            </div>
+          ) : null}
         </>
       )}
     </AdminPanelShell>

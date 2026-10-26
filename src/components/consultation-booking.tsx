@@ -26,6 +26,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PaymentGatewaySelector } from "@/components/payment-gateway-selector";
+import { defaultPaymentGateway, type PaymentGateway } from "@/lib/payment-gateways";
 import { Textarea } from "@/components/ui/textarea";
 import {
   consultationPlans,
@@ -41,7 +43,12 @@ import {
   verifyConsultationPayment,
 } from "@/lib/consultations.functions";
 
-type Step = "plans" | "details" | "summary" | "success" | "failed" | "cancelled";
+type Step = "plans" | "details" | "summary" | "success" | "failed" | "cancelled" | "pending";
+type PaymentVerification = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
 
 type BookingForm = {
   fullName: string;
@@ -121,6 +128,8 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(defaultPaymentGateway);
+  const [pendingVerification, setPendingVerification] = useState<PaymentVerification | null>(null);
 
   const plan = planId ? (getConsultationPlan(planId) ?? null) : null;
 
@@ -137,6 +146,8 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Ctx>(() => ({ open }), [open]);
 
   const reset = () => {
+    setPaymentGateway(defaultPaymentGateway);
+    setPendingVerification(null);
     setStep("plans");
     setPlanId(null);
     setOrder(null);
@@ -212,8 +223,44 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const confirmPayment = async (response: PaymentVerification) => {
+    if (!order) return;
+    setPaying(true);
+    setPendingVerification(response);
+    try {
+      const result = await verifyConsultationPayment({
+        data: {
+          bookingId: order.bookingId,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpaySignature: response.razorpay_signature,
+        },
+      });
+      setPaymentId(result.paymentId ?? response.razorpay_payment_id);
+      setStep(
+        result.status === "pending" ? "pending" : result.status === "failed" ? "failed" : "success",
+      );
+      if (result.status === "paid") setPendingVerification(null);
+    } catch (error) {
+      if (process.env.NODE_ENV === "development")
+        console.error("Razorpay payment verification failed", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Payment verification is pending. Please check again.",
+      );
+      setStep("pending");
+    } finally {
+      setPaying(false);
+    }
+  };
+
   const payNow = async () => {
     if (!order || !plan || paying) return;
+    if (paymentGateway !== "razorpay") {
+      toast.error("ICICI Bank payments are currently unavailable. Please choose Razorpay.");
+      return;
+    }
     setPaying(true);
     const ok = await loadRazorpay();
     if (!ok) {
@@ -255,30 +302,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
           setStep("cancelled");
         },
       },
-      handler: async (response: {
-        razorpay_order_id: string;
-        razorpay_payment_id: string;
-        razorpay_signature: string;
-      }) => {
-        try {
-          const result = await verifyConsultationPayment({
-            data: {
-              bookingId: order.bookingId,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            },
-          });
-          setPaymentId(result.paymentId ?? response.razorpay_payment_id);
-          setStep("success");
-        } catch (err) {
-          if (process.env.NODE_ENV === "development") console.error("Razorpay payment verification failed", err);
-          toast.error(err instanceof Error ? err.message : "Payment verification failed.");
-          setStep("failed");
-        } finally {
-          setPaying(false);
-        }
-      },
+      handler: confirmPayment,
     });
 
     rzp.on("payment.failed", async () => {
@@ -465,18 +489,12 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                 <Row label="Platform" value={form.meetingPlatform} />
               </dl>
 
-              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                Payment Gateway
-              </p>
-              <div className="mt-3 flex items-center gap-3 rounded-xl border border-primary/40 bg-surface-2/60 p-4">
-                <ShieldCheck className="size-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">Razorpay (UPI / Cards / NetBanking)</p>
-                  <p className="text-xs text-muted-foreground">
-                    Secure checkout opens in Razorpay.
-                  </p>
-                </div>
-              </div>
+              <PaymentGatewaySelector
+                selected={paymentGateway}
+                onChange={setPaymentGateway}
+                amount={order.amount}
+                disabled={paying}
+              />
 
               <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                 <Button variant="outline" onClick={() => setStep("details")} disabled={paying}>
@@ -522,6 +540,29 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                 }}
               >
                 Done
+              </Button>
+            </div>
+          ) : null}
+
+          {step === "pending" && order ? (
+            <div className="text-center">
+              <DialogTitle className="font-display text-2xl">Payment Pending</DialogTitle>
+              <DialogDescription className="mt-3">
+                We’re waiting for confirmed payment status. Check this payment before attempting
+                another one.
+              </DialogDescription>
+              <dl className="surface-card mt-6 space-y-3 p-5 text-left text-sm">
+                <Row label="Booking ID" value={order.bookingId} />
+                <Row label="Payment ID" value={pendingVerification?.razorpay_payment_id ?? "—"} />
+              </dl>
+              <Button
+                className="mt-6"
+                disabled={paying || !pendingVerification}
+                onClick={() => {
+                  if (pendingVerification) void confirmPayment(pendingVerification);
+                }}
+              >
+                {paying ? "Checking payment…" : "Check payment status"}
               </Button>
             </div>
           ) : null}

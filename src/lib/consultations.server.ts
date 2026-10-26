@@ -208,3 +208,21 @@ async function readRazorpayError(response: Response): Promise<RazorpayErrorPaylo
     return {};
   }
 }
+
+/** Read-only reconciliation for the existing best-effort booking-storage path. */
+export async function fetchRazorpayOrder(orderId: string) {
+  const config = credentials();
+  if (!config.ok) throw new Error("Payment gateway configuration is unavailable.");
+  const response = await fetch(
+    `https://api.razorpay.com/v1/orders/${encodeURIComponent(orderId)}`,
+    {
+      headers: {
+        accept: "application/json",
+        authorization: `Basic ${Buffer.from(`${config.keyId}:${config.keySecret}`).toString("base64")}`,
+      },
+      signal: AbortSignal.timeout(15_000),
+    },
+  );
+  if (!response.ok) throw new Error("Could not confirm the payment order. Please contact support.");
+  return (await response.json()) as RazorpayOrder & { notes?: Record<string, string> };
+}

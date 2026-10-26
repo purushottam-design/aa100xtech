@@ -9,6 +9,8 @@ import * as app_settings from "./handlers/app-settings";
 import * as consultations from "./handlers/consultations";
 import * as dashboard_auth from "./handlers/dashboard-auth";
 import * as partners from "./handlers/partners";
+import * as influencers from "./handlers/influencers";
+import * as payments from "./handlers/payments";
 import * as push from "./handlers/push";
 import * as rates from "./handlers/rates";
 import * as roles from "./handlers/roles";
@@ -17,6 +19,9 @@ import * as super_admin from "./handlers/super-admin";
 
 // Explicit allowlist: no user-supplied module paths or arbitrary export lookup.
 export const rpcRegistry = {
+  "payments/listPayments": payments.listPayments,
+  "influencers/listInfluencerApplications": influencers.listInfluencerApplications,
+  "influencers/saveInfluencer": influencers.saveInfluencer,
   "accounts/getBootstrapStatus": accounts.getBootstrapStatus,
   "accounts/bootstrapSupremeAdmin": accounts.bootstrapSupremeAdmin,
   "accounts/getSupremeAdminAccess": accounts.getSupremeAdminAccess,
