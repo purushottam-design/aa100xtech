@@ -11,6 +11,7 @@ import { useMyAccess } from "@/components/admin-management";
 type NavItem = { label: string; to: string; permission?: string; superOnly?: boolean };
 
 const SYSTEM_ITEMS: NavItem[] = [
+  { label: "Influencer Management", to: "/admin/influencers", permission: "partners.view" },
   { label: "Overview", to: "/admin" , superOnly: true },
   { label: "Super console", to: "/admin/super", superOnly: true },
   { label: "Admins", to: "/admin/admins", permission: "admins.view" },

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { AdminCms } from "@/components/admin-cms";
 import { AdminDashboardAnalytics } from "@/components/admin-dashboard-analytics";
 import { AdminReports } from "@/components/admin-reports";
+import { PaymentManagement } from "@/components/payment-management";
 import { AdminManagement } from "@/components/admin-management";
 import { AdminNotifications } from "@/components/admin-notifications";
 import { AdminRoles } from "@/components/admin-roles";
@@ -95,6 +96,7 @@ const NAV: { label: string; items: Section[] }[] = [
     items: [
       { key: "overview", label: "Dashboard" },
       { key: "reports", label: "Reports & exports" },
+      { key: "payments", label: "Payments & transactions" },
       { key: "legacy-overview", label: "Record counts" },
     ],
   },
@@ -891,6 +893,7 @@ export function SuperAdminConsole({ initialSection }: { initialSection?: string 
         </div>
         {section === "overview" ? <AdminDashboardAnalytics /> : null}
         {section === "reports" ? <AdminReports /> : null}
+        {section === "payments" ? <PaymentManagement /> : null}
         {section === "legacy-overview" ? <OverviewSection /> : null}
         {section === "users" ? <UsersSection /> : null}
         {section === "admins" ? <AdminManagement /> : null}

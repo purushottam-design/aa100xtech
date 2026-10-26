@@ -182,7 +182,7 @@ test("protected handlers validate bearer claims before business logic", async ()
   assert.equal(handlerCalls, 1);
 });
 
-test("all 106 typed entrypoints are explicitly registered", () => {
+test("all 109 typed entrypoints are explicitly registered", () => {
   const registrySource = fs.readFileSync(
     path.join(__dirname, "../src/lib/backend/registry.server.ts"),
     "utf8",
@@ -198,7 +198,7 @@ test("all 106 typed entrypoints are explicitly registered", () => {
           .matchAll(/>\(\s*"([^"]+)",\s*"(?:GET|POST)"\s*,?\s*\)/g),
       ].map((match) => match[1]),
     );
-  assert.equal(registered.length, 106);
+  assert.equal(registered.length, 109);
   assert.deepEqual(registered.sort(), stubs.sort());
 });
 

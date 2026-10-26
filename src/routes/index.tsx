@@ -11,6 +11,7 @@ import { services } from "@/data/services";
 import { heroStats, whyChooseUs } from "@/data/site";
 import { Price } from "@/components/currency-provider";
 import { TechnologyStack } from "@/components/technology-stack";
+import { FeaturedInfluencers } from "@/components/featured-influencers";
 
 const title = "AA100XTech — Web, App & Digital Marketing Studio in Patna";
 const description =
@@ -29,6 +30,7 @@ function HomePage() {
       <DeliverablesSection />
       <TechnologyStack />
       <WhyUsSection />
+      <FeaturedInfluencers />
     </div>
   );
 }

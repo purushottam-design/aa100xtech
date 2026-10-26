@@ -1,0 +1,206 @@
+import { test, expect, type Page } from "@playwright/test";
+
+async function openPaymentSummary(page: Page) {
+  await page.route("**/api/rpc/consultations/createConsultationBooking", (route) =>
+    route.fulfill({
+      json: {
+        data: {
+          ok: true,
+          bookingId: "CONS-TEST1234",
+          orderId: "order_test",
+          amount: 250000,
+          currency: "INR",
+          keyId: "rzp_test_fixture",
+          planName: "Quick Consultation",
+          duration: "15 Minutes",
+        },
+      },
+    }),
+  );
+  await page.goto("/consultation", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Book Now", exact: true }).first().click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByPlaceholder("Your name", { exact: true }).fill("Test Customer");
+  await dialog.getByPlaceholder("you@company.com", { exact: true }).fill("test@example.test");
+  await dialog.getByPlaceholder("+91 90000 00000", { exact: true }).fill("+910000000000");
+  await dialog.locator("select").nth(0).selectOption({ index: 1 });
+  await dialog
+    .locator('input[type="date"]')
+    .fill(new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10));
+  await dialog.locator('input[type="time"]').fill("10:00");
+  await dialog
+    .getByPlaceholder(
+      "Share goals, challenges, timeline, and what you want from this consultation...",
+      { exact: true },
+    )
+    .fill("A test consultation project with clearly defined scope.");
+  await dialog.getByRole("button", { name: "Proceed to Payment", exact: true }).click();
+  await expect(
+    dialog.getByRole("heading", { name: "Proceed to Payment", exact: true }),
+  ).toBeVisible();
+  return dialog;
+}
+
+for (const width of [1440, 390]) {
+  test(`existing Razorpay checkout remains default and ICICI stays unavailable at ${width}px`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    const dialog = await openPaymentSummary(page);
+    await expect(dialog.getByRole("radio", { name: /Pay with Razorpay/ })).toBeChecked();
+    await expect(dialog.getByRole("radio", { name: /Pay with ICICI Bank/ })).toBeDisabled();
+    await expect(dialog.getByText("Currently unavailable", { exact: true })).toBeVisible();
+    await dialog.getByRole("radio", { name: /Pay with Razorpay/ }).press("ArrowRight");
+    await expect(dialog.getByRole("radio", { name: /Pay with Razorpay/ })).toBeChecked();
+    expect(await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await page.screenshot({ path: testInfo.outputPath(`payment-options-${width}.png`) });
+    let requestBody: unknown;
+    await page.route("**/api/rpc/consultations/verifyConsultationPayment", async (route) => {
+      requestBody = route.request().postDataJSON();
+      await route.fulfill({
+        json: {
+          data: {
+            ok: true,
+            status: "paid",
+            bookingId: "CONS-TEST1234",
+            paymentId: "pay_test",
+            duplicate: false,
+          },
+        },
+      });
+    });
+    await page.evaluate(() => {
+      const w = window as unknown as {
+        Razorpay: new (options: {
+          order_id: string;
+          key: string;
+          handler: (value: unknown) => void;
+        }) => unknown;
+        testRazorpayOptions: unknown;
+      };
+      w.Razorpay = class {
+        constructor(
+          private options: { order_id: string; key: string; handler: (value: unknown) => void },
+        ) {
+          w.testRazorpayOptions = { order_id: options.order_id, key: options.key };
+        }
+        on() {}
+        open() {
+          this.options.handler({
+            razorpay_order_id: "order_test",
+            razorpay_payment_id: "pay_test",
+            razorpay_signature: "test_signature",
+          });
+        }
+      };
+    });
+    await dialog.getByRole("button", { name: /Pay with Razorpay/ }).click();
+    await expect(
+      dialog.getByRole("heading", { name: "Payment Successful", exact: true }),
+    ).toBeVisible();
+    expect(requestBody).toEqual({
+      data: {
+        bookingId: "CONS-TEST1234",
+        razorpayOrderId: "order_test",
+        razorpayPaymentId: "pay_test",
+        razorpaySignature: "test_signature",
+      },
+    });
+    expect(errors).toEqual([]);
+  });
+}
+
+test("pending Razorpay verification rechecks the same transaction without reopening checkout", async ({
+  page,
+}) => {
+  const dialog = await openPaymentSummary(page);
+  let checks = 0;
+  await page.route("**/api/rpc/consultations/verifyConsultationPayment", (route) =>
+    route.fulfill({
+      json: {
+        data: { ok: true, status: ++checks === 1 ? "pending" : "paid", paymentId: "pay_test" },
+      },
+    }),
+  );
+  await page.evaluate(() => {
+    const w = window as unknown as { Razorpay: unknown; testCheckoutOpens: number };
+    w.testCheckoutOpens = 0;
+    w.Razorpay = class {
+      constructor(private options: { handler: (value: unknown) => void }) {}
+      on() {}
+      open() {
+        w.testCheckoutOpens++;
+        this.options.handler({
+          razorpay_order_id: "order_test",
+          razorpay_payment_id: "pay_test",
+          razorpay_signature: "test_signature",
+        });
+      }
+    };
+  });
+  await dialog.getByRole("button", { name: /Pay with Razorpay/ }).click();
+  await expect(dialog.getByRole("heading", { name: "Payment Pending", exact: true })).toBeVisible();
+  await dialog.getByRole("button", { name: "Check payment status", exact: true }).click();
+  await expect(
+    dialog.getByRole("heading", { name: "Payment Successful", exact: true }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => (window as unknown as { testCheckoutOpens: number }).testCheckoutOpens,
+    ),
+  ).toBe(1);
+});
+
+for (const outcome of ["failed", "cancelled"]) {
+  test(`existing Razorpay ${outcome} feedback is retained`, async ({ page }) => {
+    const dialog = await openPaymentSummary(page);
+    await page.route("**/api/rpc/consultations/markConsultationPaymentFailed", (route) =>
+      route.fulfill({ json: { data: { ok: true } } }),
+    );
+    await page.evaluate((outcome) => {
+      const w = window as unknown as { Razorpay: unknown };
+      w.Razorpay = class {
+        private failed?: () => void;
+        constructor(private options: { modal: { ondismiss: () => void } }) {}
+        on(event: string, callback: () => void) {
+          if (event === "payment.failed") this.failed = callback;
+        }
+        open() {
+          if (outcome === "cancelled") this.options.modal.ondismiss();
+          else this.failed?.();
+        }
+      };
+    }, outcome);
+    await dialog.getByRole("button", { name: /Pay with Razorpay/ }).click();
+    await expect(
+      dialog.getByRole("heading", {
+        name: outcome === "failed" ? "Payment Failed" : "Payment Cancelled",
+        exact: true,
+      }),
+    ).toBeVisible();
+  });
+}
+
+test("ICICI endpoints reject unverified transactions and payment administration remains protected", async ({
+  request,
+}) => {
+  for (const endpoint of ["initiate", "status", "callback"]) {
+    const response = await request.post(`/api/payments/icici/${endpoint}`, {
+      headers: { "x-aa-rpc": "1" },
+      data: { paymentStatus: "SUCCESS", secureHash: "0".repeat(64) },
+    });
+    expect(response.status()).toBe(503);
+    expect((await response.json()).code).toBe("ICICI_INTEGRATION_NOT_VERIFIED");
+  }
+  expect((await request.post("/api/payments/icici/initiate", { data: {} })).status()).toBe(403);
+  expect(
+    (
+      await request.post("/api/rpc/payments/listPayments", {
+        headers: { "x-aa-rpc": "1" },
+        data: { data: {} },
+      })
+    ).status(),
+  ).toBe(401);
+});

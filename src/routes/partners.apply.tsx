@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { partnerPlans } from "@/data/partner-plans";
 import { partnerTiers } from "@/data/partnership";
 import { supabase } from "@/integrations/supabase/client";
+import { InfluencerApplicationForm } from "@/components/influencer-application-form";
 
 const title = "Apply — Influencer Partnership Program | AA100XTech";
 const description =
@@ -76,6 +77,8 @@ function PartnerApplyPage() {
       setSubmitting(false);
     }
   }
+
+  if (paidPromotion) return <InfluencerApplicationForm />;
 
   return (
     <div>

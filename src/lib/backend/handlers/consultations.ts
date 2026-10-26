@@ -1,5 +1,6 @@
 import "server-only";
 import { createServerFn } from "@/lib/backend/server";
+import { associatePaymentCustomer } from "@/lib/payment-database.server";
 
 import { getConsultationPlan } from "@/data/consultations";
 import { meetingPlatforms, consultationServices } from "@/data/consultations";
@@ -11,6 +12,7 @@ import {
 import {
   createRazorpayOrder,
   fetchRazorpayPayment,
+  fetchRazorpayOrder,
   generateBookingId,
   verifyRazorpaySignature,
 } from "@/lib/consultations.server";
@@ -76,6 +78,7 @@ export const createConsultationBooking = createServerFn({ method: "POST" })
         booking_status: "PENDING",
       });
       if (error) console.error("Booking insert failed", error);
+      else await associatePaymentCustomer(bookingId);
     }
 
     return {
@@ -95,73 +98,84 @@ export const verifyConsultationPayment = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    // Never return a paid result or change a booking on an unsigned request,
+    // including repeated requests for an already-settled booking.
+    if (
+      !verifyRazorpaySignature({
+        orderId: data.razorpayOrderId,
+        paymentId: data.razorpayPaymentId,
+        signature: data.razorpaySignature,
+      })
+    )
+      throw new Error("Payment verification failed.");
+
     const { data: booking, error } = await supabaseAdmin
       .from("consultation_bookings")
       .select("*")
       .eq("booking_id", data.bookingId)
       .maybeSingle();
 
-    if (error || !booking) {
-      // Booking row unavailable (storage not provisioned). Verify the payment
-      // directly with Razorpay: signature + captured status is authoritative.
-      const valid = verifyRazorpaySignature({
-        orderId: data.razorpayOrderId,
-        paymentId: data.razorpayPaymentId,
-        signature: data.razorpaySignature,
-      });
-      if (!valid) throw new Error("Payment verification failed.");
-      const payment = await fetchRazorpayPayment(data.razorpayPaymentId);
-      if (
-        payment.order_id !== data.razorpayOrderId ||
-        (payment.status !== "captured" && payment.status !== "authorized")
-      ) {
-        throw new Error("Payment could not be confirmed.");
-      }
+    if (booking && booking.razorpay_order_id !== data.razorpayOrderId)
+      throw new Error("Payment does not match this booking.");
+    if (booking && booking.payment_status.toUpperCase() === "PAID") {
+      if (booking.razorpay_payment_id !== data.razorpayPaymentId)
+        throw new Error("This booking already has a different settled payment. Contact support.");
       return {
         ok: true as const,
-        bookingId: data.bookingId,
-        paymentId: data.razorpayPaymentId,
-        duplicate: false as const,
-      };
-    }
-
-    if (booking.payment_status === "PAID") {
-      return {
-        ok: true as const,
+        status: "paid" as const,
         bookingId: booking.booking_id,
         paymentId: booking.razorpay_payment_id,
         duplicate: true as const,
       };
     }
-    if (booking.razorpay_order_id !== data.razorpayOrderId) {
-      throw new Error("Payment does not match this booking.");
-    }
-
-    const valid = verifyRazorpaySignature({
-      orderId: booking.razorpay_order_id,
-      paymentId: data.razorpayPaymentId,
-      signature: data.razorpaySignature,
-    });
-    if (!valid) {
-      await supabaseAdmin
-        .from("consultation_bookings")
-        .update({ payment_status: "FAILED" })
-        .eq("booking_id", data.bookingId);
-      throw new Error("Payment verification failed.");
-    }
-
     const payment = await fetchRazorpayPayment(data.razorpayPaymentId);
-    const paid = payment.status === "captured" || payment.status === "authorized";
-    if (
-      !paid ||
-      payment.order_id !== data.razorpayOrderId ||
-      payment.amount !== booking.amount * 100 ||
-      payment.currency !== booking.currency
-    ) {
+    if (payment.id !== data.razorpayPaymentId || payment.order_id !== data.razorpayOrderId)
       throw new Error("Payment could not be confirmed.");
+    if (booking) {
+      if (payment.amount !== booking.amount * 100 || payment.currency !== booking.currency)
+        throw new Error("Payment amount or currency does not match this booking.");
+    } else {
+      // Preserve existing storage fallback, but bind the gateway order to this
+      // actual booking/plan and server-created amount before reporting success.
+      const gatewayOrder = await fetchRazorpayOrder(data.razorpayOrderId);
+      if (
+        gatewayOrder.id !== data.razorpayOrderId ||
+        gatewayOrder.receipt !== data.bookingId ||
+        gatewayOrder.notes?.["bookingId"] !== data.bookingId ||
+        !getConsultationPlan(gatewayOrder.notes?.["planId"] ?? "") ||
+        gatewayOrder.amount !== payment.amount ||
+        gatewayOrder.currency !== payment.currency
+      )
+        throw new Error("Payment does not match this booking.");
     }
 
-    const { error: updateError } = await supabaseAdmin
+    const status =
+      payment.status === "captured" ? "paid" : payment.status === "failed" ? "failed" : "pending";
+    if (status !== "paid") {
+      if (status === "failed" && booking)
+        await supabaseAdmin
+          .from("consultation_bookings")
+          .update({ payment_status: "FAILED" })
+          .eq("booking_id", data.bookingId)
+          .neq("payment_status", "PAID");
+      return {
+        ok: true as const,
+        status,
+        bookingId: data.bookingId,
+        paymentId: data.razorpayPaymentId,
+        duplicate: false as const,
+      };
+    }
+    if (error || !booking)
+      return {
+        ok: true as const,
+        status: "paid" as const,
+        bookingId: data.bookingId,
+        paymentId: data.razorpayPaymentId,
+        duplicate: false as const,
+      };
+
+    const { data: settled, error: updateError } = await supabaseAdmin
       .from("consultation_bookings")
       .update({
         razorpay_payment_id: data.razorpayPaymentId,
@@ -169,14 +183,41 @@ export const verifyConsultationPayment = createServerFn({ method: "POST" })
         payment_status: "PAID",
         booking_status: "CONFIRMED",
       })
-      .eq("booking_id", data.bookingId);
+      .eq("booking_id", data.bookingId)
+      .neq("payment_status", "PAID")
+      .select("booking_id, razorpay_payment_id, payment_status")
+      .maybeSingle();
     if (updateError) {
       console.error("Booking update failed", updateError);
       throw new Error("Payment received but booking update failed. Please contact support.");
     }
 
+    if (!settled) {
+      const { data: latest, error: latestError } = await supabaseAdmin
+        .from("consultation_bookings")
+        .select("razorpay_payment_id, payment_status")
+        .eq("booking_id", data.bookingId)
+        .maybeSingle();
+      if (
+        latestError ||
+        latest?.payment_status !== "PAID" ||
+        latest.razorpay_payment_id !== data.razorpayPaymentId
+      )
+        throw new Error(
+          "Booking settlement could not be confirmed. Contact support before retrying payment.",
+        );
+      return {
+        ok: true as const,
+        status: "paid" as const,
+        bookingId: data.bookingId,
+        paymentId: data.razorpayPaymentId,
+        duplicate: true as const,
+      };
+    }
+
     return {
       ok: true as const,
+      status: "paid" as const,
       bookingId: booking.booking_id,
       paymentId: data.razorpayPaymentId,
       duplicate: false as const,
