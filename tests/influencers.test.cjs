@@ -22,6 +22,7 @@ function load(file, mocks = {}, globals = {}) {
     Request,
     Response,
     Headers,
+    AbortSignal,
     URL,
     Buffer,
     File,
@@ -61,6 +62,262 @@ const validApplication = () => ({
   publication_consent: true,
 });
 const appData = () => schema.influencerApplicationSchema.parse(validApplication());
+
+function publicReadHarness({ env, pages = [], lookup, fetchImpl = fetch } = {}) {
+  const warnings = [];
+  const queries = [];
+  let options;
+  let pageIndex = 0;
+  const query = {
+    abortSignal(signal) {
+      assert.ok(signal instanceof AbortSignal);
+      return query;
+    },
+    select(columns) {
+      queries.push(["select", columns]);
+      return query;
+    },
+    eq(...args) {
+      queries.push(["eq", ...args]);
+      return query;
+    },
+    order(...args) {
+      queries.push(["order", ...args]);
+      return query;
+    },
+    range(start, end) {
+      queries.push(["range", start, end]);
+      const result = pages[pageIndex++] ?? { data: [], error: null };
+      return result instanceof Error ? Promise.reject(result) : Promise.resolve(result);
+    },
+    maybeSingle: async () => lookup ?? { data: null, error: null },
+  };
+  const api = load(
+    "src/lib/influencers.server.ts",
+    {
+      "next/cache": { unstable_noStore() {} },
+      "@supabase/supabase-js": {
+        createClient: (_url, _key, config) => {
+          options = config;
+          return {
+            from(table) {
+              assert.equal(table, "influencer_profiles");
+              return query;
+            },
+          };
+        },
+      },
+    },
+    {
+      process: {
+        env: env ?? {
+          SUPABASE_URL: "https://example.supabase.co",
+          SUPABASE_PUBLISHABLE_KEY: "sb_publishable_test",
+        },
+      },
+      console: {
+        warn: (...args) => warnings.push(args.join(" ")),
+        error() {
+          assert.fail("Expected database failures must not emit console.error");
+        },
+      },
+      fetch: fetchImpl,
+    },
+  );
+  return {
+    api,
+    warnings,
+    queries,
+    get options() {
+      return options;
+    },
+  };
+}
+
+test("public reads preserve publication filters, stable pagination, and genuine empty results", async () => {
+  const firstPage = Array.from({ length: 200 }, (_, i) => ({ id: String(i) }));
+  const h = publicReadHarness({
+    pages: [
+      { data: firstPage, error: null },
+      { data: [{ id: "last" }], error: null },
+    ],
+  });
+  const result = await h.api.listPublishedInfluencers();
+  assert.equal(result.unavailable, false);
+  assert.equal(result.profiles.length, 201);
+  assert.equal(result.profiles[200].id, "last");
+  assert.deepEqual(
+    h.queries.filter(([kind]) => kind === "range"),
+    [
+      ["range", 0, 199],
+      ["range", 200, 399],
+    ],
+  );
+  assert.deepEqual(
+    h.queries.filter(([kind]) => kind === "eq"),
+    Array(2).fill(["eq", "publication_status", "published"]),
+  );
+  assert.deepEqual(
+    h.queries.filter(([kind]) => kind === "order"),
+    [
+      ["order", "display_name"],
+      ["order", "id"],
+      ["order", "display_name"],
+      ["order", "id"],
+    ],
+  );
+  const empty = await h.api.listPublishedInfluencers();
+  assert.equal(empty.unavailable, false);
+  assert.equal(empty.profiles.length, 0);
+  assert.equal(h.warnings.length, 0);
+});
+
+test("plain Supabase errors give safe actionable warnings, discard partial data, and recover", async () => {
+  const error = { code: "PGRST205", message: "sensitive-value", details: "sensitive-value" };
+  const h = publicReadHarness({
+    pages: [
+      { data: Array(200).fill({ id: "partial" }), error: null },
+      { data: null, error },
+      { data: null, error },
+      { data: [{ id: "recovered" }], error: null },
+    ],
+  });
+  const failed = await h.api.listPublishedInfluencers();
+  assert.equal(failed.unavailable, true);
+  assert.equal(failed.profiles.length, 0);
+  assert.equal((await h.api.listPublishedInfluencers()).unavailable, true);
+  assert.equal(h.warnings.length, 1, "Repeated outages do not spam the development console");
+  assert.match(h.warnings[0], /schema.*20261026090000_influencer_partnership.sql/);
+  assert.doesNotMatch(h.warnings[0], /sensitive-value/);
+  assert.equal((await h.api.listPublishedInfluencers()).profiles[0].id, "recovered");
+});
+
+test("configuration, permission, credential, TLS and timeout failures remain recoverable", async () => {
+  const cases = [
+    [{ code: "42703" }, /schema/],
+    [{ code: "42501" }, /permissions/],
+    [{ message: "Invalid API key sensitive-value" }, /credentials/],
+    [
+      {
+        message: "TypeError: fetch failed",
+        details: "UNABLE_TO_VERIFY_LEAF_SIGNATURE sensitive-value",
+      },
+      /tls/,
+    ],
+    [{ message: "TimeoutError: timed out" }, /timeout/],
+    [new Error("sensitive-value"), /connection/],
+  ];
+  for (const [error, expected] of cases) {
+    const h = publicReadHarness({
+      pages: [error instanceof Error ? error : { data: null, error }],
+    });
+    assert.equal((await h.api.listPublishedInfluencers()).unavailable, true);
+    assert.match(h.warnings[0], expected);
+    assert.doesNotMatch(h.warnings[0], /sensitive-value/);
+  }
+  const missing = publicReadHarness({ env: {} });
+  assert.equal((await missing.api.listPublishedInfluencers()).unavailable, true);
+  assert.match(missing.warnings[0], /configuration.*SUPABASE_URL/);
+});
+
+test("public requests retain apikey and user JWT headers, avoid caching and enforce a deadline", async () => {
+  let received;
+  const h = publicReadHarness({
+    fetchImpl: async (input, init) => {
+      received = { input, init };
+      return new Response("[]");
+    },
+  });
+  h.api.publicInfluencerClient();
+  const outgoing = h.options.global.fetch;
+  const cancellation = new AbortController();
+  const request = new Request("https://example.supabase.co/rest/v1/influencer_profiles", {
+    headers: { "x-test": "preserved" },
+  });
+  await outgoing(request, {
+    headers: { Authorization: "Bearer sb_publishable_test" },
+    signal: cancellation.signal,
+  });
+  assert.equal(received.init.headers.get("apikey"), "sb_publishable_test");
+  assert.equal(received.init.headers.has("Authorization"), false);
+  assert.equal(received.init.headers.get("x-test"), "preserved");
+  assert.equal(received.init.cache, "no-store");
+  cancellation.abort();
+  assert.equal(received.init.signal.aborted, true);
+  await outgoing(request, { headers: { Authorization: "Bearer signed-user-jwt" } });
+  assert.equal(received.init.headers.get("Authorization"), "Bearer signed-user-jwt");
+  assert.ok(received.init.signal instanceof AbortSignal);
+  const legacy = publicReadHarness({
+    env: {
+      SUPABASE_URL: "https://example.supabase.co",
+      SUPABASE_PUBLISHABLE_KEY: "legacy-anon-jwt",
+    },
+    fetchImpl: async (_input, init) => {
+      received = { init };
+      return new Response("[]");
+    },
+  });
+  legacy.api.publicInfluencerClient();
+  await legacy.options.global.fetch(request, {
+    headers: { Authorization: "Bearer legacy-anon-jwt" },
+  });
+  assert.equal(received.init.headers.get("Authorization"), "Bearer legacy-anon-jwt");
+});
+
+test("profile reads distinguish missing profiles from database failures without exposing SDK details", async () => {
+  const missing = publicReadHarness();
+  assert.equal(await missing.api.getPublishedInfluencer("missing"), null);
+  assert.ok(
+    missing.queries.some(
+      (entry) => entry[0] === "eq" && entry[1] === "slug" && entry[2] === "missing",
+    ),
+  );
+  const failed = publicReadHarness({
+    lookup: { data: null, error: { code: "42501", message: "sensitive-value" } },
+  });
+  await assert.rejects(failed.api.getPublishedInfluencer("existing"), (error) => {
+    assert.ok(error instanceof failed.api.InfluencerDirectoryUnavailableError);
+    assert.doesNotMatch(error.message, /sensitive-value/);
+    return true;
+  });
+  const published = publicReadHarness({ lookup: { data: { slug: "published" }, error: null } });
+  assert.equal((await published.api.getPublishedInfluencer("published")).slug, "published");
+});
+
+test("homepage and profile render an availability state without throwing or replacing missing profiles", async () => {
+  const failed = publicReadHarness({ env: {} });
+  const featured = load("src/components/featured-influencers.tsx", {
+    "next/link": "Link",
+    "@/lib/influencers.server": failed.api,
+    "@/components/influencer-directory": { InfluencerCard: "InfluencerCard" },
+  });
+  assert.match(JSON.stringify(await featured.FeaturedInfluencers()), /temporarily unavailable/);
+  const empty = load("src/components/featured-influencers.tsx", {
+    "next/link": "Link",
+    "@/lib/influencers.server": publicReadHarness().api,
+    "@/components/influencer-directory": { InfluencerCard: "InfluencerCard" },
+  });
+  assert.equal(await empty.FeaturedInfluencers(), null);
+  const profilePage = (api) =>
+    load("src/app/influencers/[slug]/page.tsx", {
+      "next/link": "Link",
+      "@/lib/influencers.server": api,
+      "@/lib/influencers": schema,
+      "@/components/influencer-share": { InfluencerShare: "InfluencerShare" },
+      "@/components/ui/button": { Button: "Button" },
+      "next/navigation": {
+        notFound() {
+          throw new Error("test-not-found");
+        },
+      },
+    });
+  const params = Promise.resolve({ slug: "existing" });
+  assert.match(
+    JSON.stringify(await profilePage(failed.api).default({ params })),
+    /temporarily unavailable/,
+  );
+  await assert.rejects(profilePage(publicReadHarness().api).default({ params }), /test-not-found/);
+});
 
 test("application validation requires separate consent, social profiles and safe URLs", () => {
   assert.equal(schema.influencerApplicationSchema.safeParse(validApplication()).success, true);

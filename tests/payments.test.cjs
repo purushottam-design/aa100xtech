@@ -7,25 +7,14 @@ const { PGlite } = require("@electric-sql/pglite");
 const ts = require("typescript");
 
 function load(file, mocks = {}, globals = {}) {
-  const exports = {};
-  const { outputText } = ts.transpileModule(fs.readFileSync(file, "utf8"), {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2022,
-      esModuleInterop: true,
-      jsx: ts.JsxEmit.ReactJSX,
-    },
-  });
-  vm.runInNewContext(outputText, {
-    exports,
-    require: (name) => (name === "server-only" ? {} : name in mocks ? mocks[name] : require(name)),
+  return require("./helpers/load-server.cjs")(file, mocks, {
     Request,
     Response,
     Headers,
     URL,
     Buffer,
     AbortSignal,
-    console: { info() {}, error() {} },
+    console: { info() {}, error() {}, warn() {} },
     process: {
       env: {
         RAZORPAY_KEY_ID: "rzp_test_fixture",
@@ -37,7 +26,6 @@ function load(file, mocks = {}, globals = {}) {
     },
     ...globals,
   });
-  return exports;
 }
 const icici = load("src/lib/icici.server.ts");
 test("ICICI supplied reference hash preserves exact sorting, serialization, zero, false and UTF-8 rules", () => {
@@ -79,7 +67,7 @@ test("ICICI initiation, status and forged callbacks cannot become live from envi
       headers: { "x-aa-rpc": "1", origin: "https://example.test" },
       body: JSON.stringify({ paymentStatus: "SUCCESS", secureHash: "0".repeat(64) }),
     });
-    const response = route.POST(request);
+    const response = await route.POST(request);
     assert.equal(response.status, 503);
     assert.equal((await response.json()).code, "ICICI_INTEGRATION_NOT_VERIFIED");
   }
@@ -257,11 +245,10 @@ test("authorized payments remain pending and verified failures remain failed", a
   assert.equal((await failed.verify()).status, "failed");
   assert.equal(failed.booking.payment_status, "FAILED");
 });
-test("existing missing-storage fallback verifies gateway receipt and amount before reporting paid", async () => {
-  const valid = paymentHarness({ missing: true });
-  assert.equal((await valid.verify()).status, "paid");
-  const wrong = paymentHarness({ missing: true, gatewayOrderPatch: { receipt: "CONS-OTHER" } });
-  await assert.rejects(wrong.verify(), /does not match/);
+test("a missing persisted booking never returns a paid or confirmed response", async () => {
+  const missing = paymentHarness({ missing: true });
+  await assert.rejects(missing.verify(), /Booking records could not be loaded/);
+  assert.equal(missing.writes.length, 0);
 });
 
 test("payment administration requires permission and maps legacy records without exposing signatures or contacts", async () => {

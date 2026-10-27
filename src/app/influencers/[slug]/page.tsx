@@ -10,7 +10,10 @@ import {
   MapPin,
   Youtube,
 } from "lucide-react";
-import { getPublishedInfluencer } from "@/lib/influencers.server";
+import {
+  getPublishedInfluencer,
+  InfluencerDirectoryUnavailableError,
+} from "@/lib/influencers.server";
 import { mediaUrl, youtubeEmbed } from "@/lib/influencers";
 import { InfluencerShare } from "@/components/influencer-share";
 import { Button } from "@/components/ui/button";
@@ -42,7 +45,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 export default async function InfluencerProfilePage({ params }: Props) {
-  const profile = await getPublishedInfluencer((await params).slug);
+  const { slug } = await params;
+  let profile;
+  try {
+    profile = await getPublishedInfluencer(slug);
+  } catch (error) {
+    if (!(error instanceof InfluencerDirectoryUnavailableError)) throw error;
+    return (
+      <div role="status" className="mx-auto max-w-2xl px-5 py-24 text-center">
+        <h1 className="text-3xl font-bold">This influencer profile is temporarily unavailable.</h1>
+        <p className="mt-4 text-muted-foreground">Please try again shortly.</p>
+        <Button asChild variant="outline" className="mt-6">
+          <Link href="/influencers">Back to the program</Link>
+        </Button>
+      </div>
+    );
+  }
   if (!profile) notFound();
   const socials = [
     {
