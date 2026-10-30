@@ -227,7 +227,7 @@ test("mocked confirmed UAT checkout selects ICICI at the unchanged premium price
     if (request.url().includes("/consultations/createConsultationBooking")) razorpayOrders++;
   });
   await page.route("**/api/payments/icici/availability", (route) =>
-    route.fulfill({ json: { icici: true, environment: "uat" } }),
+    route.fulfill({ json: { available: true, environment: "uat" } }),
   );
   await page.route("**/api/payments/icici/checkout", (route) => {
     const input = route.request().postDataJSON();

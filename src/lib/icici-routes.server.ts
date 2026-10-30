@@ -10,11 +10,13 @@ import {
   verifyIciciCallback,
 } from "./icici.server";
 import { checkoutForBankReference, reconcileIciciCheckout } from "./icici-checkout.server";
+import { assertIciciCheckoutAccess } from "./icici-uat-access.server";
 
 export async function iciciJsonRequest<Schema extends z.ZodTypeAny>(
   request: Request,
   schema: Schema,
   action: (input: z.output<Schema>) => Promise<unknown>,
+  { requireCheckoutAccess = false } = {},
 ) {
   const forbidden = assertPaymentOrigin(request);
   if (forbidden) return forbidden;
@@ -27,6 +29,7 @@ export async function iciciJsonRequest<Schema extends z.ZodTypeAny>(
         "ICICI UAT is not available on this website.",
         403,
       );
+    if (requireCheckoutAccess) await assertIciciCheckoutAccess(request, config);
     if (!request.headers.get("content-type")?.startsWith("application/json"))
       throw new IciciPaymentError("INVALID_REQUEST", "A JSON request is required.", 400);
     const body = await request.text();

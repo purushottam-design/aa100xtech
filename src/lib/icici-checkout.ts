@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { consultationBookingSchema } from "./consultations.schemas";
+import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 export type CheckoutCapability = { id: string; token: string };
 export type IciciCheckoutStatus = {
@@ -22,15 +23,25 @@ export type CheckoutStart = {
   amount?: number;
   currency?: string;
 };
+export async function fetchIciciAvailability() {
+  return fetch("/api/payments/icici/availability", {
+    cache: "no-store",
+    credentials: "same-origin",
+    headers: await attachSupabaseAuth(),
+  });
+}
 export async function iciciRequest<T>(
   action: "checkout" | "initiate" | "status",
   input: unknown,
 ): Promise<T> {
+  const headers = await attachSupabaseAuth();
+  headers.set("content-type", "application/json");
+  headers.set("x-aa-rpc", "1");
   const response = await fetch(`/api/payments/icici/${action}`, {
     method: "POST",
     credentials: "same-origin",
     cache: "no-store",
-    headers: { "content-type": "application/json", "x-aa-rpc": "1" },
+    headers,
     body: JSON.stringify(input),
   });
   const result = await response.json();

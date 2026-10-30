@@ -5,9 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * AA100XTech design system — dark "engineering studio".
- * Single warm accent (ember) + cool signal accent, editorial type.
- * All colors are oklch semantic tokens. Never hardcode colors in components.
+ * AA100XTech: white surfaces, dark typography and gold-orange brand accents.
+ * Existing semantic utilities keep every route and component on one theme.
  */
 
 @theme inline {
@@ -19,8 +18,8 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -63,41 +62,48 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  color-scheme: light;
+  --radius: 0.625rem;
+  --brand-gold: #fbbf24;
+  --brand-orange: #f59e0b;
+  --brand-deep-orange: #ea580c;
+  --brand-light-gold: #fde68a;
+  --brand-light: #fff7e6;
+  --brand-cream: #fffbf5;
+  --heading: #2b1600;
+  --text-primary: #111827;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --brand-gradient: linear-gradient(135deg, #ffd84d 0%, #fbbf24 30%, #f59e0b 65%, #ea580c 100%);
+  --brand-button-gradient: linear-gradient(135deg, #ffd84d 0%, #f59e0b 55%, #ea580c 100%);
+  --brand-text-gradient: linear-gradient(90deg, #fbbf24, #f59e0b, #ea580c);
 
-  --background: oklch(0.16 0.012 250);
-  --foreground: oklch(0.97 0.004 250);
-
-  --surface: oklch(0.2 0.014 250);
-  --surface-2: oklch(0.24 0.016 250);
-
-  --card: oklch(0.2 0.014 250);
-  --card-foreground: oklch(0.97 0.004 250);
-  --popover: oklch(0.2 0.014 250);
-  --popover-foreground: oklch(0.97 0.004 250);
-
-  --primary: oklch(0.74 0.17 55);
-  --primary-foreground: oklch(0.19 0.02 55);
-  --primary-glow: oklch(0.84 0.15 78);
-
-  --secondary: oklch(0.26 0.016 250);
-  --secondary-foreground: oklch(0.97 0.004 250);
-
-  --muted: oklch(0.24 0.014 250);
-  --muted-foreground: oklch(0.71 0.014 250);
-
-  --accent: oklch(0.28 0.02 250);
-  --accent-foreground: oklch(0.97 0.004 250);
-
-  --signal: oklch(0.78 0.12 195);
-  --signal-foreground: oklch(0.18 0.02 195);
+  --background: #ffffff;
+  --foreground: var(--text-primary);
+  --surface: var(--brand-cream);
+  --surface-2: var(--brand-light);
+  --card: #ffffff;
+  --card-foreground: var(--text-primary);
+  --popover: #ffffff;
+  --popover-foreground: var(--text-primary);
+  --primary: var(--brand-orange);
+  --primary-foreground: #ffffff;
+  --primary-glow: var(--brand-gold);
+  --secondary: var(--brand-light);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--brand-cream);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--brand-light);
+  --accent-foreground: var(--brand-deep-orange);
+  --signal: var(--brand-orange);
+  --signal-foreground: var(--heading);
 
   --destructive: oklch(0.62 0.21 25);
   --destructive-foreground: oklch(0.98 0.003 250);
 
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.74 0.17 55);
+  --border: #fde7b2;
+  --input: #e5e7eb;
+  --ring: var(--brand-orange);
 
   --chart-1: oklch(0.74 0.17 55);
   --chart-2: oklch(0.78 0.12 195);
@@ -105,28 +111,25 @@
   --chart-4: oklch(0.65 0.14 280);
   --chart-5: oklch(0.7 0.16 150);
 
-  --sidebar: oklch(0.18 0.013 250);
-  --sidebar-foreground: oklch(0.97 0.004 250);
-  --sidebar-primary: oklch(0.74 0.17 55);
-  --sidebar-primary-foreground: oklch(0.19 0.02 55);
-  --sidebar-accent: oklch(0.26 0.016 250);
-  --sidebar-accent-foreground: oklch(0.97 0.004 250);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.74 0.17 55);
+  --sidebar: #ffffff;
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--brand-orange);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--brand-light);
+  --sidebar-accent-foreground: var(--heading);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--brand-orange);
 
-  --gradient-ember: linear-gradient(135deg, var(--primary), var(--primary-glow));
-  --gradient-surface: linear-gradient(
-    160deg,
-    color-mix(in oklab, var(--surface) 92%, var(--primary) 8%),
-    var(--surface)
-  );
-  --shadow-elevated: 0 24px 60px -28px color-mix(in oklab, var(--primary) 45%, transparent);
-  --shadow-soft: 0 12px 40px -24px oklch(0 0 0 / 80%);
+  --gradient-ember: var(--brand-gradient);
+  --gradient-surface: linear-gradient(#ffffff, #ffffff);
+  --shadow-elevated: 0 8px 25px rgb(245 158 11 / 15%);
+  --shadow-soft: 0 8px 30px rgb(15 23 42 / 6%);
 }
 
 .dark {
-  --background: oklch(0.16 0.012 250);
-  --foreground: oklch(0.97 0.004 250);
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: var(--text-primary);
 }
 
 @layer base {
@@ -147,6 +150,16 @@
   h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+    color: var(--heading);
+  }
+
+  h3,
+  h4 {
+    color: var(--text-primary);
+  }
+
+  p {
+    color: var(--text-secondary);
   }
 
   ::selection {
@@ -155,15 +168,19 @@
 }
 
 @utility text-gradient-ember {
-  background-image: var(--gradient-ember);
+  background-image: var(--brand-text-gradient);
   background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
 @utility surface-card {
+  background-color: var(--card);
   background-image: var(--gradient-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-2xl);
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
 }
 
 @utility glow-ring {
@@ -172,8 +189,8 @@
 
 @utility grid-lines {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, rgb(245 158 11 / 6%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(245 158 11 / 6%) 1px, transparent 1px);
   background-size: 64px 64px;
 }
 
@@ -181,9 +198,9 @@
   animation: aa-marquee 32s linear infinite;
 }
 
-/* Brand logo: drops the solid black plate on dark surfaces and adds an ember glow. */
+/* Retain the original golden logo and existing motion with a restrained shadow. */
 @utility brand-logo {
-  filter: drop-shadow(0 2px 6px color-mix(in oklab, var(--primary) 22%, transparent));
+  filter: drop-shadow(0 2px 3px rgb(245 158 11 / 10%));
   transition:
     filter 400ms ease,
     transform 400ms ease;
@@ -200,11 +217,7 @@
   inset: -60% -25%;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(
-    50% 60% at 20% 50%,
-    color-mix(in oklab, var(--primary) 26%, transparent),
-    transparent 72%
-  );
+  background: radial-gradient(50% 60% at 20% 50%, rgb(251 191 36 / 8%), transparent 72%);
   opacity: 0.5;
   filter: blur(26px);
   transition: opacity 400ms ease;
@@ -212,7 +225,7 @@
 }
 
 .brand-logo-wrap:hover .brand-logo {
-  filter: drop-shadow(0 0 14px color-mix(in oklab, var(--primary) 55%, transparent));
+  filter: drop-shadow(0 2px 6px rgb(245 158 11 / 18%));
   transform: translateY(-1px);
 }
 
@@ -239,9 +252,242 @@
   }
 }
 
-
 .date-input-white-icon::-webkit-calendar-picker-indicator,
 .time-input-white-icon::-webkit-calendar-picker-indicator {
-  filter: invert(1);
+  filter: none;
   opacity: 1;
+}
+
+/* Shared component styling: preserve the existing markup, routes and behavior. */
+h1,
+h2 {
+  color: var(--heading);
+}
+
+:is(button, a, [role="button"]).bg-primary {
+  background-image: var(--brand-button-gradient);
+  color: #ffffff;
+  border-radius: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 25px rgb(245 158 11 / 25%);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+:is(button, a, [role="button"]).bg-primary:hover:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgb(234 88 12 / 30%);
+}
+
+:is(button, a).border-input.bg-background,
+:is(button, a).inline-flex.bg-secondary {
+  background-color: #ffffff;
+  border-color: var(--brand-orange);
+  border-radius: 14px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+:is(button, a).border-input.bg-background:hover,
+:is(button, a).inline-flex.bg-secondary:hover {
+  background-color: var(--brand-light);
+  color: var(--brand-deep-orange);
+}
+
+:is(button, a).inline-flex.bg-secondary {
+  border-width: 1px;
+}
+
+a.text-primary {
+  color: var(--brand-deep-orange);
+}
+
+a.text-primary:hover {
+  color: var(--brand-orange);
+}
+
+/* Section labels and badges use a pill without adding elements to the page. */
+p.text-xs.uppercase.text-primary,
+.inline-flex.border.text-xs.font-semibold:not(button):not(a):not(
+    [class*="destructive"],
+    [class*="emerald-"],
+    [class*="green-"],
+    [class*="red-"],
+    [class*="yellow-"],
+    [class*="amber-"],
+    [class*="sky-"],
+    [class*="blue-"]
+  ) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--brand-light);
+  color: #b45309;
+  padding: 0.375rem 0.75rem;
+  box-shadow: none;
+}
+
+p.text-xs.uppercase.text-primary::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--brand-orange);
+}
+
+:is(.surface-card, .bg-card, [class*="bg-card/"])[class*="rounded-"],
+.surface-card {
+  background-color: var(--card);
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+:is(.surface-card, .bg-card, [class*="bg-card/"])[class*="rounded-"],
+.surface-card {
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+@media (hover: hover) {
+  :is(.surface-card, .bg-card, [class*="bg-card/"]):not(
+      :has(form, input, textarea, select, [role="dialog"])
+    ):hover {
+    transform: translateY(-5px);
+    border-color: var(--brand-orange);
+    box-shadow: 0 15px 35px rgb(245 158 11 / 14%);
+  }
+}
+
+/* Exact existing logo alpha mask: darken only the two white wordmark lines.
+   The original golden emblem, lower wordmark and image files remain intact. */
+header .brand-logo-wrap,
+header a:has(> img[alt="Absolute Advancement 100X Tech"]) {
+  position: relative;
+}
+
+header .brand-logo-wrap::after,
+header a:has(> img[alt="Absolute Advancement 100X Tech"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--heading);
+  mask: url("/logo.png") center / contain no-repeat;
+  clip-path: inset(0 0 29% 31%);
+  transition: transform 400ms ease;
+}
+
+header .brand-logo-wrap:hover::after {
+  transform: translateY(-1px);
+}
+
+header.sticky {
+  background: rgb(255 255 255 / 95%);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+header nav :is(a, button) {
+  color: var(--text-primary);
+}
+
+header nav :is(a, button):hover {
+  color: var(--brand-deep-orange);
+}
+
+header nav a[aria-current="page"] {
+  position: relative;
+  background-color: transparent;
+  color: var(--brand-orange);
+}
+
+header nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0.625rem 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--brand-orange);
+}
+
+.marquee-track a {
+  background: #ffffff;
+  border-color: #f1f5f9;
+  color: var(--text-muted);
+}
+
+.marquee-track a:hover {
+  border-color: var(--brand-orange);
+  color: var(--brand-deep-orange);
+}
+
+:is(input, textarea, select, [role="combobox"]):not([type="checkbox"]):not([type="radio"]):not(
+    [type="file"]
+  ):not([type="range"]):not([type="hidden"]) {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  border-color: var(--input);
+  border-radius: 12px;
+}
+
+:is(input, textarea)::placeholder {
+  color: #94a3b8;
+}
+
+:is(input, textarea, select, [role="combobox"]):focus-visible {
+  outline: none;
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px rgb(245 158 11 / 12%);
+}
+
+input:is([type="checkbox"], [type="radio"]) {
+  accent-color: var(--brand-orange);
+}
+
+[class~="bg-black/80"][data-state] {
+  background-color: rgb(23 16 10 / 40%);
+  backdrop-filter: blur(4px);
+}
+
+[role="dialog"],
+[role="alertdialog"] {
+  border-color: var(--border);
+  border-radius: 18px;
+  box-shadow: 0 24px 80px rgb(43 22 0 / 14%);
+}
+
+[aria-hidden].blur-3xl[style*="--gradient-ember"] {
+  opacity: 0.055;
+}
+
+footer {
+  --background: #17100a;
+  --foreground: #ffffff;
+  --heading: #ffffff;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-muted: #d1d5db;
+  --muted-foreground: #d1d5db;
+  --border: rgb(255 255 255 / 12%);
+  background: #17100a;
+  color: #ffffff;
+}
+
+footer a {
+  color: #e5e7eb;
+}
+
+footer a:hover {
+  color: var(--brand-gold);
+}
+
+footer :is(a, p) {
+  overflow-wrap: anywhere;
 }

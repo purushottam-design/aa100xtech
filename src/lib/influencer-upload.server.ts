@@ -3,6 +3,7 @@ import sharp from "sharp";
 import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { maxImageBytes, maxUploadBytes, mediaBucket } from "./influencers";
+import { influencerFailure } from "./influencer-errors.server";
 
 export class InfluencerRequestError extends Error {
   constructor(
@@ -92,12 +93,16 @@ export async function storeInfluencerImage(file: File, applicationId: string): P
 export function requestError(error: unknown) {
   if (error instanceof InfluencerRequestError)
     return Response.json({ error: error.message }, { status: error.status });
-  console.error(
-    "[Influencers] Request failed",
-    error instanceof Error ? error.message : "Unknown error",
-  );
+  const failure = influencerFailure(error);
+  console.error(`[Influencers] ${failure.code}. ${failure.action}`);
   return Response.json(
-    { error: "We could not save your changes. Please try again or contact our team." },
-    { status: 503 },
+    {
+      error:
+        process.env.NODE_ENV === "development"
+          ? failure.development
+          : "We could not save your changes. Please try again or contact our team.",
+      code: failure.code,
+    },
+    { status: 503, headers: { "cache-control": "no-store" } },
   );
 }

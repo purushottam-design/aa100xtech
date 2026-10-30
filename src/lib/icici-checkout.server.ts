@@ -7,6 +7,7 @@ import { paymentAdmin } from "./payment-database.server";
 import { consultationBookingSchema } from "./consultations.schemas";
 import { consultationServices, getConsultationPlan, meetingPlatforms } from "@/data/consultations";
 import { createConsultationBooking } from "./backend/handlers/consultations";
+import { assertIciciCheckoutAccess } from "./icici-uat-access.server";
 import {
   IciciPaymentError,
   iciciUatConfig,
@@ -83,10 +84,35 @@ function storageFailure(): never {
   );
 }
 
-export async function iciciAvailability() {
+export type IciciAvailability = {
+  available: boolean;
+  code?: string;
+  reason?: string;
+  missing?: string[];
+  invalid?: string[];
+  blocked?: string[];
+};
+
+export async function iciciAvailability(request: Request): Promise<IciciAvailability> {
   try {
-    iciciUatConfig();
-    if (process.env["ICICI_UAT_TESTS_PASSED"] !== "true") return false;
+    const config = iciciUatConfig();
+    if (new URL(request.url).origin !== config.origin)
+      return {
+        available: false,
+        code: "ICICI_WRONG_ORIGIN",
+        reason: "Request origin must match the HTTPS origin of ICICI_RETURN_URL.",
+      };
+    const missing = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"].filter(
+      (name) => !process.env[name]?.trim(),
+    );
+    if (missing.length)
+      return {
+        available: false,
+        code: "CHECKOUT_STORAGE_UNAVAILABLE",
+        reason: "Missing server database configuration",
+        missing,
+      };
+    await assertIciciCheckoutAccess(request, config);
     const [sessions, bookings] = await Promise.all([
       checkoutAdmin
         .from("icici_uat_checkouts")
@@ -99,9 +125,40 @@ export async function iciciAvailability() {
         .limit(0)
         .abortSignal(AbortSignal.timeout(5_000)),
     ]);
-    return !sessions.error && !bookings.error;
-  } catch {
-    return false;
+    if (sessions.error)
+      return {
+        available: false,
+        code: "CHECKOUT_STORAGE_UNAVAILABLE",
+        reason:
+          sessions.error.code === "PGRST205" || sessions.error.code === "42P01"
+            ? "ICICI checkout table is missing; apply 20261027150000_icici_uat_checkouts.sql."
+            : "ICICI checkout storage could not be read; verify Supabase server access and migrations.",
+      };
+    if (bookings.error)
+      return {
+        available: false,
+        code: "PAYMENT_STORAGE_UNAVAILABLE",
+        reason:
+          bookings.error.code === "42703" || bookings.error.code === "PGRST204"
+            ? "Payment tracking columns are missing; apply 20261026120000_dual_gateway_tracking.sql."
+            : "Payment tracking storage could not be read; verify Supabase server access and migrations.",
+      };
+    return { available: true };
+  } catch (error) {
+    if (error instanceof IciciPaymentError)
+      return {
+        available: false,
+        code: error.code,
+        reason: error.message,
+        ...error.diagnostics,
+      };
+    // Never return raw database/network exceptions or environment values.
+    return {
+      available: false,
+      code: "ICICI_AVAILABILITY_CHECK_FAILED",
+      reason:
+        "ICICI availability could not be checked; verify server configuration and database access.",
+    };
   }
 }
 

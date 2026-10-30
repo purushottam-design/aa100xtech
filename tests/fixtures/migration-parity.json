@@ -177,7 +177,7 @@
       "text": false
     },
     "public/manifest.webmanifest": {
-      "hash": "6ae24f2fdaf24b80c497fe2e70befcce82d468f0a2066b00429dd7eaa477b047",
+      "hash": "c1ca8a8b713c8fb409af5c82a991beaa5175a4eb4746abf293d3174aa4905305",
       "text": true
     },
     "public/robots.txt": {
@@ -241,7 +241,7 @@
       "text": true
     },
     "src/styles.css": {
-      "hash": "eb39c27f3769aa3915772aaca1f694bdbebdc5607aaf3fe4ccc7a3ea49215aef",
+      "hash": "9332c80aa56567354222ad4e39608a740e5697633ccb98a29dedad7fde011efb",
       "text": true
     }
   },

@@ -3,129 +3,236 @@ import Link from "next/link";
 import {
   ArrowDown,
   ArrowUpRight,
+  Award,
   BadgeCheck,
-  Code2,
+  Check,
+  Crown,
+  Gift,
   Globe2,
-  Instagram,
-  Youtube,
-  Facebook,
-  Mic2,
-  MoveUpRight,
-  ScanFace,
+  Handshake,
+  HeartHandshake,
+  Megaphone,
+  MessageCircle,
+  MousePointer2,
+  Network,
+  Quote,
+  Rocket,
+  Search,
   Send,
+  ShieldCheck,
+  ShoppingBag,
   Smartphone,
   Sparkles,
+  TrendingUp,
+  Trophy,
   Users,
-  Handshake,
+  Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InfluencerCard, InfluencerDirectory } from "@/components/influencer-directory";
+import { InfluencerDirectory } from "@/components/influencer-directory";
+import { InfluencerLeaderboard, PartnerPortrait } from "@/components/influencer-leaderboard";
+import { InfluencerProgramApplication } from "@/components/influencer-program-application";
 import { applicationPath } from "@/lib/influencers";
-import { listPublishedInfluencers } from "@/lib/influencers.server";
+import { partnerLevels, primaryPlatform } from "@/lib/influencer-program";
+import { getInfluencerProgram } from "@/lib/influencer-program.server";
 import "./influencers.css";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Influencer Partnership Program | AA100X TECH",
+  title: "Influencer Partner Program | AA100XTech",
   description:
-    "Promote AA100X TECH and grow your brand. Explore creator partnerships, website and mobile app development opportunities, and our official influencer directory.",
+    "Turn genuine business introductions into shared growth. Join the AA100XTech Influencer Partner Program, explore eligible benefits and meet our verified top partners.",
   alternates: { canonical: "https://aa100xtech.com/influencers" },
   openGraph: {
     type: "website",
-    title: "Become an AA100X TECH Influencer Partner",
-    description: "Promote our brand. Build your digital future.",
+    title: "Your influence. Real business growth. | AA100XTech",
+    description:
+      "Connect businesses with digital solutions. Build lasting partnerships and earn eligible rewards.",
     url: "https://aa100xtech.com/influencers",
     images: [
       {
         url: "https://aa100xtech.com/influencers/creator-filmmaker.webp",
         width: 1200,
         height: 1067,
-        alt: "A filmmaker recording with a professional video camera",
+        alt: "A content creator filming in a professional studio",
       },
     ],
   },
 };
+
 const benefits = [
   [
     Globe2,
-    "Professional Website Development",
-    "A digital home that’s unmistakably you.",
-    "Eligible partners can collaborate on a responsive website for their personal brand, portfolio or business, within an agreed scope.",
+    "Personal Website Support",
+    "A digital home for your personal brand.",
+    "Professional portfolio or profile website support for eligible partners, with scope and costs agreed together.",
+  ],
+  [
+    Smartphone,
+    "Mobile App Solutions",
+    "Bring your next idea closer.",
+    "Explore professional app development support when your partnership and project call for it.",
+  ],
+  [
+    Sparkles,
+    "Personal Branding",
+    "Show up with confidence.",
+    "Build a stronger, more professional online identity that reflects your voice and your work.",
+  ],
+  [
+    Megaphone,
+    "Digital Marketing Support",
+    "Give good ideas a wider audience.",
+    "Marketing and campaign guidance for selected partners and agreed collaborations.",
+  ],
+  [
+    Wrench,
+    "Technical Support",
+    "An experienced team in your corner.",
+    "Access AA100XTech's technology expertise for the digital opportunities you are exploring.",
+  ],
+  [
+    Handshake,
+    "Business Collaboration",
+    "Create something meaningful together.",
+    "Collaborate on suitable client projects, campaigns and long-term opportunities.",
+  ],
+  [
+    Gift,
+    "Referral Rewards",
+    "Real results deserve recognition.",
+    "Earn eligible incentives or commissions for confirmed client conversions, under agreed written terms.",
+  ],
+  [
+    Network,
+    "Network Growth",
+    "Good connections lead somewhere.",
+    "Build relationships with businesses, brands and professionals beyond your current audience.",
+  ],
+] as const;
+const steps = [
+  [
+    Send,
+    "JOIN",
+    "Introduce yourself.",
+    "Apply to become an AA100XTech Influencer Partner. Our team reviews your profile and partnership fit.",
+  ],
+  [
+    Users,
+    "REFER",
+    "Make a genuine connection.",
+    "Introduce businesses that need websites, apps, e-commerce or digital growth services.",
+  ],
+  [
+    BadgeCheck,
+    "CLIENT CONVERTS",
+    "Let our team take it forward.",
+    "AA100XTech handles consultation, the proposal and project delivery. Only confirmed successful clients count.",
+  ],
+  [
+    TrendingUp,
+    "EARN & GROW",
+    "Build on every success.",
+    "Receive eligible rewards under your agreement and grow your partner ranking through real results.",
+  ],
+] as const;
+const services = [
+  [
+    Globe2,
+    "Website Development",
+    "A professional online presence that helps a business make its next move.",
+    "website-development",
+  ],
+  [
+    ShoppingBag,
+    "E-commerce Development",
+    "Online stores built for products, payments and a better customer experience.",
+    "ecommerce-development",
   ],
   [
     Smartphone,
     "Mobile App Development",
-    "Take your community a little further.",
-    "Explore Android or iOS development opportunities based on your partnership agreement, business needs and project scope.",
+    "Android and iOS experiences that bring services closer to customers.",
+    "mobile-app-development",
   ],
   [
-    ScanFace,
-    "Professional Online Presence",
-    "Your influence deserves a home.",
-    "Build your digital identity with an approved AA100X TECH partner profile and opportunities to showcase your work.",
+    Search,
+    "SEO",
+    "Help the right customers discover a business when they are looking for it.",
+    "seo",
   ],
   [
-    Handshake,
-    "Long-Term Collaboration",
-    "More than a single post.",
-    "Discover potential future campaigns, co-branding activities and opportunities to build something meaningful together.",
+    Megaphone,
+    "Social Media Marketing",
+    "A consistent brand presence and content that connects with the right audience.",
+    "social-media-marketing",
+  ],
+  [
+    MousePointer2,
+    "Advertising Management",
+    "Focused campaigns designed around clear business goals and measurable results.",
+    "advertising-management",
   ],
 ] as const;
-const steps = [
-  [Send, "Apply to Join", "Share your story, social profiles and your vision for collaboration."],
-  [
-    ScanFace,
-    "Profile Verification",
-    "Our team reviews your content, audience and partnership fit.",
-  ],
-  [
-    Handshake,
-    "Partnership Agreement",
-    "Together, we agree on deliverables, development scope, timelines and terms.",
-  ],
-  [
-    BadgeCheck,
-    "Become an Official Partner",
-    "Begin the approved collaboration. Your profile goes live only with consent and admin publication.",
-  ],
-] as const;
+const reasons = [
+  "Professional company support",
+  "Technology expertise",
+  "Transparent client handling",
+  "Dedicated partnership support",
+  "Long-term collaboration opportunities",
+  "Recognition for top performers",
+  "Personal growth opportunities",
+];
 const faqs = [
   [
-    "Who can become an influencer partner?",
-    "Content creators, YouTubers, Instagram influencers and digital personalities can apply. We review content quality, audience fit and the proposed collaboration individually. Acceptance is not guaranteed.",
+    "Who can become an AA100XTech influencer partner?",
+    "Content creators, YouTubers, Instagram influencers and other digital personalities can apply. We look at authenticity, audience fit and the quality of the proposed collaboration, rather than promising automatic acceptance.",
   ],
   [
-    "Is there a minimum follower requirement?",
-    "There is no universal follower threshold published for this program. Audience relevance, authenticity, engagement and content quality matter; individual campaigns may have specific criteria.",
+    "How do referrals work?",
+    "After your partnership is agreed, introduce genuine businesses that need digital services through the agreed process. Our team handles discovery, consultation, proposals and delivery. Your agreement explains attribution and any eligible rewards.",
   ],
   [
-    "What kind of promotions are required?",
-    "Promotions may include videos, posts, tutorials or other agreed formats. Platforms, frequency, approvals, usage rights and disclosure requirements are agreed in writing before work begins.",
+    "When is a referral considered successful?",
+    "A referral counts only after our team verifies a genuine client conversion and records its supporting reference. A lead, enquiry, click or submitted contact alone does not count. Rejected or reversed conversions do not increase your ranking.",
   ],
   [
-    "Will AA100X TECH develop my website?",
-    "Eligible partners may receive professional website development as part of a written collaboration agreement. Scope, eligibility, costs, deliverables and timelines are discussed individually.",
+    "How are influencer rankings calculated?",
+    "Partners are ordered by confirmed successful client conversions, highest first. Follower counts and submitted leads do not decide rank. Ties use the earliest published profile creation date, then a stable profile ID, so the order stays consistent.",
   ],
   [
-    "Can I receive mobile app development services?",
-    "Yes, Android or iOS development can be considered where it fits the partnership. Features, technical scope, ongoing support and costs must be agreed before development starts.",
+    "What services can I refer?",
+    "You can introduce businesses seeking website development, e-commerce, mobile apps, SEO, digital marketing, advertising, social media marketing and other business digital solutions. Our team confirms the right scope with each client.",
+  ],
+  [
+    "Do I need a minimum follower count?",
+    "There is no universal minimum for applying. Relevant relationships, trust, audience quality and genuine business introductions matter. A specific campaign may have its own criteria.",
+  ],
+  [
+    "What benefits do partners receive?",
+    "Eligible partners may receive website or app support, branding and marketing guidance, technical expertise, collaboration opportunities and referral rewards. Eligibility, scope, costs and incentives are discussed individually and recorded in writing.",
+  ],
+  [
+    "How can I become the featured influencer?",
+    "The eligible published partner with the highest number of confirmed converted clients automatically leads the leaderboard and appears in the top spotlight. There is no manual paid placement in this ranking.",
   ],
   [
     "Is website or app development always free?",
-    "No. Development is not automatically free or unlimited. Services may involve fees, a promotional exchange or another compensation arrangement, depending on the written agreement.",
-  ],
-  [
-    "How will my public influencer profile appear?",
-    "After review and approval, an admin confirms your publication consent and publishes a curated profile. Only approved public details appear. Private contact information and contract terms stay private; publication consent can be withdrawn.",
-  ],
-  [
-    "How long does approval take?",
-    "Review times vary with application volume and verification needs. Our team may contact you for more information. There is no guaranteed approval deadline or guaranteed collaboration.",
+    "No. Development is not automatically free or unlimited. Scope, eligibility, fees, promotional exchanges and support are agreed in writing before work begins.",
   ],
 ];
+
 export default async function InfluencersPage() {
-  const { profiles, unavailable } = await listPublishedInfluencers();
-  const featured = profiles.filter((p) => p.featured);
+  const {
+    profiles,
+    partners,
+    testimonials,
+    unavailable,
+    rankingsUnavailable,
+    testimonialsUnavailable,
+  } = await getInfluencerProgram();
+  const top = partners[0];
+  const byId = new Map(profiles.map((profile) => [profile.id, profile]));
   return (
     <div className="influencer-program">
       <script
@@ -134,289 +241,524 @@ export default async function InfluencersPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "AA100X TECH Influencer Partners",
+            name: "AA100XTech Influencer Partner Program",
             url: "https://aa100xtech.com/influencers",
-            description: "Official approved and published AA100X TECH influencer partners",
             mainEntity: {
               "@type": "ItemList",
-              itemListElement: profiles.map((profile, index) => ({
+              itemListElement: partners.map((partner) => ({
                 "@type": "ListItem",
-                position: index + 1,
-                name: profile.display_name,
-                url: `https://aa100xtech.com/influencers/${profile.slug}`,
+                position: partner.rank,
+                name: partner.name,
+                url: `https://aa100xtech.com${partner.profileUrl}`,
               })),
             },
           }).replace(/</g, "\\u003c"),
         }}
       />
-      <section className="ip-hero relative isolate overflow-hidden border-b border-border/60">
-        <div className="ip-hero-glow" aria-hidden="true" />
-        <div className="ip-container relative grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-[1.05fr_1fr] lg:gap-8 lg:py-28">
-          <div className="ip-enter">
-            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/5 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary sm:text-xs">
-              <span className="size-1.5 rounded-full bg-primary" /> Creators. Collaborators. What’s
-              next.
-            </p>
-            <h1 className="max-w-2xl text-4xl font-bold leading-[1.08] tracking-[-0.04em] sm:text-6xl lg:text-[4.2rem]">
-              Become an
-              <br />
-              AA100X TECH
-              <br />
-              <span className="ip-gradient-text">Influencer Partner.</span>
-            </h1>
-            <p className="mt-6 font-display text-lg font-medium sm:text-xl">
-              Promote AA100X TECH. Build Your Digital Future.
-            </p>
-            <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
-              Are you a content creator, YouTuber, Instagram influencer, or digital personality?
-              Partner with AA100X TECH, promote our company, and unlock opportunities to get a
-              professional website or mobile application developed for your brand or business.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Button asChild size="lg" className="ip-cta">
-                <Link href={applicationPath}>
-                  Become an Influencer Partner <ArrowUpRight className="size-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <a href="#directory">
-                  Explore Our Influencers <ArrowDown className="size-4" />
-                </a>
-              </Button>
-            </div>
-            <p className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
-              <BadgeCheck className="size-4 text-primary" /> Real partnerships. Individually agreed.
-              Built for growth.
-            </p>
-          </div>
-          <div
-            className="ip-editorial relative mx-auto w-full max-w-xl"
-            aria-label="Editorial photographs of content creators at work"
-          >
-            <div className="ip-photo-main">
+
+      <section className="ip-spotlight-section ip-container" aria-labelledby="spotlight-title">
+        <div className="ip-section-caption">
+          <span className="ip-eyebrow">
+            <Trophy className="size-3.5" /> The partner spotlight
+          </span>
+          <span className="ip-caption-note">Genuine connections. Shared success.</span>
+        </div>
+        <article className="ip-spotlight" data-featured-partner={top?.id}>
+          <div className="ip-spotlight-photo">
+            {top ? (
+              <PartnerPortrait partner={top} featured />
+            ) : (
               <img
                 src="/influencers/creator-podcast.webp"
-                alt="A creator recording a podcast in a soundproof studio"
+                alt="A content creator recording a podcast; editorial program photograph"
                 width={1200}
                 height={1500}
                 fetchPriority="high"
-                className="h-full w-full object-cover"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-5 pt-20">
-                <span className="text-[10px] uppercase tracking-[0.25em] text-white/70">
-                  Your voice. Your vision.
-                </span>
-                <p className="mt-1 font-display text-2xl font-semibold text-white">
-                  A bigger digital future.
-                </p>
-              </div>
-            </div>
-            <div className="ip-photo-small">
-              <img
-                src="/influencers/creator-filmmaker.webp"
-                alt="A filmmaker recording with a professional video camera"
-                width={1200}
-                height={1067}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <span className="ip-social ip-social-one" aria-hidden="true">
-              <Instagram className="size-6" />
+            )}
+            <span className="ip-photo-caption">
+              {top
+                ? "REAL PEOPLE. MEANINGFUL PARTNERSHIPS."
+                : "YOUR VOICE. YOUR NETWORK. YOUR NEXT CHAPTER."}
             </span>
-            <span className="ip-social ip-social-two" aria-hidden="true">
-              <Youtube className="size-6" />
-            </span>
-            <span className="ip-social ip-social-three" aria-hidden="true">
-              <Facebook className="size-5" />
-            </span>
-            <div className="ip-note">
-              <Code2 className="size-8 shrink-0 text-primary" />
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                  You create the impact.
-                </p>
-                <p className="mt-1 text-sm font-semibold">Let’s build what comes next.</p>
-              </div>
-            </div>
           </div>
-        </div>
+          <div className="ip-spotlight-copy">
+            <span className="ip-spotlight-badge">
+              {top ? <Crown className="size-4" /> : <Sparkles className="size-4" />}
+              {top ? "Top Influencer Partner" : "Built for creators with ambition"}
+            </span>
+            {top ? (
+              <>
+                <p className="ip-overline mt-7">Leading through real client success</p>
+                <h2 id="spotlight-title" className="ip-spotlight-name">
+                  {top.name}
+                </h2>
+                <p className="ip-spotlight-platform">
+                  {top.platform} <span>·</span> {top.profile.city}, {top.profile.state}
+                </p>
+                <div className="ip-spotlight-stats">
+                  <div>
+                    <strong>{top.convertedClients.toLocaleString("en-IN")}</strong>
+                    <span>Successful {top.convertedClients === 1 ? "Client" : "Clients"}</span>
+                  </div>
+                  <div>
+                    <span className="ip-level-badge ip-level-elite">{top.partnerLevel}</span>
+                    <span>Earned through confirmed conversions</span>
+                  </div>
+                </div>
+                <p className="mt-6 max-w-lg text-sm leading-7">
+                  Recognising a partner who turns trusted connections into meaningful business
+                  opportunities. Ranked #1 by verified client conversions.
+                </p>
+                <Button asChild size="lg" className="mt-7">
+                  <Link href={top.profileUrl}>
+                    Meet our top partner <ArrowUpRight className="size-4" />
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <h2 id="spotlight-title" className="ip-spotlight-name">
+                  The next big partnership
+                  <br />
+                  <span className="ip-gradient-text">could begin with you.</span>
+                </h2>
+                <p className="mt-5 max-w-lg leading-7">
+                  Connect the businesses you believe in with a technology team that can help them
+                  grow. Build a partnership worth being recognised for.
+                </p>
+                <p role="status" className="ip-spotlight-empty">
+                  {rankingsUnavailable || unavailable
+                    ? "The partner spotlight is temporarily unavailable. You can still explore the program and apply below."
+                    : "Our spotlight will feature the leading published partner as verified client results become available."}
+                </p>
+                <Button asChild size="lg" className="mt-6">
+                  <a href="#join">
+                    Your next chapter starts here <ArrowUpRight className="size-4" />
+                  </a>
+                </Button>
+              </>
+            )}
+          </div>
+        </article>
       </section>
-      <div className="border-b border-border/60 bg-card/30">
-        <div className="ip-container flex flex-wrap items-center justify-center gap-x-10 gap-y-4 py-6 text-xs uppercase tracking-widest text-muted-foreground">
-          <span className="flex items-center gap-2">
-            <Mic2 className="size-4 text-primary" /> Creator-first collaborations
-          </span>
-          <span className="flex items-center gap-2">
-            <Code2 className="size-4 text-primary" /> Websites & mobile apps
-          </span>
-          <span className="flex items-center gap-2">
-            <Users className="size-4 text-primary" /> Built for your next chapter
+
+      <section className="ip-hero ip-container ip-section" aria-labelledby="program-title">
+        <div className="ip-hero-copy">
+          <p className="ip-eyebrow">
+            <Handshake className="size-3.5" /> AA100XTech Influencer Partner Program
+          </p>
+          <h1 id="program-title">
+            Turn Your Influence Into
+            <br />
+            <span className="ip-gradient-text">Real Business Growth.</span>
+          </h1>
+          <p>
+            Partner with AA100XTech and connect businesses with powerful digital solutions.
+            Introduce clients who need websites, mobile apps, e-commerce, SEO or digital marketing
+            and grow together with our technology team.
+          </p>
+          <div className="ip-actions">
+            <Button asChild size="lg">
+              <a href="#join">
+                Join as Influencer <ArrowUpRight className="size-4" />
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <a href="#benefits">
+                Explore Benefits <ArrowDown className="size-4" />
+              </a>
+            </Button>
+          </div>
+          <span className="ip-hero-footnote">
+            <ShieldCheck className="size-4" /> Real introductions. Clear terms. Long-term potential.
           </span>
         </div>
-      </div>
-      <section className="ip-container py-20 sm:py-24" aria-labelledby="benefits-title">
-        <p className="ip-eyebrow">Influence meets opportunity</p>
-        <div className="mt-4 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-          <h2 id="benefits-title" className="ip-heading">
-            Promote Our Brand.
+        <aside className="ip-growth-note">
+          <span className="ip-icon">
+            <TrendingUp className="size-6" />
+          </span>
+          <p className="ip-overline">Influence, with a bigger purpose</p>
+          <h2>
+            Your network.
             <br />
-            <span className="text-primary">Grow Your Own.</span>
+            Their next opportunity.
+            <br />
+            <span>Together, we grow.</span>
           </h2>
-          <p className="max-w-md text-sm leading-7 text-muted-foreground">
-            You’ve built a voice people connect with. Let’s explore how your influence and our
-            technology can open doors for both of us.
+          <p>
+            Bring genuine clients to AA100XTech, grow with our company and receive eligible
+            partnership benefits and rewards.
+          </p>
+          <div className="ip-growth-signature">
+            <span>YOU INTRODUCE.</span>
+            <ArrowUpRight className="size-4" />
+            <span>WE BUILD.</span>
+          </div>
+        </aside>
+      </section>
+
+      <section id="benefits" className="ip-tinted ip-section" aria-labelledby="benefits-title">
+        <div className="ip-container">
+          <SectionIntro
+            eyebrow="The partnership advantage"
+            title="Everything You Need to Grow Your Digital Presence"
+            id="benefits-title"
+            description="More room for your ideas. More support for your next chapter. Benefits are tailored to each eligible partnership."
+          />
+          <div className="ip-benefit-grid">
+            {benefits.map(([Icon, title, subtitle, description], index) => (
+              <article className="ip-program-card ip-benefit" key={title}>
+                <div className="flex items-center justify-between">
+                  <span className="ip-icon">
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="ip-card-index">0{index + 1}</span>
+                </div>
+                <h3>{title}</h3>
+                <p className="ip-card-subtitle">{subtitle}</p>
+                <p>{description}</p>
+              </article>
+            ))}
+          </div>
+          <p className="ip-section-note">
+            Support, services and rewards depend on eligibility and a written agreement. Development
+            is not automatically free or unlimited.
           </p>
         </div>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {benefits.map(([Icon, title, subtitle, description], i) => (
-            <article
-              key={title}
-              className="ip-benefit rounded-2xl border border-border/70 bg-card/60 p-6"
-            >
-              <div className="mb-9 flex items-center justify-between">
-                <span className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-primary">
-                  <Icon className="size-5" />
+      </section>
+
+      <section className="ip-container ip-section" aria-labelledby="steps-title">
+        <SectionIntro
+          eyebrow="A simple path forward"
+          title="Good connections. Real outcomes."
+          id="steps-title"
+          description="You make the introduction. Our team brings the expertise. Every successful client becomes part of a shared growth story."
+        />
+        <div className="ip-process">
+          {steps.map(([Icon, title, subtitle, description], index) => (
+            <article key={title}>
+              <div className="ip-step-top">
+                <span className="ip-step-icon">
+                  <Icon className="size-6" />
                 </span>
-                <span className="font-display text-xs text-muted-foreground/60">0{i + 1}</span>
+                <span aria-hidden="true" className="ip-step-line" />
               </div>
-              <h3 className="text-lg font-semibold leading-snug">{title}</h3>
-              <p className="mt-3 text-sm text-foreground/90">{subtitle}</p>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">{description}</p>
+              <p className="ip-overline">
+                STEP 0{index + 1} / {title}
+              </p>
+              <h3>{subtitle}</h3>
+              <p>{description}</p>
             </article>
           ))}
         </div>
-        <div className="mt-8 rounded-2xl border border-primary/20 bg-primary/5 px-6 py-8 text-center">
-          <Sparkles className="mx-auto mb-4 size-6 text-primary" />
-          <p className="mx-auto max-w-3xl font-display text-xl font-medium leading-relaxed sm:text-2xl">
-            “You promote AA100X TECH through your content. We support your digital growth through
-            website and app development.”
-          </p>
-          <p className="mx-auto mt-4 max-w-2xl text-xs leading-6 text-muted-foreground">
-            Services, deliverables, eligibility, timelines and costs are agreed individually.
-            Development is not automatically free or unlimited. Every collaboration depends on a
-            written agreement.
+      </section>
+
+      <section id="directory" className="ip-tinted ip-section" aria-labelledby="directory-title">
+        <div className="ip-container">
+          <div className="ip-leaderboard-heading">
+            <SectionIntro
+              eyebrow="Recognition, earned"
+              title="Top Influencer Partners"
+              id="directory-title"
+              description="Our strongest partnerships deserve recognition."
+            />
+            <span className="ip-ranking-note">
+              <BadgeCheck className="size-4" /> Confirmed clients, not submitted leads
+            </span>
+          </div>
+          {rankingsUnavailable && !unavailable && profiles.length > 0 && (
+            <p role="status" className="ip-section-note mb-7">
+              Verified rankings are temporarily unavailable. You can still explore our published
+              partners below.
+            </p>
+          )}
+          {partners.length ? (
+            <InfluencerLeaderboard partners={partners} />
+          ) : (
+            <InfluencerDirectory profiles={profiles} unavailable={unavailable} />
+          )}
+          <p className="ip-section-note">
+            Rankings update from confirmed successful clients. Reversed or rejected conversions do
+            not count. Ties use profile creation date, then a stable profile ID.
           </p>
         </div>
       </section>
-      <section
-        className="border-y border-border/60 bg-card/25 py-20 sm:py-24"
-        aria-labelledby="steps-title"
-      >
+
+      <section className="ip-container ip-section" aria-labelledby="levels-title">
+        <SectionIntro
+          eyebrow="Your growth, recognised"
+          title="Every introduction can be a step forward."
+          id="levels-title"
+          description="Four partner levels. One measure of progress: businesses you have successfully introduced."
+        />
+        <div className="ip-levels">
+          {partnerLevels.map((level, index) => (
+            <article
+              key={level.name}
+              className={`ip-program-card ${index === 3 ? "ip-elite-card" : ""}`}
+            >
+              <span className="ip-icon">
+                {index === 3 ? (
+                  <Crown className="size-6" />
+                ) : index === 2 ? (
+                  <Award className="size-6" />
+                ) : index === 1 ? (
+                  <TrendingUp className="size-6" />
+                ) : (
+                  <Rocket className="size-6" />
+                )}
+              </span>
+              <h3>{level.name}</h3>
+              <p className="ip-level-range">
+                {level.range} <span>converted clients</span>
+              </p>
+              <p>{level.description}</p>
+              {index === 3 && (
+                <span className="ip-level-badge ip-level-elite mt-5">The gold standard</span>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="ip-tinted ip-section" aria-labelledby="services-title">
         <div className="ip-container">
-          <p className="ip-eyebrow">From first hello to official partner</p>
-          <h2 id="steps-title" className="ip-heading mt-4">
-            How Our Influencer
-            <br />
-            Partnership Works
-          </h2>
-          <div className="relative mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map(([Icon, title, description], i) => (
-              <article key={title} className="relative">
-                <div className="mb-6 flex items-center gap-4">
-                  <span className="relative z-10 flex size-14 shrink-0 items-center justify-center rounded-full border border-primary/40 bg-background text-primary">
-                    <Icon className="size-5" />
-                  </span>
-                  <span
-                    className="h-px w-full bg-gradient-to-r from-primary/35 to-transparent"
-                    aria-hidden="true"
-                  />
-                </div>
-                <p className="ip-eyebrow text-[10px]">Step 0{i + 1}</p>
-                <h3 className="mt-2 text-lg font-semibold">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{description}</p>
+          <SectionIntro
+            eyebrow="Great introductions start here"
+            title="Solutions You Can Introduce to Your Audience"
+            id="services-title"
+            description="From a local business taking its first digital step to a brand ready for its next stage of growth."
+          />
+          <div className="ip-service-grid">
+            {services.map(([Icon, title, description, slug]) => (
+              <article className="ip-program-card" key={slug}>
+                <span className="ip-icon">
+                  <Icon className="size-5" />
+                </span>
+                <h3>{title}</h3>
+                <p>{description}</p>
+                <Link className="ip-profile-link" href={`/services/${slug}`}>
+                  Learn more <ArrowUpRight className="size-4" />
+                </Link>
               </article>
             ))}
           </div>
         </div>
       </section>
-      {featured.length > 0 && (
-        <section className="ip-container py-20" aria-labelledby="featured-title">
-          <p className="ip-eyebrow">In the spotlight</p>
-          <h2 id="featured-title" className="ip-heading mt-4">
-            Featured Partners
-          </h2>
-          <div className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.slice(0, 3).map((profile) => (
-              <InfluencerCard key={profile.id} profile={profile} />
-            ))}
-          </div>
-        </section>
-      )}
-      <section
-        id="directory"
-        className="ip-container scroll-mt-24 py-20 sm:py-24"
-        aria-labelledby="directory-title"
-      >
-        <div className="mb-9">
-          <p className="ip-eyebrow">Real people. Shared ambition.</p>
-          <h2 id="directory-title" className="ip-heading mt-4">
-            Meet Our Influencer Partners
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
-            Discover the creators collaborating with AA100X TECH. Every profile here is approved,
-            consented and published by our team.
+
+      <section className="ip-container ip-section ip-why" aria-labelledby="why-title">
+        <div>
+          <p className="ip-eyebrow">
+            <HeartHandshake className="size-3.5" /> Built for the long term
           </p>
+          <h2 id="why-title" className="ip-heading mt-5">
+            More Than a<br />
+            <span className="ip-gradient-text">Referral Program.</span>
+          </h2>
+          <p className="mt-5 max-w-lg leading-7">
+            Become part of a growing technology ecosystem. Connect your audience with a professional
+            team, build stronger business relationships and create opportunities that can last
+            beyond a single campaign.
+          </p>
+          <Button asChild variant="outline" size="lg" className="mt-7">
+            <Link href="/about">
+              Get to know AA100XTech <ArrowUpRight className="size-4" />
+            </Link>
+          </Button>
         </div>
-        <InfluencerDirectory profiles={profiles} unavailable={unavailable} />
+        <div className="ip-reasons">
+          {reasons.map((reason, index) => (
+            <div key={reason}>
+              <span>0{index + 1}</span>
+              <p>{reason}</p>
+              <Check className="size-4 text-primary" />
+            </div>
+          ))}
+        </div>
       </section>
-      <section
-        className="border-t border-border/60 bg-card/20 py-20 sm:py-24"
-        aria-labelledby="faq-title"
-      >
-        <div className="ip-container grid gap-10 lg:grid-cols-[0.7fr_1fr]">
+
+      <section className="ip-tinted ip-section" aria-labelledby="stories-title">
+        <div className="ip-container">
+          <SectionIntro
+            eyebrow="The people behind the partnerships"
+            title="Real voices. Shared possibilities."
+            id="stories-title"
+            description="Stories from our influencer partners, shared with their permission."
+          />
+          {testimonials.length > 0 ? (
+            <div className="ip-service-grid">
+              {testimonials.map((story) => {
+                const profile = byId.get(story.profile_id)!;
+                return (
+                  <figure className="ip-testimonial" key={story.id}>
+                    <Quote className="size-7 text-primary" aria-hidden="true" />
+                    <blockquote>{story.quote}</blockquote>
+                    <figcaption>
+                      <div className="ip-story-avatar">
+                        {profile.profile_image ? (
+                          <img
+                            src={`/api/influencers/media/${profile.profile_image}`}
+                            alt={profile.display_name}
+                            width={48}
+                            height={48}
+                          />
+                        ) : (
+                          profile.display_name[0]
+                        )}
+                      </div>
+                      <div>
+                        <strong>{profile.display_name}</strong>
+                        <span>{primaryPlatform(profile)[1]}</span>
+                      </div>
+                      <BadgeCheck className="ml-auto size-5 text-primary" />
+                    </figcaption>
+                    <span className="ip-level-badge mt-4">Official Partner</span>
+                  </figure>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="ip-stories-empty">
+              <Quote className="size-8 text-primary" />
+              <div>
+                <h3>Every meaningful partnership starts with a first conversation.</h3>
+                <p>
+                  {testimonialsUnavailable
+                    ? "Partner stories are temporarily unavailable. Explore the program and start a conversation with our team."
+                    : "Approved partner stories will appear here as our collaborations grow. We share only real experiences, with permission."}
+                </p>
+              </div>
+              <a href="#join" className="ip-profile-link">
+                Start your story <ArrowUpRight className="size-4" />
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section id="join" className="ip-container ip-section" aria-labelledby="join-title">
+        <div className="ip-join-layout">
+          <div className="ip-join-copy">
+            <p className="ip-eyebrow">
+              <Send className="size-3.5" /> Your next move
+            </p>
+            <h2 id="join-title" className="ip-heading mt-5">
+              Good things begin
+              <br />
+              with an <span className="ip-gradient-text">introduction.</span>
+            </h2>
+            <p className="mt-5 leading-7">
+              Tell us about your audience, your ambitions and the businesses you can connect with
+              our team. We’ll explore the right partnership together.
+            </p>
+            <ul>
+              {[
+                "Individual application review",
+                "Clear, agreed partnership terms",
+                "No automatic public profile",
+                "Private contact details stay private",
+              ].map((text) => (
+                <li key={text}>
+                  <ShieldCheck className="size-4 text-primary" /> {text}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={applicationPath}
+              className="ip-detailed-application"
+              aria-label="Become an Influencer Partner"
+            >
+              Become an Influencer Partner <ArrowUpRight className="size-4" />
+              <span>Prefer to share a portfolio? Use our existing detailed application.</span>
+            </Link>
+          </div>
+          <InfluencerProgramApplication />
+        </div>
+      </section>
+
+      <section className="ip-tinted ip-section" aria-labelledby="faq-title">
+        <div className="ip-container ip-faq-layout">
           <div>
-            <p className="ip-eyebrow">A little clarity, before we begin</p>
-            <h2 id="faq-title" className="ip-heading mt-4">
+            <p className="ip-eyebrow">A little clarity</p>
+            <h2 id="faq-title" className="ip-heading mt-5">
               Good questions.
               <br />
               Clear answers.
             </h2>
-            <p className="mt-5 max-w-sm text-sm leading-7 text-muted-foreground">
-              A strong partnership starts with shared expectations. Here’s what to know before
-              applying.
+            <p className="mt-5 max-w-sm leading-7">
+              A lasting partnership starts with shared expectations. Here’s what to know before you
+              join.
             </p>
+            <Link href="/contact" className="ip-profile-link mt-7">
+              Have another question? <ArrowUpRight className="size-4" />
+            </Link>
           </div>
-          <div className="divide-y divide-border/70">
+          <div className="ip-faq">
             {faqs.map(([question, answer]) => (
-              <details key={question} className="group py-5">
-                <summary className="cursor-pointer list-none pr-6 font-medium marker:hidden focus-visible:outline-primary">
+              <details key={question} className="group">
+                <summary>
                   {question}
-                  <span
-                    className="float-right ml-2 text-primary transition-transform group-open:rotate-45"
-                    aria-hidden="true"
-                  >
-                    +
-                  </span>
+                  <span aria-hidden="true">+</span>
                 </summary>
-                <p className="mt-4 text-sm leading-7 text-muted-foreground">{answer}</p>
+                <p>{answer}</p>
               </details>
             ))}
           </div>
         </div>
       </section>
-      <section className="ip-container py-16 sm:py-24">
-        <div className="ip-final-cta relative overflow-hidden rounded-3xl border border-primary/25 p-8 sm:p-14">
-          <MoveUpRight
-            className="absolute right-10 top-10 size-28 text-primary/10"
-            aria-hidden="true"
-          />
-          <p className="ip-eyebrow">Your influence. Our technology.</p>
-          <h2 className="ip-heading relative mt-5 max-w-2xl">
-            You bring the story.
+
+      <section className="ip-container ip-final-wrap">
+        <div className="ip-program-final">
+          <span className="ip-final-decoration" aria-hidden="true">
+            <Network />
+          </span>
+          <p className="ip-overline">YOUR INFLUENCE. A BIGGER IMPACT.</p>
+          <h2>
+            Your Audience Can Create
             <br />
-            <span className="text-primary">Let’s build the next chapter.</span>
+            Real Opportunities.
           </h2>
-          <p className="relative mt-5 max-w-xl text-sm leading-7 text-muted-foreground">
-            Promote AA100X TECH and grow your brand. Collaborate with us for professional website
-            and mobile app development opportunities.
+          <p>
+            Join the AA100XTech Influencer Partner Program and turn your network into meaningful
+            business collaborations.
           </p>
-          <Button asChild size="lg" className="relative mt-7 ip-cta">
-            <Link href={applicationPath}>
-              Become an Influencer Partner <ArrowUpRight className="size-4" />
-            </Link>
-          </Button>
+          <div className="ip-actions">
+            <Button asChild size="lg">
+              <a href="#join">
+                Join Now <ArrowUpRight className="size-4" />
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/contact">
+                Talk to Our Team <MessageCircle className="size-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+function SectionIntro({
+  eyebrow,
+  title,
+  description,
+  id,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  id: string;
+}) {
+  return (
+    <div className="ip-section-intro">
+      <p className="ip-eyebrow">{eyebrow}</p>
+      <h2 id={id} className="ip-heading">
+        {title}
+      </h2>
+      <p>{description}</p>
     </div>
   );
 }

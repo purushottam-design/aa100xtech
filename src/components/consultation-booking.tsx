@@ -35,11 +35,13 @@ import {
   type ConsultationAttempt,
 } from "@/lib/consultation-submission";
 import {
+  fetchIciciAvailability,
   iciciRequest,
   type CheckoutCapability,
   type CheckoutStart,
   type IciciCheckoutStatus,
 } from "@/lib/icici-checkout";
+import { useSession } from "@/hooks/use-session";
 import { Textarea } from "@/components/ui/textarea";
 import {
   consultationPlans,
@@ -131,6 +133,7 @@ function loadRazorpay() {
 }
 
 export function ConsultationProvider({ children }: { children: ReactNode }) {
+  const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>("plans");
   const [planId, setPlanId] = useState<string | null>(null);
@@ -168,14 +171,21 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    void fetch("/api/payments/icici/availability", { cache: "no-store" })
+    void fetchIciciAvailability()
       .then((response) => (response.ok ? response.json() : null))
       .then((result) => {
-        if (active) setIciciAvailable(result?.icici === true);
+        if (active) setIciciAvailable((result?.available ?? result?.icici) === true);
       })
       .catch(() => {
         if (active) setIciciAvailable(false);
       });
+    return () => {
+      active = false;
+    };
+  }, [session?.access_token]);
+
+  useEffect(() => {
+    let active = true;
     const returnedId = new URLSearchParams(window.location.search).get("icici_return");
     if (returnedId) {
       try {

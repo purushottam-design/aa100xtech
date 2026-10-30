@@ -609,6 +609,7 @@ test("directory search and category, platform and city/state filters combine wit
 test("uploads decode and re-encode valid images, strip metadata and reject disguised files", async () => {
   const uploads = [];
   const upload = load("src/lib/influencer-upload.server.ts", {
+    "./influencer-errors.server": load("src/lib/influencer-errors.server.ts"),
     "@/integrations/supabase/client.server": {
       supabaseAdmin: {
         storage: {

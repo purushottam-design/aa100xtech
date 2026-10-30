@@ -1,8 +1,981 @@
 .influencer-program {
-  --ip-gold: #ffd24a;
-  --ip-orange: #ff8a3d;
-  background: #0b0b0f;
-  color: #f4f6ff;
+  --heading: #111827;
+  --ip-gold: var(--brand-gold);
+  --ip-orange: var(--brand-orange);
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+/* Partner program: scoped to /influencers; the shared shell stays unchanged. */
+.influencer-program .ip-section {
+  padding-block: clamp(4rem, 7vw, 6.5rem);
+  scroll-margin-top: 88px;
+}
+.influencer-program .ip-tinted {
+  background: var(--brand-cream);
+  border-block: 1px solid var(--border);
+}
+.influencer-program .ip-section-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.influencer-program .ip-caption-note {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+.influencer-program .ip-spotlight-section {
+  padding-block: 2rem 0;
+}
+.influencer-program .ip-spotlight {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  overflow: hidden;
+  border: 1px solid #f5d59c;
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 18px 65px rgb(96 57 0 / 7%);
+}
+.influencer-program .ip-spotlight-photo {
+  min-height: 480px;
+  position: relative;
+  background: var(--brand-light);
+  overflow: hidden;
+}
+.influencer-program .ip-spotlight-photo > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+}
+.influencer-program .ip-photo-caption {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  padding: 0.8rem;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 10px;
+  color: #fff;
+  background: rgb(17 24 39 / 55%);
+  backdrop-filter: blur(12px);
+  font-size: 0.58rem;
+  line-height: 1.8;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+}
+.influencer-program .ip-spotlight-copy {
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  align-content: center;
+  background: radial-gradient(ellipse at 100% 0, rgb(251 191 36 / 13%), transparent 65%), #fff;
+}
+.influencer-program .ip-spotlight-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #92400e;
+  background: var(--brand-gradient);
+  border: 1px solid rgb(245 158 11 / 35%);
+  border-radius: 999px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.influencer-program .ip-spotlight-name {
+  margin-top: 1.25rem;
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  line-height: 1.13;
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+.influencer-program .ip-spotlight-platform {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  flex-wrap: wrap;
+}
+.influencer-program .ip-spotlight-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  border-block: 1px solid var(--border);
+  padding-block: 1.25rem;
+}
+.influencer-program .ip-spotlight-stats > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.influencer-program .ip-spotlight-stats strong {
+  color: var(--heading);
+  font-size: 2.65rem;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+.influencer-program .ip-spotlight-stats span:not(.ip-level-badge) {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.influencer-program .ip-spotlight-empty {
+  margin-top: 1.25rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--brand-gold);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.8;
+}
+.influencer-program .ip-overline {
+  color: #b45309;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.influencer-program .ip-hero {
+  display: grid;
+  grid-template-columns: 1.45fr 0.8fr;
+  gap: 5rem;
+  align-items: center;
+}
+.influencer-program .ip-hero h1 {
+  margin-top: 1.6rem;
+  font-size: clamp(2.35rem, 4.1vw, 3.65rem);
+  line-height: 1.09;
+  letter-spacing: -0.05em;
+  font-weight: 800;
+}
+.influencer-program .ip-hero-copy > p:not(.ip-eyebrow) {
+  margin-top: 1.5rem;
+  max-width: 650px;
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+.influencer-program .ip-actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
+}
+.influencer-program .ip-hero-footnote {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.4rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.influencer-program .ip-hero-footnote svg {
+  color: var(--brand-orange);
+  flex-shrink: 0;
+}
+.influencer-program .ip-growth-note {
+  position: relative;
+  padding: 2rem;
+  background: var(--brand-light);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+}
+.influencer-program .ip-growth-note .ip-overline {
+  margin-top: 1.5rem;
+}
+.influencer-program .ip-growth-note h2 {
+  margin-top: 1rem;
+  font-size: 1.85rem;
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.035em;
+}
+.influencer-program .ip-growth-note h2 span {
+  color: #b45309;
+}
+.influencer-program .ip-growth-note > p:not(.ip-overline) {
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+.influencer-program .ip-growth-signature {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid #f1d7a5;
+  padding-top: 1rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  color: #92400e;
+}
+.influencer-program .ip-section-intro {
+  max-width: 720px;
+  margin-bottom: 2.5rem;
+}
+.influencer-program .ip-section-intro h2 {
+  margin-top: 1.1rem;
+}
+.influencer-program .ip-section-intro > p:last-child {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+.influencer-program .ip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  color: var(--brand-orange);
+  background: var(--brand-light);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+}
+.influencer-program .ip-benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.influencer-program .ip-program-card {
+  min-width: 0;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.influencer-program .ip-program-card h3 {
+  margin-top: 1.25rem;
+  font-size: 1.025rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.influencer-program .ip-program-card p {
+  margin-top: 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.85;
+  color: var(--text-muted);
+}
+.influencer-program .ip-program-card .ip-card-subtitle {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.influencer-program .ip-card-index {
+  color: #d3b282;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+.influencer-program .ip-section-note {
+  margin-top: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.85;
+}
+.influencer-program .ip-process {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.75rem;
+}
+.influencer-program .ip-step-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.influencer-program .ip-step-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  background: var(--brand-light);
+  color: var(--brand-orange);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+}
+.influencer-program .ip-step-line {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, #fbbf24, #fde7b2);
+}
+.influencer-program .ip-process article:last-child .ip-step-line {
+  visibility: hidden;
+}
+.influencer-program .ip-process h3 {
+  margin-top: 0.7rem;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.influencer-program .ip-process article > p:last-child {
+  margin-top: 0.75rem;
+  font-size: 0.83rem;
+  line-height: 1.85;
+  color: var(--text-muted);
+}
+.influencer-program .ip-leaderboard-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.influencer-program .ip-leaderboard-heading .ip-section-intro {
+  margin-bottom: 0;
+}
+.influencer-program .ip-ranking-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  color: #92400e;
+  font-size: 0.7rem;
+}
+.influencer-program .ip-directory-filters {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.influencer-program .ip-directory-filters select {
+  height: 44px;
+  min-width: 0;
+  width: 100%;
+  border: 1px solid var(--input);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+}
+.influencer-program .ip-podium {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  align-items: end;
+  gap: 1.5rem;
+}
+.influencer-program .ip-partner-grid,
+.influencer-program .ip-service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+.influencer-program .ip-rank-card {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+.influencer-program .ip-rank-card-first {
+  border-color: var(--brand-orange);
+  box-shadow: 0 12px 35px rgb(245 158 11 / 15%);
+}
+.influencer-program .ip-rank-portrait {
+  position: relative;
+  display: block;
+  height: 240px;
+  background: var(--brand-light);
+  overflow: hidden;
+}
+.influencer-program .ip-rank-card-first .ip-rank-portrait {
+  height: 305px;
+}
+.influencer-program .ip-partner-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.influencer-program .ip-partner-avatar {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, var(--brand-light), #fde68a);
+  color: #92400e;
+  font-size: 4rem;
+  font-weight: 750;
+}
+.influencer-program .ip-rank-number,
+.influencer-program .ip-rank-award {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  left: 1rem;
+  top: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.influencer-program .ip-rank-award {
+  top: auto;
+  bottom: 1rem;
+  background: var(--brand-gradient);
+  color: #5a2e00;
+}
+.influencer-program .ip-rank-content {
+  padding: 1.4rem;
+}
+.influencer-program .ip-platform {
+  color: #b45309;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.influencer-program .ip-conversion-count {
+  margin-top: 1.1rem;
+  margin-bottom: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+.influencer-program .ip-conversion-count strong {
+  font-size: 1.6rem;
+  font-weight: 750;
+  color: var(--heading);
+  margin-right: 0.25rem;
+}
+.influencer-program .ip-level-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--brand-light);
+  color: #92400e;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+.influencer-program .ip-level-elite {
+  background: var(--brand-gradient);
+  border-color: var(--brand-orange);
+  color: #633300;
+}
+.influencer-program .ip-profile-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #b45309;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.influencer-program .ip-rank-content .ip-profile-link {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.influencer-program .ip-profile-link:hover {
+  color: var(--brand-deep-orange);
+}
+.influencer-program .ip-empty {
+  padding: 3rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  text-align: center;
+  background: white;
+}
+.influencer-program .ip-levels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.influencer-program .ip-level-range {
+  color: var(--heading) !important;
+  font-size: 1.75rem !important;
+  font-weight: 750;
+  line-height: 1.3 !important;
+}
+.influencer-program .ip-level-range span {
+  display: block;
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.75rem;
+}
+.influencer-program .ip-elite-card {
+  border-color: var(--brand-orange);
+  background: linear-gradient(145deg, #fff, #fff7e6);
+}
+.influencer-program .ip-service-grid .ip-profile-link {
+  margin-top: 1.5rem;
+}
+.influencer-program .ip-why {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 5rem;
+}
+.influencer-program .ip-reasons {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.influencer-program .ip-reasons > div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 1.1rem;
+  border-bottom: 1px solid #f8efdf;
+}
+.influencer-program .ip-reasons > div:last-child {
+  border: 0;
+}
+.influencer-program .ip-reasons span {
+  color: #d7b67f;
+  font-size: 0.65rem;
+}
+.influencer-program .ip-reasons p {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.influencer-program .ip-stories-empty {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: #fff;
+}
+.influencer-program .ip-stories-empty > svg {
+  flex-shrink: 0;
+}
+.influencer-program .ip-stories-empty > div {
+  flex: 1;
+}
+.influencer-program .ip-stories-empty h3 {
+  font-weight: 650;
+}
+.influencer-program .ip-stories-empty p {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+.influencer-program .ip-testimonial {
+  padding: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.influencer-program .ip-testimonial blockquote {
+  margin-top: 1rem;
+  line-height: 1.85;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  white-space: pre-line;
+}
+.influencer-program .ip-testimonial figcaption {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.influencer-program .ip-story-avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--brand-light);
+  color: var(--brand-orange);
+  font-weight: 700;
+}
+.influencer-program .ip-story-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.influencer-program .ip-testimonial figcaption strong {
+  display: block;
+  font-size: 0.85rem;
+}
+.influencer-program .ip-testimonial figcaption span {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.influencer-program .ip-join-layout {
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  align-items: start;
+  gap: 4.5rem;
+}
+.influencer-program .ip-join-copy {
+  position: sticky;
+  top: 100px;
+}
+.influencer-program .ip-join-copy ul {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+.influencer-program .ip-join-copy li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.influencer-program .ip-join-copy li svg {
+  flex-shrink: 0;
+}
+.influencer-program .ip-detailed-application {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: #b45309;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.influencer-program .ip-detailed-application span {
+  flex-basis: 100%;
+  font-size: 0.72rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.influencer-program .ip-application-form,
+.influencer-program .ip-application-success {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 15px 50px rgb(15 23 42 / 5%);
+}
+.influencer-program .ip-form-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.influencer-program .ip-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+.influencer-program .ip-form-field {
+  display: grid;
+  min-width: 0;
+  gap: 0.55rem;
+}
+.influencer-program .ip-form-field label {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+.influencer-program .ip-form-field :is(input, select) {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  font-size: 0.8rem;
+}
+.influencer-program .ip-form-field select {
+  border: 1px solid var(--input);
+  padding: 0.5rem 0.75rem;
+}
+.influencer-program .ip-form-consents {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--brand-cream);
+}
+.influencer-program .ip-form-consents label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.7rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+.influencer-program .ip-form-consents input {
+  flex-shrink: 0;
+  margin-top: 0.3rem;
+}
+.influencer-program .ip-form-consents a {
+  color: #b45309;
+  text-decoration: underline;
+}
+.influencer-program .ip-faq-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 5rem;
+}
+.influencer-program .ip-faq details {
+  padding: 1.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.influencer-program .ip-faq details:first-child {
+  border-top: 1px solid var(--border);
+}
+.influencer-program .ip-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  list-style: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  font-weight: 600;
+}
+.influencer-program .ip-faq summary::-webkit-details-marker {
+  display: none;
+}
+.influencer-program .ip-faq summary span {
+  font-size: 1.4rem;
+  color: var(--brand-orange);
+  transition: transform 0.2s;
+}
+.influencer-program .ip-faq details[open] summary span {
+  transform: rotate(45deg);
+}
+.influencer-program .ip-faq details > p {
+  margin-top: 1rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.9;
+}
+.influencer-program .ip-final-wrap {
+  padding-block: 3rem 5rem;
+}
+.influencer-program .ip-program-final {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  border-radius: 26px;
+  background: var(--brand-gradient);
+  border: 1px solid #f5bd43;
+  color: #512d00;
+}
+.influencer-program .ip-program-final .ip-overline {
+  color: #623700;
+}
+.influencer-program .ip-program-final h2 {
+  position: relative;
+  margin-top: 1rem;
+  max-width: 800px;
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+  color: #2b1600;
+}
+.influencer-program .ip-program-final > p:not(.ip-overline) {
+  position: relative;
+  max-width: 640px;
+  margin-top: 1.5rem;
+  line-height: 1.85;
+  color: #5b3406;
+  font-size: 0.95rem;
+}
+.influencer-program .ip-program-final .ip-actions {
+  position: relative;
+}
+.influencer-program .ip-program-final .bg-primary {
+  background: #111827;
+  box-shadow: 0 8px 25px rgb(43 22 0 / 15%);
+  color: #fff;
+}
+.influencer-program .ip-final-decoration {
+  position: absolute;
+  z-index: -1;
+  right: -3rem;
+  bottom: -5rem;
+  opacity: 0.11;
+  transform: rotate(-10deg);
+  color: #fff;
+}
+.influencer-program .ip-final-decoration svg {
+  width: 360px;
+  height: 360px;
+  stroke-width: 0.7px;
+}
+@media (hover: hover) {
+  .influencer-program :is(.ip-program-card, .ip-rank-card):hover {
+    transform: translateY(-5px);
+    border-color: var(--brand-orange);
+    box-shadow: 0 15px 35px rgb(245 158 11 / 14%);
+  }
+}
+@media (max-width: 1100px) {
+  .influencer-program .ip-benefit-grid,
+  .influencer-program .ip-levels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .influencer-program .ip-hero,
+  .influencer-program .ip-why,
+  .influencer-program .ip-join-layout,
+  .influencer-program .ip-faq-layout {
+    gap: 2rem;
+  }
+  .influencer-program .ip-spotlight-photo {
+    min-height: 500px;
+  }
+}
+@media (max-width: 800px) {
+  .influencer-program .ip-caption-note {
+    display: none;
+  }
+  .influencer-program .ip-hero,
+  .influencer-program .ip-why,
+  .influencer-program .ip-join-layout,
+  .influencer-program .ip-faq-layout {
+    grid-template-columns: 1fr;
+  }
+  .influencer-program .ip-spotlight {
+    grid-template-columns: 0.85fr 1fr;
+  }
+  .influencer-program .ip-spotlight-photo {
+    min-height: 470px;
+  }
+  .influencer-program .ip-spotlight-copy {
+    padding: 1.5rem;
+  }
+  .influencer-program .ip-spotlight-copy .ip-spotlight-name {
+    font-size: 1.8rem;
+  }
+  .influencer-program .ip-process,
+  .influencer-program .ip-directory-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .influencer-program .ip-podium,
+  .influencer-program .ip-partner-grid,
+  .influencer-program .ip-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .influencer-program .ip-rank-card-first {
+    grid-column: 1 / -1;
+  }
+  .influencer-program .ip-stories-empty {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .influencer-program .ip-stories-empty .ip-profile-link {
+    flex-basis: 100%;
+  }
+  .influencer-program .ip-join-copy {
+    position: static;
+  }
+}
+@media (max-width: 540px) {
+  .influencer-program .ip-section {
+    padding-block: 3.25rem;
+  }
+  .influencer-program .ip-spotlight-section {
+    padding-top: 1.4rem;
+  }
+  .influencer-program .ip-spotlight {
+    grid-template-columns: 1fr;
+    border-radius: 20px;
+  }
+  .influencer-program .ip-spotlight-photo {
+    min-height: 310px;
+  }
+  .influencer-program .ip-spotlight-copy {
+    padding: 1.5rem 1.25rem;
+  }
+  .influencer-program .ip-spotlight-copy .ip-spotlight-name {
+    font-size: 1.9rem;
+  }
+  .influencer-program .ip-hero h1 {
+    font-size: 2.3rem;
+  }
+  .influencer-program .ip-benefit-grid,
+  .influencer-program .ip-levels,
+  .influencer-program .ip-process,
+  .influencer-program .ip-service-grid,
+  .influencer-program .ip-podium,
+  .influencer-program .ip-partner-grid,
+  .influencer-program .ip-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .influencer-program .ip-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .influencer-program .ip-actions > a {
+    width: 100%;
+    padding-inline: 0.8rem;
+  }
+  .influencer-program .ip-eyebrow {
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+  }
+  .influencer-program .ip-program-card {
+    padding: 1.4rem;
+  }
+  .influencer-program .ip-rank-card-first .ip-rank-portrait {
+    height: 300px;
+  }
+  .influencer-program .ip-spotlight-stats {
+    gap: 1rem;
+  }
+  .influencer-program .ip-growth-note {
+    padding: 1.5rem;
+  }
+  .influencer-program .ip-stories-empty {
+    padding: 1.5rem;
+  }
+  .influencer-program .ip-stories-empty > div {
+    min-width: 0;
+  }
+  .influencer-program .ip-form-heading {
+    align-items: flex-start;
+  }
+  .influencer-program .ip-form-heading h3 {
+    font-size: 1.1rem;
+  }
+  .influencer-program .ip-program-final {
+    padding: 2rem 1.25rem;
+    border-radius: 20px;
+  }
 }
 html:has(.influencer-program) {
   scroll-behavior: smooth;
@@ -29,26 +1002,34 @@ html:has(.influencer-program, .influencer-application) footer a[href^="mailto:"]
   text-transform: uppercase;
   letter-spacing: 0.22em;
   font-weight: 600;
-  color: var(--ip-gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--brand-light);
+  color: #b45309;
 }
 .influencer-program .ip-gradient-text {
   color: var(--ip-gold);
-  background: linear-gradient(110deg, var(--ip-gold), var(--ip-orange));
+  background: var(--brand-text-gradient);
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .influencer-program .ip-cta {
-  background: linear-gradient(110deg, var(--ip-gold), var(--ip-orange));
-  color: #1a1206;
-  box-shadow: 0 6px 30px #ff8a3d15;
+  background: var(--brand-button-gradient);
+  color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgb(245 158 11 / 25%);
 }
 .influencer-program .ip-hero-glow {
   position: absolute;
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse at 75% 40%, #ff8a3d12, transparent 55%),
-    radial-gradient(ellipse at 5% 95%, #ffd24a09, transparent 50%);
+    radial-gradient(ellipse at 75% 40%, rgb(251 191 36 / 10%), transparent 55%),
+    radial-gradient(ellipse at 5% 95%, rgb(245 158 11 / 5%), transparent 50%);
 }
 .influencer-program .ip-editorial {
   height: 540px;
@@ -61,7 +1042,7 @@ html:has(.influencer-program, .influencer-application) footer a[href^="mailto:"]
   top: 2%;
   overflow: hidden;
   border-radius: 180px 180px 20px 20px;
-  border: 1px solid #ffffff25;
+  border: 1px solid var(--border);
   transform: rotate(-5deg);
 }
 .influencer-program .ip-photo-small {
@@ -72,7 +1053,7 @@ html:has(.influencer-program, .influencer-application) footer a[href^="mailto:"]
   bottom: 1%;
   overflow: hidden;
   border-radius: 16px;
-  border: 6px solid #0b0b0f;
+  border: 6px solid var(--background);
   transform: rotate(7deg);
 }
 .influencer-program .ip-social {
@@ -82,27 +1063,27 @@ html:has(.influencer-program, .influencer-application) footer a[href^="mailto:"]
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  border: 1px solid #ffffff25;
-  background: #1a1a24ee;
-  box-shadow: 0 12px 36px #0005;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: var(--shadow-soft);
   animation: ip-float 7s ease-in-out infinite;
 }
 .influencer-program .ip-social-one {
   top: 13%;
   right: 13%;
-  color: #ffaa91;
+  color: var(--brand-orange);
   transform: rotate(12deg);
 }
 .influencer-program .ip-social-two {
   top: 51%;
   left: 1%;
-  color: #ff735d;
+  color: var(--brand-deep-orange);
   animation-delay: -2s;
 }
 .influencer-program .ip-social-three {
   bottom: 45%;
   right: 1%;
-  color: #a3bfff;
+  color: var(--brand-orange);
   animation-delay: -4s;
 }
 .influencer-program .ip-note {
@@ -114,10 +1095,10 @@ html:has(.influencer-program, .influencer-application) footer a[href^="mailto:"]
   gap: 12px;
   align-items: center;
   padding: 16px 20px;
-  background: #1a1a24f5;
-  border: 1px solid #ffffff20;
+  background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: 14px;
-  box-shadow: 0 20px 40px #0004;
+  box-shadow: var(--shadow-soft);
 }
 .influencer-program .ip-benefit {
   transition:
@@ -126,10 +1107,12 @@ html:has(.influencer-program, .influencer-application) footer a[href^="mailto:"]
 }
 .influencer-program .ip-benefit:hover {
   transform: translateY(-5px);
-  border-color: #ffd24a55;
+  border-color: var(--brand-orange);
+  box-shadow: 0 15px 35px rgb(245 158 11 / 14%);
 }
 .influencer-program .ip-final-cta {
-  background: radial-gradient(ellipse at right, #ff8a3d18, transparent 65%), #131319;
+  background:
+    radial-gradient(ellipse at right, rgb(251 191 36 / 12%), transparent 65%), var(--brand-cream);
 }
 .influencer-program .ip-enter {
   animation: ip-enter 0.7s ease-out both;

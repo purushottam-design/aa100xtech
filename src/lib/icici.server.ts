@@ -33,6 +33,11 @@ export class IciciPaymentError extends Error {
     public readonly code: string,
     message: string,
     public readonly status = 503,
+    public readonly diagnostics?: {
+      missing?: string[];
+      invalid?: string[];
+      blocked?: string[];
+    },
   ) {
     super(message);
   }
@@ -44,30 +49,61 @@ export const iciciUatUrls = {
 } as const;
 
 export function iciciUatConfig() {
-  const mode = process.env["ICICI_SIGNING_MODE"];
-  const environment = process.env["ICICI_ENVIRONMENT"];
-  const merchantId = process.env["ICICI_MERCHANT_ID"];
-  const aggregatorID = process.env["ICICI_AGGREGATOR_ID"];
+  const mode = process.env["ICICI_SIGNING_MODE"]?.trim();
+  const environment = process.env["ICICI_ENVIRONMENT"]?.trim();
+  const merchantId = process.env["ICICI_MERCHANT_ID"]?.trim();
+  const aggregatorID = process.env["ICICI_AGGREGATOR_ID"]?.trim();
   const secret = process.env["ICICI_SECRET_KEY"];
-  const returnURL = process.env["ICICI_RETURN_URL"];
-  if (
-    process.env["ICICI_UAT_ENABLED"] !== "true" ||
-    process.env["ICICI_UAT_MERCHANT_CONFIRMED"] !== "true" ||
-    !["uat", "sandbox"].includes(environment ?? "") ||
-    (mode !== "sorted-fields" && mode !== "json-v2") ||
-    !merchantId ||
-    !secret ||
-    !returnURL
-  )
+  const returnURL = process.env["ICICI_RETURN_URL"]?.trim();
+  const flags = ["ICICI_UAT_ENABLED", "ICICI_UAT_MERCHANT_CONFIRMED"];
+  const required = [
+    "ICICI_MERCHANT_ID",
+    "ICICI_SECRET_KEY",
+    "ICICI_ENVIRONMENT",
+    "ICICI_SIGNING_MODE",
+    "ICICI_RETURN_URL",
+    ...flags,
+  ];
+  const missing = required.filter((name) => !process.env[name]?.trim());
+  if (missing.length)
     throw new IciciPaymentError(
       "ICICI_INTEGRATION_NOT_VERIFIED",
-      "ICICI Bank payments are currently unavailable. Please choose Razorpay.",
+      missing.length === 1 ? `${missing[0]} is missing` : "Missing ICICI configuration",
+      503,
+      { missing },
+    );
+  if (!["uat", "sandbox"].includes(environment ?? ""))
+    throw new IciciPaymentError(
+      "ICICI_CONFIGURATION",
+      "ICICI_ENVIRONMENT must be uat or sandbox; this adapter does not support production.",
+      503,
+      { invalid: ["ICICI_ENVIRONMENT"] },
+    );
+  if (mode !== "sorted-fields" && mode !== "json-v2")
+    throw new IciciPaymentError(
+      "ICICI_CONFIGURATION",
+      "ICICI_SIGNING_MODE must be the bank-confirmed sorted-fields or json-v2 mode.",
+      503,
+      { invalid: ["ICICI_SIGNING_MODE"] },
+    );
+  const blocked = flags.filter((name) => process.env[name]?.trim() !== "true");
+  if (blocked.length)
+    throw new IciciPaymentError(
+      "ICICI_INTEGRATION_NOT_VERIFIED",
+      `${blocked.join(", ")} must be true after the corresponding UAT approval.`,
+      503,
+      { blocked },
     );
   let callback: URL;
   try {
-    callback = new URL(returnURL);
+    callback = new URL(returnURL!);
   } catch {
-    throw new IciciPaymentError("ICICI_CONFIGURATION", "ICICI UAT return URL is not configured.");
+    throw new IciciPaymentError(
+      "ICICI_CONFIGURATION",
+      "ICICI_RETURN_URL must be a valid HTTPS callback URL.",
+      503,
+      { invalid: ["ICICI_RETURN_URL"] },
+    );
   }
   if (
     callback.protocol !== "https:" ||
@@ -76,18 +112,36 @@ export function iciciUatConfig() {
     callback.search ||
     callback.hash ||
     callback.pathname !== "/api/payments/icici/callback" ||
-    returnURL.length > 128 ||
-    merchantId.length > 20 ||
-    (aggregatorID?.length ?? 0) > 20 ||
-    (process.env["ICICI_BASE_URL"] && process.env["ICICI_BASE_URL"] !== iciciUatUrls.initiate)
+    returnURL!.length > 128
   )
-    throw new IciciPaymentError("ICICI_CONFIGURATION", "ICICI UAT configuration requires review.");
+    throw new IciciPaymentError(
+      "ICICI_CONFIGURATION",
+      "ICICI_RETURN_URL must use HTTPS and /api/payments/icici/callback, be at most 128 characters, and have no credentials, query or fragment.",
+      503,
+      { invalid: ["ICICI_RETURN_URL"] },
+    );
+  const invalid = [
+    ...(merchantId!.length > 20 ? ["ICICI_MERCHANT_ID"] : []),
+    ...((aggregatorID?.length ?? 0) > 20 ? ["ICICI_AGGREGATOR_ID"] : []),
+    ...(process.env["ICICI_BASE_URL"]?.trim() &&
+    process.env["ICICI_BASE_URL"]?.trim() !== iciciUatUrls.initiate
+      ? ["ICICI_BASE_URL"]
+      : []),
+  ];
+  if (invalid.length)
+    throw new IciciPaymentError(
+      "ICICI_CONFIGURATION",
+      "ICICI IDs must be at most 20 characters and ICICI_BASE_URL, when set, must match the supported UAT initiation endpoint.",
+      503,
+      { invalid },
+    );
   return {
     mode: mode as IciciSigningMode,
-    merchantId,
+    merchantId: merchantId!,
     aggregatorID,
-    secret,
-    returnURL,
+    // Validate presence without changing the bank-issued secret's bytes.
+    secret: secret!,
+    returnURL: returnURL!,
     origin: callback.origin,
   };
 }
