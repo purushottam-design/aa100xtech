@@ -21,6 +21,12 @@ export const consultationBookingSchema = z.object({
   projectDescription: z.string().trim().min(10).max(4000),
 });
 
+// A request key identifies one booking intent, including network retries.
+// The base form remains unchanged for stored ICICI checkout data.
+export const consultationBookingCreationSchema = consultationBookingSchema.extend({
+  idempotencyKey: z.string().uuid(),
+});
+
 export const consultationPaymentVerificationSchema = z.object({
   bookingId: z.string().trim().min(5).max(40),
   razorpayOrderId: z.string().trim().min(5).max(80),

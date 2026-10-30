@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import { listInfluencerApplications, saveInfluencer } from "@/lib/influencers.functions";
+import { InfluencerProgramManagement } from "@/components/influencer-program-management";
 import {
   influencerCategories,
   maxImageBytes,
@@ -166,11 +167,20 @@ export function InfluencerManagement() {
         </div>
         <div>
           {current ? (
-            <ApplicationEditor
-              key={`${current.id}:${current.profile?.updated_at}:${current.influencer_review_status}`}
-              application={current}
-              canEdit={edit}
-            />
+            <>
+              <ApplicationEditor
+                key={`${current.id}:${current.profile?.updated_at}:${current.influencer_review_status}`}
+                application={current}
+                canEdit={edit}
+              />
+              {current.profile && (
+                <InfluencerProgramManagement
+                  key={current.profile.id}
+                  profileId={current.profile.id}
+                  canEdit={edit}
+                />
+              )}
+            </>
           ) : (
             <div className="surface-card p-8 text-sm text-muted-foreground">
               Select an application to review its private details and public profile.

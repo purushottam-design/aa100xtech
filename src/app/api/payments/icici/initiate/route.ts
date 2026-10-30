@@ -1,5 +1,8 @@
-import { assertPaymentOrigin, iciciUnavailableResponse } from "@/lib/icici.server";
+import { checkoutInitiationSchema, startCheckout } from "@/lib/icici-checkout.server";
+import { iciciJsonRequest } from "@/lib/icici-routes.server";
 export const runtime = "nodejs";
 export function POST(request: Request) {
-  return assertPaymentOrigin(request) ?? iciciUnavailableResponse();
+  return iciciJsonRequest(request, checkoutInitiationSchema, startCheckout, {
+    requireCheckoutAccess: true,
+  });
 }

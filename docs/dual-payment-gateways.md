@@ -1,10 +1,12 @@
 # Razorpay and ICICI payment preparation
 
-## Current state
+**Current UAT adapter and both signing modes:** see [ICICI UAT integration](icici-uat.md) for the implementation, environment settings, migrations and testing instructions. ICICI remains gated pending the bank's confirmation and successful UAT. The preparation notes below describe the earlier placeholder implementation and its audit, before the UAT adapter was added.
+
+## Previous preparation state
 
 The existing payment flow is the consultation booking dialog shared by `/consultation`, the mobile app and booking CTAs. It uses typed RPC endpoints backed by Supabase `consultation_bookings`, creates Razorpay orders server-side and opens the existing Razorpay Checkout SDK.
 
-Razorpay remains the default and active provider. ICICI appears as a disabled, clearly **Currently unavailable** option. ICICI is **not connected to a bank API** and is not production-ready. Its product/version, official merchant kit, request/response contracts, credentials and bank-issued sandbox vectors have not been supplied or validated. No bank URLs or payload formats have been guessed.
+Razorpay remains the default and active provider. ICICI appears as a disabled, clearly **Currently unavailable** option. ICICI is **not connected to a bank API** and is not production-ready. Five ICICI configuration values are present locally, but their validity and activation have not been verified; the applicable product/version, official merchant kit, request/response contracts and bank-issued sandbox vectors remain unavailable. No bank URLs or payload formats have been guessed.
 
 The official [ICICI Developer Portal](https://developer.icicibank.com/) lists gateway integration kits and a Sandbox → UAT → Production onboarding path. The merchant's exact gateway contract must be obtained from that portal or their ICICI integration team. Third-party copies of integration documents are not treated as authoritative.
 
@@ -64,6 +66,30 @@ No anonymous write permissions are added. The new admin payment view is read-onl
 This is a **reference utility, not a verified ICICI signature protocol**. Tests use local reference vectors, not bank-issued certification cases. Neither callbacks nor real transactions use this utility until ICICI confirms the exact field order, numeric/string representation, nested serialization, secret encoding and response/callback signing rules. Adding environment variables cannot bypass the closed gate.
 
 ## Configuration and activation
+
+### Configuration audit on 2026-10-27
+
+The local environment contains nonempty `ICICI_MERCHANT_ID`, `ICICI_AGGREGATOR_ID`, `ICICI_SECRET_KEY`, `ICICI_BASE_URL` and `ICICI_ENVIRONMENT`. Each is defined once. The configured environment is sandbox; the configured URL uses HTTPS on an ICICI Bank domain. No ICICI variables use a `NEXT_PUBLIC_` prefix. These checks confirm presence and basic URL shape only, not merchant validity, product compatibility, bank activation or operational readiness. No bank request was sent using these credentials.
+
+The disabled radio is intentional: `paymentGateways` marks ICICI unavailable, `payNow` rejects it, and initiation/status/callback routes return `503 ICICI_INTEGRATION_NOT_VERIFIED`. None of those routes currently calls the bank, verifies a transaction, or confirms a booking. The reference HMAC utility has not been checked against an applicable bank-issued protocol or signed test vectors. Changing an availability flag or adding credentials cannot supply that missing implementation.
+
+The selector had incorrectly defaulted to the disabled ICICI option while the button and order creation still used Razorpay. The default is corrected to the available Razorpay option. Razorpay order creation, SDK loading, verification, credentials, pricing and booking fields are unchanged. The existing premium plan costs ₹20,000; prices for the other plans are preserved.
+
+**Required to implement and activate ICICI:**
+
+- The merchant's exact payment gateway product, API version and current official integration kit. ICICI's public [developer portal](https://developer.icicibank.com/) lists Node.js payment gateway kits, but a public portal listing is not a verified contract for this merchant. The applicable kit was not found in this repository or supplied with this request; direct portal access failed during this audit.
+- Bank-confirmed sandbox/UAT initiation and status endpoint URLs, request/response schemas and content types, amount units/format and currency, merchant/aggregator identifier rules, required authentication, encryption and signature canonicalization/encoding for requests, responses and callbacks.
+- The registered HTTPS return/callback URLs, callback acknowledgement format, transaction status/response-code mapping, polling/reconciliation rules, duplicate merchant-reference behavior and any certificate/IP allowlisting requirements.
+- Bank-issued valid and tampered signature vectors, and sandbox test cases for successful, declined, cancelled, pending and expired transactions; confirmation that the supplied credentials are activated for the specified product and environment. Populate any additional API keys/certificates only if required by that kit.
+- Working Supabase server access and the existing additive `20261026120000_dual_gateway_tracking.sql` migration for durable transaction tracking. The read-only audit returned `401 Invalid API key` for the configured server key and `42703` (missing column) for a zero-row query of the payment-tracking columns with the public key. Correct `SUPABASE_SERVICE_ROLE_KEY` for the same project and apply the additive payment migration through the normal process; do not reset existing bookings. Current single-row settlement protections must be complemented by bank-specific, persistent payment-attempt locking/idempotency before allowing provider switching or bank initiation retries.
+
+The implementation cannot safely proceed from a generic HMAC and base URL: the bank's status endpoint must verify the stored merchant/order reference, transaction reference, server-derived amount and currency before an atomic booking confirmation. A customer redirect or callback claiming success must never independently mark a booking paid. Ambiguous initiation/network timeouts must remain pending and be reconciled before another external charge is allowed. The existing Razorpay order is created before the summary; a verified ICICI adapter must introduce its own initiation path without using that order or changing Razorpay's contract.
+
+**Safe test sequence after the kit is available:** use the merchant's activated sandbox/UAT account in a separate deployment with synthetic booking details and a test database. Validate bank-issued signature vectors first. Test the ₹20,000 premium plan as 2,000,000 paise internally, converting only as specified by the bank; verify all other plan prices remain unchanged. Test success, decline, cancellation, expiry and pending-to-terminal reconciliation. Reject tampered callbacks and wrong merchant, booking, amount or currency values. Repeat callbacks and status checks concurrently; double-click initiation, retry after timeouts, and attempt a provider switch while pending. Assert exactly one bank attempt where supported, one stored settlement and one booking confirmation, and no bank action on Razorpay-only checkout. Complete the bank's UAT approval and operational checks before making ICICI selectable or enabling production credentials. These are required future bank-integration checks, not tests already passed by the placeholder routes.
+
+Current local regression checks use mocked Razorpay SDK/API responses and isolated PostgreSQL. The configured Razorpay key is live; no live charge or refund is needed for these checks. ICICI remains unavailable until its integration and operational checks pass.
+
+After the default-selection correction, all 47 automated tests, all six payment Playwright tests, TypeScript, the production build and ESLint on the changed source file passed. The browser checks cover desktop/mobile default selection and checkout, pending status rechecks, failed/cancelled feedback, blocked unverified ICICI callbacks and protected payment administration. No live charge, refund, bank credential-validation call or production database mutation was performed.
 
 The example environment now includes:
 

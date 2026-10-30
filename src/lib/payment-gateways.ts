@@ -1,6 +1,6 @@
 /** Public display metadata only. Bank credentials never belong in this module. */
 export type PaymentGateway = "razorpay" | "icici";
-export const defaultPaymentGateway: PaymentGateway = "icici";
+export const defaultPaymentGateway: PaymentGateway = "razorpay";
 export const paymentGateways = [
   {
     id: "razorpay",

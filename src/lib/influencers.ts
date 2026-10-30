@@ -44,6 +44,7 @@ const socialUrl = (hosts: string[]) =>
     "Use the correct social platform URL",
   );
 export const socialSchema = z.object({
+  primary: z.enum(["instagram", "youtube", "facebook", "other"]).optional(),
   instagram: socialUrl(["instagram.com"]),
   instagram_followers: z.number().int().min(0).max(10_000_000_000).nullable().default(null),
   youtube: socialUrl(["youtube.com", "youtu.be"]),
@@ -65,10 +66,15 @@ export const influencerApplicationSchema = z.object({
   category: z.enum(influencerCategories),
   specialization: text(250),
   audience_location: z.string().trim().min(2).max(250),
-  socials: socialSchema.refine(
-    (s) => !!(s.instagram || s.youtube || s.facebook || s.other.length),
-    "Add at least one social profile",
-  ),
+  socials: socialSchema
+    .refine(
+      (s) => !!(s.instagram || s.youtube || s.facebook || s.other.length),
+      "Add at least one social profile",
+    )
+    .refine(
+      (s) => !s.primary || (s.primary === "other" ? s.other.length > 0 : !!s[s.primary]),
+      "Add the profile URL for your selected primary platform",
+    ),
   interest: z.enum(["website", "app", "both"]),
   deliverables: z.string().trim().min(20).max(2000),
   expected_terms: z.string().trim().min(10).max(2000),
@@ -77,6 +83,7 @@ export const influencerApplicationSchema = z.object({
   video_urls: z.array(publicUrl).max(5).default([]),
   processing_consent: z.literal(true),
   publication_consent: z.literal(true),
+  program_terms_consent: z.literal(true).optional(),
   website: z.string().max(0).optional(),
 });
 export type InfluencerApplicationInput = z.infer<typeof influencerApplicationSchema>;

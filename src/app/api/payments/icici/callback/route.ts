@@ -1,7 +1,5 @@
-import { iciciUnavailableResponse } from "@/lib/icici.server";
+import { receiveIciciCallback } from "@/lib/icici-routes.server";
 export const runtime = "nodejs";
-export function POST() {
-  // Never accept, acknowledge as successful, or mutate data from an unverified
-  // callback. Its authentication/acknowledgement contract needs the bank kit.
-  return iciciUnavailableResponse();
+export function POST(request: Request) {
+  return receiveIciciCallback(request);
 }

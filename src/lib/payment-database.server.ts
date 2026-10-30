@@ -23,7 +23,7 @@ type PaymentDatabase = Omit<Database, "public"> & {
     };
   };
 };
-const paymentAdmin = supabaseAdmin as unknown as SupabaseClient<PaymentDatabase>;
+export const paymentAdmin = supabaseAdmin as unknown as SupabaseClient<PaymentDatabase>;
 
 /** Account association is verified from the existing session, never form input.
  * Guest bookings remain valid, including on deployments predating the migration. */

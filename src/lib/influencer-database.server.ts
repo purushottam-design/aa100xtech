@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import type { InfluencerApplication, InfluencerProfile } from "./influencers";
+import type { PartnerReferral, PartnerStats, PartnerTestimonial } from "./influencer-program";
 
 type ApplicationRow = Database["public"]["Tables"]["partner_applications"]["Row"] &
   Omit<InfluencerApplication, "profile"> & {
@@ -32,10 +33,54 @@ export type InfluencerDatabase = {
           },
         ];
       };
+      influencer_client_referrals: {
+        Row: PartnerReferral & {
+          confirmed_by: string | null;
+          updated_by: string;
+          updated_at: string;
+        };
+        Insert: Partial<PartnerReferral> & {
+          profile_id: string;
+          client_reference: string;
+          updated_by: string;
+          confirmed_by?: string | null;
+          updated_at?: string;
+        };
+        Update: Partial<PartnerReferral> & {
+          confirmed_by?: string | null;
+          updated_by?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      influencer_testimonials: {
+        Row: PartnerTestimonial & {
+          publication_status: string;
+          consent_confirmed: boolean;
+          approved_by: string;
+          updated_at: string;
+        };
+        Insert: Partial<PartnerTestimonial> & {
+          profile_id: string;
+          quote: string;
+          publication_status: string;
+          consent_confirmed: boolean;
+          approved_by: string;
+          updated_at?: string;
+        };
+        Update: Partial<PartnerTestimonial> & {
+          publication_status?: string;
+          consent_confirmed?: boolean;
+          approved_by?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
       take_influencer_submission_slot: { Args: { rate_key: string }; Returns: boolean };
+      get_influencer_partner_stats: { Args: Record<string, never>; Returns: PartnerStats[] };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

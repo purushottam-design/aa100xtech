@@ -46,7 +46,9 @@ test("all 58 existing page templates match the approved rendered JSX baseline", 
 });
 
 test("all 79 existing shared components match the approved rendered JSX baseline", () => {
-  const components = Object.entries(fixture.markup).filter(([file]) => file.startsWith("src/components/"));
+  const components = Object.entries(fixture.markup).filter(([file]) =>
+    file.startsWith("src/components/"),
+  );
   assert.equal(components.length, 79);
   for (const [file, expected] of components) {
     const source = fs.readFileSync(path.join(root, file), "utf8");
@@ -54,7 +56,7 @@ test("all 79 existing shared components match the approved rendered JSX baseline
   }
 });
 
-test("original styles, business data, robots, manifest, and public images remain unchanged", () => {
+test("approved theme, business data, robots, manifest, and public images remain unchanged", () => {
   for (const [file, expected] of Object.entries(fixture.files)) {
     const bytes = fs.readFileSync(path.join(root, file));
     const actual = expected.text ? bytes.toString("utf8").replace(/\r\n/g, "\n") : bytes;
@@ -84,14 +86,21 @@ function assertSeoFields(actual, legacy, file) {
     if (meta.title !== undefined) assert.equal(actual.title, meta.title, `${file}: title`);
     const key = meta.name ?? meta.property;
     if (!key || meta.content === undefined) continue;
-    if (key.startsWith("og:")) assert.equal(actual.openGraph?.[key.slice(3)], meta.content, `${file}: ${key}`);
-    else if (key.startsWith("twitter:")) assert.equal(actual.twitter?.[key.slice(8)], meta.content, `${file}: ${key}`);
+    if (key.startsWith("og:"))
+      assert.equal(actual.openGraph?.[key.slice(3)], meta.content, `${file}: ${key}`);
+    else if (key.startsWith("twitter:"))
+      assert.equal(actual.twitter?.[key.slice(8)], meta.content, `${file}: ${key}`);
     else assert.equal(actual[key], meta.content, `${file}: ${key}`);
   }
   for (const link of legacy.links ?? []) {
-    if (link.rel === "canonical") assert.equal(actual.alternates?.canonical, link.href, `${file}: canonical`);
+    if (link.rel === "canonical")
+      assert.equal(actual.alternates?.canonical, link.href, `${file}: canonical`);
   }
-  assert.equal(actual.openGraph?.type ?? "website", legacy.meta?.find((item) => item.property === "og:type")?.content ?? "website", `${file}: inherited OG type`);
+  assert.equal(
+    actual.openGraph?.type ?? "website",
+    legacy.meta?.find((item) => item.property === "og:type")?.content ?? "website",
+    `${file}: inherited OG type`,
+  );
 }
 
 test("native Next metadata preserves SEO fields on all 58 pages and both dynamic 404 variants", () => {
@@ -100,6 +109,7 @@ test("native Next metadata preserves SEO fields on all 58 pages and both dynamic
     const module = loadMetadata(entry.file);
     const metadata = entry.input ? module.detailMetadata(entry.input) : module.metadata;
     assertSeoFields(metadata, entry.legacy, entry.file);
-    if (entry.missing) assertSeoFields(module.detailMetadata(), entry.missing, `${entry.file} (not found)`);
+    if (entry.missing)
+      assertSeoFields(module.detailMetadata(), entry.missing, `${entry.file} (not found)`);
   }
 });

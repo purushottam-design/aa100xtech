@@ -61,6 +61,30 @@ Never prefix the server key with `NEXT_PUBLIC_`. No additional external service 
 
 The prior live check rejected the configured server key with **Invalid API key**. Live submission, private media and admin verification require a valid key and the migration. A directory service failure is displayed as unavailable, rather than being presented as an empty database. Local Node requests behind the current certificate environment may need `NODE_OPTIONS=--use-system-ca`; TLS verification is never disabled in application code.
 
+### Directory connection troubleshooting (2026-10-27)
+
+Read-only checks against the configured project found:
+
+- Server/browser URLs and publishable keys match. The publishable key authenticates successfully.
+- The public directory query returns `404 / PGRST205`: `public.influencer_profiles` is absent from the REST API schema cache. A separate zero-row query of `partner_applications.is_influencer` returns `400 / 42703` (missing column), confirming that the influencer schema has not been provisioned.
+- Both the configured `SUPABASE_SERVICE_ROLE_KEY` and the separately configured `SUPABASE_SECRET_KEY` return `401 Invalid API key`. The application admin client uses **`SUPABASE_SERVICE_ROLE_KEY`**; changing only `SUPABASE_SECRET_KEY` will not fix it. Set the former to a valid server key for the same project. The existing client supports both legacy service-role JWTs and new `sb_secret_...` keys.
+- On this Windows machine, default Node requests fail with `UNABLE_TO_VERIFY_LEAF_SIGNATURE`. Running Node 24 with `--use-system-ca` succeeds in verifying the certificate and reveals the database errors above.
+
+To finish database setup, apply `supabase/migrations/20261026090000_influencer_partnership.sql` **once** through the existing project's SQL editor or normal migration process. Do not reset the database or replay historical migrations. This migration preserves existing applications and creates the directory, consent policies, private bucket and submission limiter together. If the table exists after migration but the API still reports `PGRST205`, reload the PostgREST schema cache with `NOTIFY pgrst, 'reload schema';`. Verify the `anon` SELECT grant and the migration's publication/consent policy; do not disable RLS or substitute an admin key for public reads.
+
+For local development on this machine, use Node 24's system CA support at process startup:
+
+```powershell
+$env:NODE_OPTIONS = "--use-system-ca"
+npm.cmd run dev
+```
+
+Preserve any other required `NODE_OPTIONS` flags when adding this flag. An organization-specific CA can alternatively be configured with `NODE_EXTRA_CA_CERTS` pointing to its trusted PEM certificate bundle before Node starts. Keep certificate verification enabled. These are runtime settings; adding them to Next.js `.env` after Node has started does not configure its certificate trust.
+
+The public loader bounds each database request to eight seconds, keeps reads uncached, and reports only fixed, actionable warning text at most once per failure category every five minutes per server instance. It never logs SDK messages, URLs or credentials. Failures return an unavailable state, never partial results or stale published records. The homepage and individual profile routes render an availability message without throwing into a development error overlay; genuinely missing profiles still return 404. A successful empty directory retains its existing invitation to join. Admin/authentication behavior and database policies are unchanged.
+
+Verification: all 47 automated tests (including isolated PostgreSQL migration/RLS checks), the five existing influencer Playwright tests, production build, TypeScript and lint on changed source/test files passed. Browser checks against the local development server confirmed HTTP 200 and visible unavailable states on `/`, `/influencers` and a profile route, with no console errors, uncaught errors or development error overlay. Live successful reads and authenticated publication remain unverified until the migration and valid server key are configured; no production records were modified.
+
 ## Admin workflow
 
 1. Open **Influencer Management** from existing admin navigation. Search/filter the private queue.

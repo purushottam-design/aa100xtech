@@ -70,6 +70,12 @@ export function generateBookingId() {
   return `CONS-${randomBytes(5).toString("hex").toUpperCase()}`;
 }
 
+/** Public checkout key only; signing secrets remain inside credentials(). */
+export function getRazorpayCheckoutKeyId(): string | null {
+  const config = credentials();
+  return config.ok ? config.keyId : null;
+}
+
 export async function createRazorpayOrder(input: {
   amountInPaise: number;
   receipt: string;

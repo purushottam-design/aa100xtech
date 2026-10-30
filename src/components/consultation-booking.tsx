@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -28,6 +29,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PaymentGatewaySelector } from "@/components/payment-gateway-selector";
 import { defaultPaymentGateway, type PaymentGateway } from "@/lib/payment-gateways";
+import {
+  consultationAttempt,
+  clearConsultationAttempt,
+  type ConsultationAttempt,
+} from "@/lib/consultation-submission";
+import {
+  fetchIciciAvailability,
+  iciciRequest,
+  type CheckoutCapability,
+  type CheckoutStart,
+  type IciciCheckoutStatus,
+} from "@/lib/icici-checkout";
+import { useSession } from "@/hooks/use-session";
 import { Textarea } from "@/components/ui/textarea";
 import {
   consultationPlans,
@@ -119,6 +133,7 @@ function loadRazorpay() {
 }
 
 export function ConsultationProvider({ children }: { children: ReactNode }) {
+  const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>("plans");
   const [planId, setPlanId] = useState<string | null>(null);
@@ -130,6 +145,83 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   const [paying, setPaying] = useState(false);
   const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(defaultPaymentGateway);
   const [pendingVerification, setPendingVerification] = useState<PaymentVerification | null>(null);
+  const [iciciAvailable, setIciciAvailable] = useState(false);
+  const [checkout, setCheckout] = useState<CheckoutCapability | null>(null);
+  const draftCheckout = useRef<{ serialized: string; capability: CheckoutCapability } | null>(null);
+  const submissionInFlight = useRef(false);
+  const submissionRevision = useRef(0);
+  const bookingAttempt = useRef<ConsultationAttempt | null>(null);
+
+  const applyIciciStatus = useCallback((result: IciciCheckoutStatus) => {
+    setPlanId(result.booking.planId);
+    setForm(result.booking);
+    setOrder({
+      bookingId: result.bookingId ?? result.reference,
+      orderId: result.reference,
+      amount: result.amount,
+      currency: result.currency,
+      keyId: "",
+    });
+    setPaymentGateway(result.gateway ?? "icici");
+    setPaymentId(result.paymentId);
+    setStep(
+      result.status === "paid" ? "success" : result.status === "failed" ? "failed" : "pending",
+    );
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    void fetchIciciAvailability()
+      .then((response) => (response.ok ? response.json() : null))
+      .then((result) => {
+        if (active) setIciciAvailable((result?.available ?? result?.icici) === true);
+      })
+      .catch(() => {
+        if (active) setIciciAvailable(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [session?.access_token]);
+
+  useEffect(() => {
+    let active = true;
+    const returnedId = new URLSearchParams(window.location.search).get("icici_return");
+    if (returnedId) {
+      try {
+        const saved = JSON.parse(
+          sessionStorage.getItem("icici-uat-checkout") ?? "null",
+        ) as CheckoutCapability | null;
+        if (saved?.id === returnedId && /^[a-f0-9]{64}$/.test(saved.token)) {
+          setCheckout(saved);
+          setPaymentGateway("icici");
+          setOrder({
+            bookingId: `CONS-${returnedId.replaceAll("-", "").toUpperCase()}`,
+            orderId: "",
+            amount: 0,
+            currency: "INR",
+            keyId: "",
+          });
+          setStep("pending");
+          setIsOpen(true);
+          void iciciRequest<IciciCheckoutStatus>("status", saved)
+            .then((result) => {
+              if (active) applyIciciStatus(result);
+            })
+            .catch(() => {
+              if (active)
+                toast.error("Payment status is pending. Please check again before paying.");
+            });
+        } else
+          toast.error("Open this payment in the browser where you started it, or contact support.");
+      } catch {
+        toast.error("The payment session could not be restored. Please contact support.");
+      }
+    }
+    return () => {
+      active = false;
+    };
+  }, [applyIciciStatus]);
 
   const plan = planId ? (getConsultationPlan(planId) ?? null) : null;
 
@@ -146,6 +238,13 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Ctx>(() => ({ open }), [open]);
 
   const reset = () => {
+    submissionRevision.current += 1;
+    if (step === "success") {
+      clearConsultationAttempt();
+      bookingAttempt.current = null;
+    }
+    setCheckout(null);
+    draftCheckout.current = null;
     setPaymentGateway(defaultPaymentGateway);
     setPendingVerification(null);
     setStep("plans");
@@ -177,32 +276,73 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   };
 
   const proceedToPayment = async () => {
-    if (!plan || creating) return;
+    if (!plan || submissionInFlight.current) return;
     if (!validate()) {
       toast.error("Please fix the highlighted fields.");
       return;
     }
+    submissionInFlight.current = true;
+    const revision = submissionRevision.current;
     setCreating(true);
     try {
+      const booking = {
+        planId: plan.id,
+        fullName: form.fullName.trim(),
+        companyName: form.companyName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        country: form.country.trim(),
+        service: form.service,
+        preferredDate: form.preferredDate,
+        preferredTime: form.preferredTime,
+        timezone: form.timezone,
+        meetingPlatform: form.meetingPlatform,
+        projectDescription: form.projectDescription.trim(),
+      };
+      if (iciciAvailable) {
+        const serialized = JSON.stringify(booking);
+        if (draftCheckout.current?.serialized !== serialized) {
+          const bytes = crypto.getRandomValues(new Uint8Array(32));
+          draftCheckout.current = {
+            serialized,
+            capability: {
+              id: crypto.randomUUID(),
+              token: Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join(""),
+            },
+          };
+        }
+        const capability = draftCheckout.current.capability;
+        // Persist the capability before initiation so a bank return can resume it.
+        sessionStorage.setItem("icici-uat-checkout", JSON.stringify(capability));
+        const prepared = await iciciRequest<{
+          amount: number;
+          currency: string;
+          reference: string;
+        }>("checkout", { ...capability, booking });
+        if (revision !== submissionRevision.current) return;
+        setCheckout(capability);
+        setOrder({
+          bookingId: prepared.reference,
+          orderId: "",
+          amount: prepared.amount,
+          currency: prepared.currency,
+          keyId: "",
+        });
+        setStep("summary");
+        return;
+      }
+      bookingAttempt.current = await consultationAttempt(
+        JSON.stringify(booking),
+        bookingAttempt.current,
+      );
+      if (revision !== submissionRevision.current) return;
       const res = await createConsultationBooking({
-        data: {
-          planId: plan.id,
-          fullName: form.fullName.trim(),
-          companyName: form.companyName.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          country: form.country.trim(),
-          service: form.service,
-          preferredDate: form.preferredDate,
-          preferredTime: form.preferredTime,
-          timezone: form.timezone,
-          meetingPlatform: form.meetingPlatform,
-          projectDescription: form.projectDescription.trim(),
-        },
+        data: { ...booking, idempotencyKey: bookingAttempt.current.key },
       });
+      if (revision !== submissionRevision.current) return;
       if (!res.ok) {
         if (process.env.NODE_ENV === "development") {
-          console.error("Razorpay order creation failed", { code: res.code, message: res.error });
+          console.warn("Consultation booking preparation failed", { code: res.code });
         }
         toast.error(res.error);
         return;
@@ -216,21 +356,24 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
       });
       setStep("summary");
     } catch (err) {
-      if (process.env.NODE_ENV === "development") console.error("Consultation payment initialization failed", err);
+      if (revision !== submissionRevision.current) return;
+      if (process.env.NODE_ENV === "development")
+        console.warn("Consultation payment preparation did not complete");
       toast.error(err instanceof Error ? err.message : "Could not start the payment.");
     } finally {
+      submissionInFlight.current = false;
       setCreating(false);
     }
   };
 
-  const confirmPayment = async (response: PaymentVerification) => {
-    if (!order) return;
+  const confirmPayment = async (response: PaymentVerification, paymentOrder = order) => {
+    if (!paymentOrder) return;
     setPaying(true);
     setPendingVerification(response);
     try {
       const result = await verifyConsultationPayment({
         data: {
-          bookingId: order.bookingId,
+          bookingId: paymentOrder.bookingId,
           razorpayOrderId: response.razorpay_order_id,
           razorpayPaymentId: response.razorpay_payment_id,
           razorpaySignature: response.razorpay_signature,
@@ -255,8 +398,68 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const checkIciciPayment = async () => {
+    if (!checkout || paying) return;
+    setPaying(true);
+    try {
+      applyIciciStatus(await iciciRequest<IciciCheckoutStatus>("status", checkout));
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Payment status is pending. Please check again.",
+      );
+    } finally {
+      setPaying(false);
+    }
+  };
+
   const payNow = async () => {
     if (!order || !plan || paying) return;
+    let paymentOrder = order;
+    if (checkout) {
+      setPaying(true);
+      try {
+        const started = await iciciRequest<CheckoutStart>("initiate", {
+          ...checkout,
+          gateway: paymentGateway,
+        });
+        if (started.pending) {
+          if (started.bookingId) setOrder({ ...paymentOrder, bookingId: started.bookingId });
+          setStep("pending");
+          setPaying(false);
+          return;
+        }
+        if (started.gateway === "icici" && started.redirectUrl) {
+          window.location.assign(started.redirectUrl);
+          return;
+        }
+        if (
+          started.gateway !== "razorpay" ||
+          !started.bookingId ||
+          !started.orderId ||
+          !started.keyId ||
+          !started.amount ||
+          !started.currency
+        )
+          throw new Error(
+            "Payment initiation is pending. Please check status before paying again.",
+          );
+        paymentOrder = {
+          bookingId: started.bookingId,
+          orderId: started.orderId,
+          keyId: started.keyId,
+          amount: started.amount,
+          currency: started.currency,
+        };
+        setOrder(paymentOrder);
+      } catch (error) {
+        setPaying(false);
+        setStep("pending");
+        toast.error(
+          error instanceof Error ? error.message : "Payment status is pending. Please check again.",
+        );
+        return;
+      }
+    }
     if (paymentGateway !== "razorpay") {
       toast.error("ICICI Bank payments are currently unavailable. Please choose Razorpay.");
       return;
@@ -265,7 +468,8 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
     const ok = await loadRazorpay();
     if (!ok) {
       setPaying(false);
-      if (process.env.NODE_ENV === "development") console.error("Razorpay Checkout SDK failed to load");
+      if (process.env.NODE_ENV === "development")
+        console.error("Razorpay Checkout SDK failed to load");
       toast.error("Could not load the secure checkout. Check your connection and try again.");
       return;
     }
@@ -287,14 +491,14 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
     }
 
     const rzp = new RazorpayCtor({
-      key: order.keyId,
-      order_id: order.orderId,
-      amount: order.amount,
-      currency: order.currency,
+      key: paymentOrder.keyId,
+      order_id: paymentOrder.orderId,
+      amount: paymentOrder.amount,
+      currency: paymentOrder.currency,
       name: "AA100XTech",
       description: `${plan.name} · ${plan.duration}`,
       prefill: { name: form.fullName, email: form.email, contact: form.phone },
-      notes: { booking_id: order.bookingId },
+      notes: { booking_id: paymentOrder.bookingId },
       theme: { color: "#e0912f" },
       modal: {
         ondismiss: () => {
@@ -302,14 +506,14 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
           setStep("cancelled");
         },
       },
-      handler: confirmPayment,
+      handler: (response: PaymentVerification) => confirmPayment(response, paymentOrder),
     });
 
     rzp.on("payment.failed", async () => {
       setPaying(false);
       setStep("failed");
       try {
-        await markConsultationPaymentFailed({ data: { bookingId: order.bookingId } });
+        await markConsultationPaymentFailed({ data: { bookingId: paymentOrder.bookingId } });
       } catch {
         /* non-blocking */
       }
@@ -494,6 +698,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                 onChange={setPaymentGateway}
                 amount={order.amount}
                 disabled={paying}
+                iciciAvailable={iciciAvailable && !!checkout}
               />
 
               <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -507,7 +712,8 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                     </>
                   ) : (
                     <>
-                      Pay with Razorpay {inr(plan.price)} <ArrowRight className="size-4" />
+                      Pay with {paymentGateway === "icici" ? "ICICI Bank" : "Razorpay"}{" "}
+                      {inr(plan.price)} <ArrowRight className="size-4" />
                     </>
                   )}
                 </Button>
@@ -553,13 +759,18 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
               </DialogDescription>
               <dl className="surface-card mt-6 space-y-3 p-5 text-left text-sm">
                 <Row label="Booking ID" value={order.bookingId} />
-                <Row label="Payment ID" value={pendingVerification?.razorpay_payment_id ?? "—"} />
+                <Row
+                  label="Payment ID"
+                  value={paymentId ?? pendingVerification?.razorpay_payment_id ?? "—"}
+                />
               </dl>
               <Button
                 className="mt-6"
-                disabled={paying || !pendingVerification}
+                disabled={paying || (!pendingVerification && !checkout)}
                 onClick={() => {
-                  if (pendingVerification) void confirmPayment(pendingVerification);
+                  if (checkout && (paymentGateway === "icici" || !pendingVerification))
+                    void checkIciciPayment();
+                  else if (pendingVerification) void confirmPayment(pendingVerification);
                 }}
               >
                 {paying ? "Checking payment…" : "Check payment status"}
@@ -583,7 +794,16 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                 <Button variant="outline" onClick={() => setStep("plans")}>
                   Change Plan
                 </Button>
-                <Button onClick={() => setStep("summary")}>Try Again</Button>
+                <Button
+                  onClick={() => {
+                    if (checkout && paymentGateway === "icici") {
+                      draftCheckout.current = null;
+                      void proceedToPayment();
+                    } else setStep("summary");
+                  }}
+                >
+                  Try Again
+                </Button>
               </div>
             </div>
           ) : null}

@@ -25,7 +25,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ path
       const { data, error } = await publicInfluencerClient()
         .from("influencer_profiles")
         .select("profile_image,cover_image,gallery")
-        .eq("application_id", path.split("/")[0])
+        .eq("application_id", path.split("/")[0]!)
         .maybeSingle();
       if (
         error ||

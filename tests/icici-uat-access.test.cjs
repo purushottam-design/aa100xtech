@@ -1,0 +1,201 @@
+const assert = require("node:assert/strict");
+const { test } = require("node:test");
+const { z } = require("zod");
+const load = require("./helpers/load-server.cjs");
+
+const origin = "https://uat.example.test";
+const defaults = {
+  NODE_ENV: "production", // A deployed UAT app uses a production Next.js build.
+  ICICI_ENVIRONMENT: "uat",
+  ICICI_MERCHANT_ID: "fixture-merchant",
+  ICICI_SECRET_KEY: "fixture-signing-secret",
+  ICICI_SIGNING_MODE: "sorted-fields",
+  ICICI_RETURN_URL: `${origin}/api/payments/icici/callback`,
+  ICICI_UAT_ENABLED: "true",
+  ICICI_UAT_MERCHANT_CONFIRMED: "true",
+  ICICI_UAT_TESTS_PASSED: "false",
+  ICICI_UAT_TEST_MODE: "true",
+  SUPABASE_URL: "https://database.example.test",
+  SUPABASE_SERVICE_ROLE_KEY: "fixture-service-secret",
+};
+
+function harness(patch = {}, { authFails = false, notAdmin = false } = {}) {
+  const env = { ...defaults, ...patch };
+  const effects = { prepared: 0, initiated: 0, validated: 0, authorized: 0 };
+  const globals = {
+    process: { env },
+    fetch: () => assert.fail("Access checks must never contact the bank"),
+  };
+  const bank = load("src/lib/icici.server.ts", {}, globals);
+  const schema = z.object({ id: z.string() });
+  const mocks = {
+    "@/lib/icici.server": bank,
+    "@/integrations/supabase/client.server": {
+      supabaseAdmin: {
+        auth: {
+          getUser: async (token) => {
+            effects.validated++;
+            return authFails || token !== "fixture-user-token"
+              ? { data: { user: null }, error: { message: defaults.ICICI_SECRET_KEY } }
+              : { data: { user: { id: "fixture-user-id" } }, error: null };
+          },
+        },
+        from: () => ({
+          select: () => ({
+            limit: () => ({ abortSignal: async () => ({ error: null }) }),
+          }),
+        }),
+      },
+    },
+    "@/lib/payment-database.server": {
+      paymentAdmin: {
+        from: () => ({
+          select: () => ({ limit: () => ({ abortSignal: async () => ({ error: null }) }) }),
+        }),
+      },
+    },
+    "@/lib/backend/handlers/consultations": {},
+    "@/lib/rbac.server": {
+      authorizeSuper: async (id) => {
+        assert.equal(id, "fixture-user-id");
+        effects.authorized++;
+        if (notAdmin) throw new Error(defaults.ICICI_SECRET_KEY);
+      },
+    },
+  };
+  const checkout = load("src/lib/icici-checkout.server.ts", mocks, globals);
+  const routes = Object.fromEntries(
+    ["checkout", "initiate"].map((name) => [
+      name,
+      load(
+        `src/app/api/payments/icici/${name}/route.ts`,
+        {
+          ...mocks,
+          "@/lib/icici-checkout.server": {
+            checkoutPreparationSchema: schema,
+            checkoutInitiationSchema: schema,
+            prepareCheckout: async () => {
+              effects.prepared++;
+              return { amount_paise: 250000, currency: "INR", merchant_reference: "ICFIXTURE" };
+            },
+            startCheckout: async () => {
+              effects.initiated++;
+              return { gateway: "icici", redirectUrl: "https://pgpayuat.icicibank.com/fixture" };
+            },
+          },
+        },
+        globals,
+      ),
+    ]),
+  );
+  const request = (path, token, host = origin) =>
+    new Request(`${host}/api/payments/icici/${path}`, {
+      method: "POST",
+      headers: {
+        origin: host,
+        "x-aa-rpc": "1",
+        "content-type": "application/json",
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ id: "fixture-checkout" }),
+    });
+  return {
+    env,
+    effects,
+    request,
+    availability: (token) => checkout.iciciAvailability(request("availability", token)),
+    post: (name, token, host) => routes[name].POST(request(name, token, host)),
+  };
+}
+
+test("a verified super admin can start controlled UAT before tests pass, including on a deployed build", async () => {
+  const h = harness();
+  assert.equal((await h.availability("fixture-user-token")).available, true);
+  for (const name of ["checkout", "initiate"])
+    assert.equal((await h.post(name, "fixture-user-token")).status, 200);
+  assert.equal(h.env.ICICI_UAT_TESTS_PASSED, "false", "Testing never records UAT approval");
+  assert.deepEqual(h.effects, { prepared: 1, initiated: 1, validated: 3, authorized: 3 });
+});
+
+test("anonymous, forged-token and non-admin requests cannot prepare or initiate initial UAT", async () => {
+  for (const [options, token] of [
+    [{}, undefined],
+    [{}, "forged-token"],
+    [{ authFails: true }, "fixture-user-token"],
+    [{ notAdmin: true }, "fixture-user-token"],
+  ]) {
+    const h = harness({}, options);
+    const available = await h.availability(token);
+    assert.equal(available.available, false);
+    assert.equal(available.code, "ICICI_UAT_TEST_ACCESS_REQUIRED");
+    for (const name of ["checkout", "initiate"]) {
+      const response = await h.post(name, token);
+      assert.equal(response.status, 403);
+      assert.equal(
+        JSON.stringify(await response.json()).includes(defaults.ICICI_SECRET_KEY),
+        false,
+      );
+    }
+    assert.equal(h.effects.prepared, 0);
+    assert.equal(h.effects.initiated, 0);
+  }
+});
+
+test("controlled UAT cannot bypass bank activation, approved origin or the live-environment ban", async () => {
+  for (const patch of [
+    { ICICI_UAT_MERCHANT_CONFIRMED: "false" },
+    { ICICI_UAT_ENABLED: "false" },
+    { ICICI_ENVIRONMENT: "production", ICICI_UAT_TESTS_PASSED: "true" },
+    { ICICI_RETURN_URL: "http://localhost:3000/api/payments/icici/callback" },
+    { ICICI_BASE_URL: "https://pgpay.icicibank.com/tsp/pg/api/v2/initiateSale" },
+    { ICICI_UAT_TEST_MODE: "false" },
+  ]) {
+    const h = harness(patch);
+    assert.equal((await h.availability("fixture-user-token")).available, false);
+    for (const name of ["checkout", "initiate"])
+      assert.equal((await h.post(name, "fixture-user-token")).status, 503);
+    assert.equal(h.effects.prepared, 0);
+    assert.equal(h.effects.initiated, 0);
+  }
+  const h = harness();
+  assert.equal(
+    (await h.post("initiate", "fixture-user-token", "https://other.example.test")).status,
+    403,
+  );
+  assert.equal(h.effects.initiated, 0);
+});
+
+test("only a genuinely completed UAT flag opens the existing customer UAT path", async () => {
+  const h = harness({ ICICI_UAT_TESTS_PASSED: "true", ICICI_UAT_TEST_MODE: "false" });
+  assert.equal((await h.availability()).available, true);
+  assert.equal((await h.post("initiate")).status, 200);
+  assert.equal(h.effects.validated, 0);
+  assert.equal(h.effects.initiated, 1);
+});
+
+test("the ICICI browser client forwards its existing session for availability and initiation", async () => {
+  const requests = [];
+  const client = load(
+    "src/lib/icici-checkout.ts",
+    {
+      "@/integrations/supabase/auth-attacher": {
+        attachSupabaseAuth: async () => new Headers({ authorization: "Bearer fixture-user-token" }),
+      },
+    },
+    {
+      fetch: async (url, init) => {
+        requests.push({ url, init });
+        return Response.json({ ok: true });
+      },
+    },
+  );
+  await client.fetchIciciAvailability();
+  await client.iciciRequest("initiate", { id: "fixture-checkout" });
+  for (const { init } of requests) {
+    assert.equal(init.headers.get("authorization"), "Bearer fixture-user-token");
+    assert.equal(init.credentials, "same-origin");
+    assert.equal(init.cache, "no-store");
+  }
+  assert.equal(requests[1].init.headers.get("x-aa-rpc"), "1");
+  assert.equal(requests[1].init.headers.get("content-type"), "application/json");
+});
