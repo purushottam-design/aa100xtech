@@ -8,22 +8,50 @@ import { PANEL_LABEL, PANEL_PATH } from "@/lib/admin-panels";
 import { modulesForAccess } from "@/lib/permissions";
 import { useMyAccess } from "@/components/admin-management";
 
-type NavItem = { label: string; to: string; permission?: string; superOnly?: boolean };
+type NavItem = {
+  label: string;
+  to: string;
+  permission?: string;
+  anyPermissions?: readonly string[];
+  superOnly?: boolean;
+};
 
 const SYSTEM_ITEMS: NavItem[] = [
-  { label: "Influencer Management", to: "/admin/influencers", permission: "partners.view" },
-  { label: "Overview", to: "/admin" , superOnly: true },
+  {
+    label: "Website requests",
+    to: "/admin/requests",
+    anyPermissions: ["leads.view", "candidates.view"],
+  },
+  {
+    label: "Influencer Management",
+    to: "/admin/influencers",
+    permission: "partners.view",
+  },
+  { label: "Overview", to: "/admin", superOnly: true },
   { label: "Super console", to: "/admin/super", superOnly: true },
   { label: "Admins", to: "/admin/admins", permission: "admins.view" },
   { label: "Security", to: "/admin/security", permission: "security.activity" },
-  { label: "Website settings", to: "/admin/settings/website", permission: "settings.website", superOnly: true },
-  { label: "General settings", to: "/admin/settings/general", permission: "settings.general", superOnly: true },
-  { label: "Email settings", to: "/admin/settings/email", permission: "settings.email", superOnly: true },
+  {
+    label: "Website settings",
+    to: "/admin/settings/website",
+    permission: "settings.website",
+    superOnly: true,
+  },
+  {
+    label: "General settings",
+    to: "/admin/settings/general",
+    permission: "settings.general",
+    superOnly: true,
+  },
+  {
+    label: "Email settings",
+    to: "/admin/settings/email",
+    permission: "settings.email",
+    superOnly: true,
+  },
   { label: "My dashboards", to: "/admin/select" },
   { label: "Account", to: "/dashboard" },
 ];
-
-
 
 /**
  * Dynamic admin navigation: only the panels and modules the signed-in account
@@ -39,6 +67,12 @@ export function AdminNav({ className }: { className?: string }) {
   const allowed = SYSTEM_ITEMS.filter((item) => {
     if (item.superOnly && !isSuper) return false;
     if (item.permission && !isSuper && !permissions.includes(item.permission)) return false;
+    if (
+      item.anyPermissions &&
+      !isSuper &&
+      !item.anyPermissions.some((permission) => permissions.includes(permission))
+    )
+      return false;
     return true;
   });
 

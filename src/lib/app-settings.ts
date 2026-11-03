@@ -33,7 +33,6 @@ export const SETTING_GROUPS: SettingGroup[] = [
       { key: "supportEmail", label: "Support email", type: "email" },
       { key: "phone", label: "Phone", type: "text" },
       { key: "address", label: "Registered address", type: "textarea" },
-      { key: "hours", label: "Business hours", type: "text" },
       { key: "gstin", label: "GSTIN", type: "text" },
       {
         key: "announcement",
@@ -78,7 +77,11 @@ export const SETTING_GROUPS: SettingGroup[] = [
       { key: "replyTo", label: "Reply-to email", type: "email" },
       { key: "notifyBookings", label: "Notify on new bookings", type: "boolean" },
       { key: "notifyAccessRequests", label: "Notify on access requests", type: "boolean" },
-      { key: "notifyPartnerApplications", label: "Notify on partner applications", type: "boolean" },
+      {
+        key: "notifyPartnerApplications",
+        label: "Notify on partner applications",
+        type: "boolean",
+      },
       { key: "notifyCandidates", label: "Notify on candidate submissions", type: "boolean" },
       { key: "signature", label: "Email signature", type: "textarea" },
     ],

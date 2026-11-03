@@ -10,8 +10,8 @@ for (const width of [1440, 768, 390]) {
     await expect(page.locator("h1")).toContainText("Real Business Growth");
     await expect(page.locator("header")).toBeVisible();
     await expect(page.locator("footer")).toBeAttached();
-    await expect(page.locator(".ip-spotlight")).toBeVisible();
-    await expect(page.getByLabel("Search influencers by name")).toBeAttached();
+    await expect(page.locator(".ip-spotlight")).toHaveCount(0);
+    await expect(page.getByLabel("Search influencers by name")).toHaveCount(0);
     await page
       .locator("summary")
       .filter({ hasText: "Is website or app development always free?" })
@@ -26,16 +26,7 @@ for (const width of [1440, 768, 390]) {
       path: testInfo.outputPath(`influencers-${width}.png`),
       fullPage: true,
     });
-    if (width < 1024) {
-      await page.getByRole("button", { name: "Open menu", exact: true }).click();
-      await page.getByRole("dialog").getByRole("button", { name: "Join Us", exact: true }).click();
-    } else
-      await page
-        .getByRole("navigation", { name: "Main navigation", exact: true })
-        .getByRole("button", { name: "Join Us", exact: true })
-        .click();
-    await page.getByRole("menuitem", { name: "Influencer Partners", exact: true }).click();
-    await expect(page).toHaveURL(/\/influencers$/);
+    await expect(page.getByRole("button", { name: "Join Us", exact: true })).toHaveCount(0);
     await page
       .getByRole("link", { name: "Become an Influencer Partner", exact: true })
       .first()

@@ -112,8 +112,18 @@ export const technologies: Technology[] = [
   { name: "Sanity", description: "Content Platform", icon: Palette, category: "cms" },
 
   // Digital Marketing
-  { name: "Google Analytics", description: "Web Analytics", icon: BarChart3, category: "marketing" },
-  { name: "Google Ads", description: "Advertising", icon: MousePointerClick, category: "marketing" },
+  {
+    name: "Google Analytics",
+    description: "Web Analytics",
+    icon: BarChart3,
+    category: "marketing",
+  },
+  {
+    name: "Google Ads",
+    description: "Advertising",
+    icon: MousePointerClick,
+    category: "marketing",
+  },
   { name: "SEMrush", description: "SEO Tool", icon: LineChart, category: "marketing" },
   { name: "HubSpot", description: "Marketing Hub", icon: Target, category: "marketing" },
   { name: "Mailchimp", description: "Email Marketing", icon: Mail, category: "marketing" },
@@ -125,6 +135,6 @@ export const technologies: Technology[] = [
 export const techStats = [
   { value: "40+", label: "Technologies", icon: Boxes },
   { value: "50+", label: "Projects Built", icon: Gauge },
-  { value: "1+", label: "Years Experience", icon: Rocket },
+  { value: "10+", label: "Years of Team Experience", icon: Rocket },
   { value: "100%", label: "Client Satisfaction", icon: Target },
 ];

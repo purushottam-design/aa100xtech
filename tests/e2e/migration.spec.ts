@@ -93,7 +93,9 @@ for (const viewport of [
       }
     });
     await page.goto("/", { waitUntil: "networkidle" });
-    await expect(page.locator("h1")).toContainText("Crafting digital excellence");
+    await expect(page.locator("h1")).toContainText(
+      "Expert IT & Digital Marketing Solutions for Your Business",
+    );
     await expect(page.locator("header")).toBeVisible();
     await expect(page.locator("footer")).toBeAttached();
     await expect(
@@ -113,12 +115,15 @@ for (const viewport of [
       await page.getByRole("button", { name: "Open menu" }).click();
       const menu = page.getByRole("dialog");
       await expect(menu).toBeVisible();
-      await menu.getByRole("link", { name: "Services", exact: true }).click();
+      await menu.getByRole("button", { name: "Services", exact: true }).click();
+      await menu.getByRole("link", { name: "View all services", exact: true }).click();
     } else {
       await page
         .getByRole("navigation", { name: "Main navigation" })
-        .getByRole("link", { name: "Services", exact: true })
-        .click();
+        .getByRole("button", { name: "Services", exact: true })
+        .focus();
+      await page.keyboard.press("Enter");
+      await page.getByRole("link", { name: "View all services", exact: true }).click();
     }
     await expect(page).toHaveURL(/\/services$/);
     await expect(

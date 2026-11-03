@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { consultationScheduleError } from "./consultation-schedule";
 
 export const consultationBookingSchema = z.object({
   planId: z.string().trim().min(1).max(40),
@@ -23,9 +24,14 @@ export const consultationBookingSchema = z.object({
 
 // A request key identifies one booking intent, including network retries.
 // The base form remains unchanged for stored ICICI checkout data.
-export const consultationBookingCreationSchema = consultationBookingSchema.extend({
-  idempotencyKey: z.string().uuid(),
-});
+export const consultationBookingCreationSchema = consultationBookingSchema
+  .extend({
+    idempotencyKey: z.string().uuid(),
+  })
+  .superRefine((booking, context) => {
+    const message = consultationScheduleError(booking);
+    if (message) context.addIssue({ code: "custom", path: ["preferredTime"], message });
+  });
 
 export const consultationPaymentVerificationSchema = z.object({
   bookingId: z.string().trim().min(5).max(40),

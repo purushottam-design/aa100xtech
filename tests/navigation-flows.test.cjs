@@ -9,7 +9,10 @@ const ts = require("typescript");
 function load(relativePath, mocks = {}, globals = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", relativePath), "utf8");
   const { outputText } = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      jsx: ts.JsxEmit.ReactJSX,
+    },
   });
   const exports = {};
   const components = new Proxy({}, { get: (_, name) => String(name) });
@@ -33,7 +36,9 @@ function findAll(node, predicate) {
   return [...(predicate(node) ? [node] : []), ...findAll(node.props?.children, predicate)];
 }
 
-const cohorts = load("src/data/careers.ts");
+const cohorts = load("src/data/careers.ts", {
+  "./site": load("src/data/site.ts"),
+});
 
 for (const kind of ["global", "london", "partnership"]) {
   test(`${kind}: success requires a completed insert; errors retain the application`, async () => {
@@ -47,7 +52,10 @@ for (const kind of ["global", "london", "partnership"]) {
       states = [];
     let resets = 0;
     const mocks = {
-      react: { useState: (initial) => [initial, (value) => states.push(value)] },
+      react: {
+        useState: (initial) => [initial, (value) => states.push(value)],
+        useRef: (initial) => ({ current: initial }),
+      },
       sonner: {
         toast: {
           success: (...args) => successes.push(args),
@@ -55,8 +63,10 @@ for (const kind of ["global", "london", "partnership"]) {
         },
       },
       "@/lib/navigation": { Link: "Link" },
+      "@/hooks/use-public-site": { usePublicSite: () => load("src/data/site.ts").site },
       "next/navigation": {
-        useSearchParams: () => new URLSearchParams(kind === "influencer" ? "opportunity=paid-promotion" : ""),
+        useSearchParams: () =>
+          new URLSearchParams(kind === "influencer" ? "opportunity=paid-promotion" : ""),
       },
       "@/integrations/supabase/client": {
         supabase: {
@@ -71,7 +81,23 @@ for (const kind of ["global", "london", "partnership"]) {
       "@/data/partner-plans": { partnerPlans: [] },
       "@/data/partnership": { partnerTiers: [] },
     };
+    mocks["@/lib/website-requests"] = {
+      submitWebsiteRequest: async (data) => {
+        inserts.push({
+          table: "candidate_submissions",
+          data: {
+            role_applied: data.role,
+            task_title: data.requirements,
+            availability: data.availability,
+          },
+        });
+        const result = await insertResult;
+        if (result.error) throw new Error("Save failed");
+        return { saved: true };
+      },
+    };
     const globals = {
+      crypto: { randomUUID: () => "00000000-0000-4000-8000-000000000001" },
       FormData: class {
         constructor(form) {
           this.form = form;
@@ -158,11 +184,8 @@ test("header destinations and reversible authentication visibility", () => {
   assert.ok(
     !site.headerNavLinks.some((item) => ["/careers", "/creator-moves-365"].includes(item.to)),
   );
-  assert.ok(
-    site.headerNavLinks.some(
-      (item) => item.label === "Founder" && item.href === "https://theamanlife.com/",
-    ),
-  );
+  assert.ok(site.headerNavLinks.some((item) => item.to === "/business-plans"));
+  assert.ok(site.headerNavLinks.some((item) => item.to === "/consultation"));
   assert.deepEqual(
     Array.from(site.joinUsLinks, (item) => item.label),
     ["Jobs", "Influencer Partners"],

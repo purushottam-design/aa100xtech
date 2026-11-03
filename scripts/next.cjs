@@ -5,6 +5,7 @@ const { spawn } = require("node:child_process");
 const flags = process.allowedNodeEnvironmentFlags.has("--use-system-ca") ? ["--use-system-ca"] : [];
 const args = process.argv.slice(2);
 const commands = {
+  "diagnose-website": require.resolve("./diagnose-website.cjs"),
   "diagnose-influencers": require.resolve("./diagnose-influencers.cjs"),
   "repair-influencers": require.resolve("./repair-influencers.cjs"),
 };

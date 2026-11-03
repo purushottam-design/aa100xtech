@@ -1,153 +1,155 @@
 "use client";
 
 import { Link } from "@/lib/navigation";
-import { ChevronDown, Megaphone, Menu } from "lucide-react";
-import { useState } from "react";
+import { ArrowUpRight, Menu } from "lucide-react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { CurrencySelector } from "@/components/currency-selector";
+import { ServicesMegaMenu } from "@/components/services-mega-menu";
+import { MobileServicesMenu } from "@/components/mobile-services-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import {
-  joinUsLinks,
-  marketingLinks,
-  moreLinks,
-  headerNavLinks as navLinks,
-  showAuthButtons,
-} from "@/data/site";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { moreLinks, headerNavLinks, showAuthButtons } from "@/data/site";
+import { serviceNavigation } from "@/data/service-navigation";
 import { useSession } from "@/hooks/use-session";
+
+const about = moreLinks.find((link) => link.to === "/about")!;
+const desktopLinks = [...headerNavLinks.filter((link) => link.to !== "/consultation"), about];
+const mobileLinks = [...headerNavLinks, about];
+const servicePaths = new Set(
+  serviceNavigation.flatMap((group) => group.items.map((item) => item.href.split("#")[0])),
+);
+const remainingLinks = moreLinks.filter(
+  (link) => !mobileLinks.some((item) => item.to === link.to) && !servicePaths.has(link.to),
+);
+const navClass =
+  "rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { session, loading } = useSession();
+  const pathname = usePathname();
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    const scroll = () => setScrolled(window.scrollY > 8);
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const resize = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    scroll();
+    window.addEventListener("scroll", scroll, { passive: true });
+    desktop.addEventListener("change", resize);
+    return () => {
+      window.removeEventListener("scroll", scroll);
+      desktop.removeEventListener("change", resize);
+    };
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" aria-label="AA100XTech home" className="flex items-center">
+    <header
+      className={`sticky top-0 z-50 border-b border-border/60 bg-background/95 backdrop-blur-xl transition-shadow ${scrolled ? "shadow-md shadow-black/5" : ""}`}
+    >
+      <div className="relative mx-auto flex h-20 max-w-7xl items-center justify-between gap-2 px-4 sm:gap-3 sm:px-6 lg:px-5">
+        <Link to="/" aria-label="AA100XTech home" className="flex shrink-0 items-center">
           <span className="brand-logo-wrap">
             <span aria-hidden className="brand-logo-wrap-glow" />
-
             <img
               src="/logo.png"
               alt="Absolute Advancement 100X Tech logo"
-              className="brand-logo h-8 w-auto md:h-10"
+              className="brand-logo h-8 w-auto xl:h-9"
               width={1024}
               height={286}
             />
           </span>
         </Link>
-
-        <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
-          {navLinks.map((l) =>
-            "href" in l && l.href ? (
-              <a
-                key={l.to}
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {l.label}
-              </a>
+        <nav aria-label="Main navigation" className="hidden items-center gap-0.5 lg:flex">
+          {desktopLinks.map((link) =>
+            link.to === "/services" ? (
+              <ServicesMegaMenu key={link.to} />
             ) : (
               <Link
-                key={l.to}
-                to={l.to}
-                activeOptions={{ exact: l.to === "/" }}
+                key={link.to}
+                to={link.to}
+                activeOptions={{ exact: link.to === "/" }}
                 activeProps={{ className: "text-foreground bg-secondary" }}
-                className="rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className={navClass}
               >
-                {l.label}
+                {link.label}
               </Link>
             ),
           )}
-
-          <HeaderDropdown label="Join Us" links={joinUsLinks} />
-          <HeaderDropdown label="Marketing" links={marketingLinks} />
         </nav>
-
-        <div className="flex items-center gap-2">
-          <CurrencySelector className="hidden xl:inline-flex" />
-          {showAuthButtons &&
-            !loading &&
-            (session ? (
-              <Button asChild className="hidden sm:inline-flex">
-                <Link to="/dashboard">My account</Link>
-              </Button>
-            ) : (
-              <Button asChild className="hidden sm:inline-flex">
-                <Link to="/auth">Sign in / Sign up</Link>
-              </Button>
-            ))}
-
+        <div className="flex shrink-0 items-center gap-2">
+          <CurrencySelector className="hidden px-2 lg:inline-flex [&>span:not(:last-child)]:hidden" />
+          <Button
+            asChild
+            className="hidden lg:inline-flex"
+            aria-label="Ready to Talk to an Expert?"
+          >
+            <Link to="/consultation">
+              <span className="hidden xl:inline">Ready to Talk to an Expert?</span>
+              <ArrowUpRight aria-hidden="true" className="size-4" />
+            </Link>
+          </Button>
+          {showAuthButtons && !loading && (
+            <Button asChild variant="outline" className="hidden sm:inline-flex">
+              <Link to={session ? "/dashboard" : "/auth"}>
+                {session ? "My account" : "Sign in / Sign up"}
+              </Link>
+            </Button>
+          )}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="lg:hidden" aria-label="Open menu">
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72 overflow-y-auto">
+            <SheetContent
+              side="right"
+              className="w-[min(92vw,24rem)] overflow-y-auto overscroll-contain px-4"
+            >
               <SheetTitle className="font-display">Menu</SheetTitle>
               <nav aria-label="Mobile navigation" className="mt-6 flex flex-col gap-1">
-                {navLinks.map((l) =>
-                  "href" in l && l.href ? (
-                    <a
-                      key={l.to}
-                      href={l.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => setOpen(false)}
-                      className="rounded-lg px-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {l.label}
-                    </a>
+                {mobileLinks.map((link) =>
+                  link.to === "/services" ? (
+                    <MobileServicesMenu key={link.to} onNavigate={() => setOpen(false)} />
                   ) : (
                     <Link
-                      key={l.to}
-                      to={l.to}
+                      key={link.to}
+                      to={link.to}
                       onClick={() => setOpen(false)}
-                      activeOptions={{ exact: l.to === "/" }}
+                      activeOptions={{ exact: link.to === "/" }}
                       activeProps={{ className: "bg-secondary text-foreground" }}
-                      className="rounded-lg px-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                      className="rounded-lg px-3 py-3 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     >
-                      {l.label}
+                      {link.label}
                     </Link>
                   ),
                 )}
-                <HeaderDropdown
-                  label="Join Us"
-                  links={joinUsLinks}
-                  mobile
-                  onNavigate={() => setOpen(false)}
-                />
-                <HeaderDropdown
-                  label="Marketing"
-                  links={marketingLinks}
-                  mobile
-                  onNavigate={() => setOpen(false)}
-                />
                 <p className="mt-4 px-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   More
                 </p>
-                {moreLinks.map((l) => (
+                {remainingLinks.map((link) => (
                   <Link
-                    key={l.to}
-                    to={l.to}
+                    key={link.to}
+                    to={link.to}
                     onClick={() => setOpen(false)}
-                    activeProps={{ className: "bg-secondary text-foreground" }}
-                    className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
                   >
-                    {l.label}
+                    {link.label}
                   </Link>
                 ))}
-                <CurrencySelector className="mt-4 w-full justify-start" />
+                <Button asChild className="mt-4">
+                  <Link to="/consultation" onClick={() => setOpen(false)}>
+                    Ready to Talk to an Expert?
+                  </Link>
+                </Button>
+                <CurrencySelector className="mt-3 w-full justify-start" />
                 {showAuthButtons && !loading && (
-                  <Button asChild className="mt-2">
+                  <Button asChild variant="outline" className="mt-2">
                     <Link to={session ? "/dashboard" : "/auth"} onClick={() => setOpen(false)}>
                       {session ? "My account" : "Sign in / Sign up"}
                     </Link>
@@ -159,47 +161,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  );
-}
-
-type HeaderDropdownProps = {
-  label: string;
-  links: readonly ((typeof joinUsLinks)[number] | (typeof marketingLinks)[number])[];
-  mobile?: boolean;
-  onNavigate?: () => void;
-};
-
-function HeaderDropdown({ label, links, mobile, onNavigate }: HeaderDropdownProps) {
-  return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={`flex items-center gap-1 rounded-lg py-3 font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:text-foreground [&[data-state=open]>svg]:rotate-180 ${mobile ? "w-full justify-between px-3 text-base" : "px-2.5 py-2 text-sm"}`}
-        >
-          {label}
-          <ChevronDown aria-hidden className="size-3.5 transition-transform" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align={mobile ? "start" : "end"}
-        className="w-64 rounded-xl border-border/60 bg-background/95 p-1 shadow-xl backdrop-blur-xl"
-      >
-        {links.map(({ label: itemLabel, ...target }) => (
-          <DropdownMenuItem
-            key={itemLabel}
-            asChild
-            className="rounded-lg px-3 py-3 font-medium text-muted-foreground focus:bg-secondary focus:text-foreground"
-          >
-            <Link {...target} onClick={onNavigate}>
-              {label === "Marketing" && (
-                <Megaphone aria-hidden className="size-4 shrink-0 text-primary" />
-              )}
-              {itemLabel}
-            </Link>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

@@ -41,7 +41,12 @@ import {
 const TYPES = ["banner", "notice", "section", "blog", "offer"] as const;
 
 const slugify = (v: string) =>
-  v.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
+  v
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 80);
 
 function BlockEditor({ row, onClose }: { row: any | null; onClose: () => void }) {
   const queryClient = useQueryClient();
@@ -94,28 +99,54 @@ function BlockEditor({ row, onClose }: { row: any | null; onClose: () => void })
             <div className="space-y-1">
               <Label>Type</Label>
               <Select value={blockType} onValueChange={setBlockType}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  {TYPES.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
               <Label htmlFor="c-place">Where it shows</Label>
-              <Input id="c-place" value={placement} onChange={(e) => setPlacement(e.target.value)} placeholder="home" />
+              <Input
+                id="c-place"
+                value={placement}
+                onChange={(e) => setPlacement(e.target.value)}
+                placeholder="home"
+              />
             </div>
           </div>
           <div className="space-y-1">
             <Label htmlFor="c-title">Title</Label>
-            <Input id="c-title" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} />
+            <Input
+              id="c-title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={200}
+            />
           </div>
           <div className="space-y-1">
             <Label htmlFor="c-slug">Slug</Label>
-            <Input id="c-slug" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder={slugify(title) || "auto"} />
+            <Input
+              id="c-slug"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              placeholder={slugify(title) || "auto"}
+            />
           </div>
           <div className="space-y-1">
             <Label htmlFor="c-sub">Subtitle</Label>
-            <Input id="c-sub" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} maxLength={300} />
+            <Input
+              id="c-sub"
+              value={subtitle}
+              onChange={(e) => setSubtitle(e.target.value)}
+              maxLength={300}
+            />
           </div>
           <div className="space-y-1">
             <Label htmlFor="c-body">Body</Label>
@@ -123,22 +154,42 @@ function BlockEditor({ row, onClose }: { row: any | null; onClose: () => void })
           </div>
           <div className="space-y-1">
             <Label htmlFor="c-img">Image URL</Label>
-            <Input id="c-img" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} maxLength={600} />
+            <Input
+              id="c-img"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              maxLength={600}
+            />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="c-link">Button link</Label>
-              <Input id="c-link" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} maxLength={600} />
+              <Input
+                id="c-link"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                maxLength={600}
+              />
             </div>
             <div className="space-y-1">
               <Label htmlFor="c-label">Button label</Label>
-              <Input id="c-label" value={linkLabel} onChange={(e) => setLinkLabel(e.target.value)} maxLength={80} />
+              <Input
+                id="c-label"
+                value={linkLabel}
+                onChange={(e) => setLinkLabel(e.target.value)}
+                maxLength={80}
+              />
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <div className="space-y-1">
               <Label htmlFor="c-pos">Order</Label>
-              <Input id="c-pos" className="w-24" value={position} onChange={(e) => setPosition(e.target.value)} />
+              <Input
+                id="c-pos"
+                className="w-24"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+              />
             </div>
             <div className="flex items-center gap-2 pt-5">
               <Switch id="c-active" checked={active} onCheckedChange={setActive} />
@@ -147,8 +198,13 @@ function BlockEditor({ row, onClose }: { row: any | null; onClose: () => void })
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button disabled={title.trim().length < 2 || save.isPending} onClick={() => save.mutate()}>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            disabled={title.trim().length < 2 || save.isPending}
+            onClick={() => save.mutate()}
+          >
             {save.isPending ? "Saving…" : "Save"}
           </Button>
         </DialogFooter>
@@ -172,6 +228,14 @@ export function AdminCms() {
 
   return (
     <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Publish sections and images with placement “home” or “portfolio”. Blog blocks appear under
+        /blog when published; their title and subtitle supply the article SEO metadata. For page SEO
+        use a section block with placement "seo-home", "seo-contact", "seo-consultation",
+        "seo-portfolio", "seo-founders" or "seo-influencer-marketing"; title and subtitle supply the
+        page title and description. Drafts stay private. Website contact settings are managed under
+        Website settings.
+      </p>
       <div className="flex flex-wrap items-center gap-3">
         <Input
           className="min-w-52 flex-1"
@@ -180,10 +244,16 @@ export function AdminCms() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <Select value={blockType} onValueChange={setBlockType}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="Type" /></SelectTrigger>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All types</SelectItem>
-            {TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+            {TYPES.map((t) => (
+              <SelectItem key={t} value={t}>
+                {t}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Button onClick={() => setEditing(null)}>+ New content</Button>
@@ -215,10 +285,16 @@ export function AdminCms() {
                   <TableCell className="text-muted-foreground">{b.block_type}</TableCell>
                   <TableCell className="text-muted-foreground">{b.placement}</TableCell>
                   <TableCell className="text-muted-foreground">{b.position}</TableCell>
-                  <TableCell><Badge variant={b.active ? "default" : "secondary"}>{b.active ? "Live" : "Hidden"}</Badge></TableCell>
+                  <TableCell>
+                    <Badge variant={b.active ? "default" : "secondary"}>
+                      {b.active ? "Live" : "Hidden"}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => setEditing(b)}>Edit</Button>
+                      <Button size="sm" variant="outline" onClick={() => setEditing(b)}>
+                        Edit
+                      </Button>
                       <Button
                         size="sm"
                         variant="destructive"
@@ -226,8 +302,12 @@ export function AdminCms() {
                           try {
                             await deleteContentBlock({ data: { id: b.id } });
                             toast.success("Deleted");
-                            queryClient.invalidateQueries({ queryKey: ["content-blocks"] });
-                          } catch (e) { toast.error((e as Error).message); }
+                            queryClient.invalidateQueries({
+                              queryKey: ["content-blocks"],
+                            });
+                          } catch (e) {
+                            toast.error((e as Error).message);
+                          }
                         }}
                       >
                         Delete
@@ -241,7 +321,9 @@ export function AdminCms() {
         </div>
       )}
 
-      {editing !== undefined ? <BlockEditor row={editing} onClose={() => setEditing(undefined)} /> : null}
+      {editing !== undefined ? (
+        <BlockEditor row={editing} onClose={() => setEditing(undefined)} />
+      ) : null}
     </div>
   );
 }

@@ -11,17 +11,21 @@ export function StatCounter({
   suffix?: string;
   label: string;
 }) {
-  const [display, setDisplay] = useState(0);
+  // Render useful values before hydration; enhance with the same count-up once
+  // visible instead of leaving server-rendered pages at zero on a slow tunnel.
+  const [display, setDisplay] = useState(value);
   const ref = useRef<HTMLDivElement>(null);
   const started = useRef(false);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const run = () => {
       if (started.current) return;
       started.current = true;
+      setDisplay(0);
       const duration = 1400;
       const start = performance.now();
       const tick = (now: number) => {

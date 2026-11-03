@@ -2,7 +2,7 @@
 
 import { Link } from "@/lib/navigation";
 import { ArrowRight, Check, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { SectionHeading } from "@/components/section-heading";
 import {
@@ -15,11 +15,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+import { submitWebsiteRequest } from "@/lib/website-requests";
 import type { CareersCohort } from "@/data/careers";
+import { usePublicSite } from "@/hooks/use-public-site";
 
 export function CareersPage({ cohort }: { cohort: CareersCohort }) {
+  const publicSite = usePublicSite();
   const [submitting, setSubmitting] = useState(false);
+  const openedAt = useRef(Date.now());
+  const requestId = useRef<string | null>(null);
 
   const [selectedRole, setSelectedRole] = useState("");
 
@@ -34,23 +38,29 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
       const extra = cohort.extraFields
         ?.map((field) => field.label + ": " + value(field.name))
         .join("\n");
-      const { error } = await supabase.from("candidate_submissions").insert({
-        full_name: value("name"),
+      requestId.current ??= crypto.randomUUID();
+      await submitWebsiteRequest({
+        id: requestId.current,
+        startedAt: openedAt.current,
+        kind: "career",
+        name: value("name"),
         email: value("email"),
         phone: value("phone"),
-        role_applied: value("role"),
-        task_title: "Job application (" + cohort.slug + ")",
-        hours_needed: value("hours"),
+        role: value("role"),
+        requirements: "Job application (" + cohort.slug + ")",
+        hours: value("hours"),
         availability: "Earliest start: " + value("start") + "\n" + (extra ?? ""),
-        portfolio_url: value("portfolio"),
-        deliverables: value("shipped"),
+        portfolio: value("portfolio"),
+        experience: value("experience"),
+        message: value("shipped"),
       });
-      if (error) throw error;
       toast.success("Application received", {
         description: "Your application has been saved for review.",
       });
       form.reset();
       setSelectedRole("");
+      requestId.current = null;
+      openedAt.current = Date.now();
     } catch {
       toast.error(
         "Could not save your application. Please try again or email " + cohort.email + ".",
@@ -315,7 +325,7 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
             </p>
             <Button asChild variant="outline" className="mt-6">
               <a
-                href={`https://wa.me/${cohort.whatsapp.replace(/\D/g, "")}`}
+                href={`https://wa.me/${publicSite.phone.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -335,6 +345,16 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
             onSubmit={onSubmit}
             className="glass-card grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
           >
+            <div className="grid gap-2 sm:col-span-2">
+              <Label htmlFor={`${cohort.slug}-experience`}>Experience</Label>
+              <Textarea
+                id={`${cohort.slug}-experience`}
+                name="experience"
+                maxLength={1000}
+                rows={3}
+                placeholder="Your relevant experience"
+              />
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="name">Full name</Label>
               <Input id="name" name="name" required />

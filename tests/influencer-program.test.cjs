@@ -186,7 +186,7 @@ test("public program reads only aggregates and consented stories belonging to pu
   assert.equal(failed.reads.length, 0);
 });
 
-test("spotlight and leaderboard share the same automatic winner, without fake stories or private data", async () => {
+test("removed public spotlight and leaderboard stay absent without fake stories or private data", async () => {
   const profiles = [profile(2, { featured: true }), profile(1)];
   const partners = program.rankInfluencers(profiles, [stats(2, 3, 900), stats(1, 12)]);
   const page = load("src/app/influencers/page.tsx", {
@@ -205,13 +205,13 @@ test("spotlight and leaderboard share the same automatic winner, without fake st
     },
   });
   const markup = renderToStaticMarkup(await page.default());
-  assert.ok(markup.includes(`data-featured-partner="${id(1)}"`));
-  assert.ok(markup.includes(`data-partner-id="${id(1)}" data-rank="1"`));
-  assert.ok(markup.includes("12"));
+  assert.equal(markup.includes("data-featured-partner="), false);
+  assert.equal(markup.includes("data-rank="), false);
+  assert.equal(markup.includes("Top Influencer Partners"), false);
   assert.ok(markup.includes("Approved partner stories will appear here"));
   assert.equal(markup.includes("client_reference"), false);
   assert.equal(markup.includes("evidence_reference"), false);
-  assert.ok(markup.indexOf('class="ip-spotlight-section') < markup.indexOf('id="program-title"'));
+  assert.equal(markup.includes('class="ip-spotlight-section'), false);
 });
 
 test("client records require explicit verified conversion evidence; public counters cannot be submitted", () => {

@@ -1,9 +1,12 @@
+"use client";
 import { Link } from "@/lib/navigation";
+import { usePublicSite } from "@/hooks/use-public-site";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { services } from "@/data/services";
-import { legalLinks, moreLinks, navLinks, site } from "@/data/site";
+import { legalLinks, moreLinks, navLinks } from "@/data/site";
 
 export function SiteFooter() {
+  const site = usePublicSite();
   return (
     <footer className="border-t border-border/60 bg-surface/40">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:grid-cols-5 lg:px-8">

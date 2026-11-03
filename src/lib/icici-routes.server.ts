@@ -11,6 +11,7 @@ import {
 } from "./icici.server";
 import { checkoutForBankReference, reconcileIciciCheckout } from "./icici-checkout.server";
 import { assertIciciCheckoutAccess } from "./icici-uat-access.server";
+import { assertIciciOrigin, iciciRequestOrigin } from "./icici-origin.server";
 
 export async function iciciJsonRequest<Schema extends z.ZodTypeAny>(
   request: Request,
@@ -18,17 +19,13 @@ export async function iciciJsonRequest<Schema extends z.ZodTypeAny>(
   action: (input: z.output<Schema>) => Promise<unknown>,
   { requireCheckoutAccess = false } = {},
 ) {
-  const forbidden = assertPaymentOrigin(request);
+  // Keep rejecting cross-site requests before configuration/auth/database work.
+  const forbidden = assertPaymentOrigin(request, iciciRequestOrigin(request) ?? "");
   if (forbidden) return forbidden;
   try {
     // Validate the activation gate before touching the database or parsing input.
     const config = iciciUatConfig();
-    if (new URL(request.url).origin !== config.origin)
-      throw new IciciPaymentError(
-        "ICICI_WRONG_ORIGIN",
-        "ICICI UAT is not available on this website.",
-        403,
-      );
+    assertIciciOrigin(request, config.origin);
     if (requireCheckoutAccess) await assertIciciCheckoutAccess(request, config);
     if (!request.headers.get("content-type")?.startsWith("application/json"))
       throw new IciciPaymentError("INVALID_REQUEST", "A JSON request is required.", 400);

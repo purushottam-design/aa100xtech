@@ -6,6 +6,7 @@ import { useState } from "react";
 import { SectionHeading } from "@/components/section-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CmsSections } from "@/components/cms-sections";
 import { projectCategories, projects } from "@/data/portfolio";
 
 const title = "Portfolio — Websites, Apps & Platforms by AA100XTech";
@@ -36,6 +37,7 @@ function PortfolioPage() {
         </div>
       </section>
 
+      <CmsSections placement="portfolio" />
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-2">
@@ -56,16 +58,22 @@ function PortfolioPage() {
 
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {list.map((p) => (
-              <article key={p.slug} className="surface-card group overflow-hidden">
+              <article
+                key={p.slug}
+                className="surface-card group overflow-hidden transition-transform motion-safe:hover:-translate-y-1"
+              >
                 <div className="aspect-[3/2] overflow-hidden">
                   <img
                     src={p.image}
-                    alt={`${p.name} project screenshot`}
+                    alt={`${p.name} project illustration`}
                     loading="lazy"
                     className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 <div className="p-6">
+                  <p className="mb-3 text-xs text-muted-foreground">
+                    Illustrative cover · use Visit site to view the actual project
+                  </p>
                   <Badge variant="secondary">{p.category}</Badge>
                   <h2 className="mt-3 font-display text-xl font-semibold">{p.name}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -97,7 +105,7 @@ function PortfolioPage() {
               description="Tell us about your product, timeline and budget — we'll come back with a scoped proposal."
             />
             <Button asChild size="lg" className="mt-8">
-              <Link to="/contact">Start your project</Link>
+              <Link to="/proposal">Get Customised Proposal</Link>
             </Button>
           </div>
         </div>

@@ -1,22 +1,29 @@
 import { fromLegacyHead } from "@/lib/page-metadata";
 
-// Original page metadata, preserved during the App Router migration.
 export const metadata = fromLegacyHead({
-  "meta": [
+  meta: [
     {
-      "title": "AA100XTech — Web, App & Digital Marketing Studio in Patna"
+      title: "IT & Digital Marketing Experts | AA100XTech",
     },
     {
-      "name": "description",
-      "content": "Absolute Advancement 100X Tech builds high-performance websites, mobile apps, AI solutions and growth marketing for ambitious brands. Transparent INR pricing from ₹7,999."
+      name: "description",
+      content:
+        "Website development, apps, digital marketing and creative services from AA100XTech. Explore business plans and book a consultation with our IT and marketing team.",
     },
     {
-      "property": "og:title",
-      "content": "AA100XTech — Web, App & Digital Marketing Studio in Patna"
+      property: "og:title",
+      content: "IT & Digital Marketing Experts | AA100XTech",
     },
     {
-      "property": "og:description",
-      "content": "Absolute Advancement 100X Tech builds high-performance websites, mobile apps, AI solutions and growth marketing for ambitious brands. Transparent INR pricing from ₹7,999."
-    }
-  ]
+      property: "og:description",
+      content:
+        "Website development, apps, digital marketing and creative services from AA100XTech. Explore business plans and book a consultation with our IT and marketing team.",
+    },
+  ],
+  links: [
+    {
+      rel: "canonical",
+      href: "https://aa100xtech.com/",
+    },
+  ],
 });

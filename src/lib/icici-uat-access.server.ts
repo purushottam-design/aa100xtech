@@ -1,9 +1,11 @@
 import "server-only";
 import { IciciPaymentError, type IciciUatConfig } from "./icici.server";
+import { assertIciciOrigin } from "./icici-origin.server";
 
-/** Initial UAT may be exercised by a verified super admin without claiming it passed. */
+/** Initial UAT supports explicitly enabled local guest tests without claiming it passed. */
 export async function assertIciciCheckoutAccess(request: Request, config: IciciUatConfig) {
   // Config validation rejects live endpoints/environments before this function runs.
+  assertIciciOrigin(request, config.origin);
   if (process.env["ICICI_UAT_TESTS_PASSED"]?.trim() === "true") return;
   if (process.env["ICICI_UAT_TEST_MODE"]?.trim() !== "true")
     throw new IciciPaymentError(
@@ -12,13 +14,15 @@ export async function assertIciciCheckoutAccess(request: Request, config: IciciU
       503,
       { blocked: ["ICICI_UAT_TESTS_PASSED"] },
     );
-  // Require the same registered HTTPS origin even for an authenticated tester.
-  if (new URL(request.url).origin !== config.origin)
-    throw new IciciPaymentError(
-      "ICICI_WRONG_ORIGIN",
-      "Request origin must match the HTTPS origin of ICICI_RETURN_URL.",
-      403,
-    );
+  // Guest testing is a local-development opt-in, pinned to the configured HTTPS
+  // tunnel. It cannot open an unverified deployed build or a live bank adapter.
+  if (
+    process.env["NODE_ENV"] === "development" &&
+    process.env["ICICI_UAT_GUEST_CHECKOUT"]?.trim() === "true" &&
+    process.env["ICICI_TRUST_PROXY"]?.trim() === "true" &&
+    process.env["DEV_TUNNEL_ORIGIN"]?.trim() === config.origin
+  )
+    return;
   const authorization = request.headers.get("authorization");
   if (authorization?.startsWith("Bearer ")) {
     try {

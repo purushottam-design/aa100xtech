@@ -13,6 +13,7 @@ import {
   setResponseStatus,
 } from "@/lib/backend/request-context.server";
 import { z } from "zod";
+import { safePublicUrl } from "@/lib/public-links";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -245,7 +246,11 @@ export const getAdminAnalytics = createServerFn({ method: "POST" })
         openTickets: openTickets ?? 0,
         avgOrderValue: paidOrders ? Math.round((revenue / paidOrders) * 100) / 100 : 0,
       },
-      previous: { revenue: prevRevenue, paidOrders: prevPaidOrders, newUsers: prevSignups },
+      previous: {
+        revenue: prevRevenue,
+        paidOrders: prevPaidOrders,
+        newUsers: prevSignups,
+      },
       growth: {
         revenue: growth(revenue, prevRevenue),
         paidOrders: growth(paidOrders, prevPaidOrders),
@@ -255,9 +260,16 @@ export const getAdminAnalytics = createServerFn({ method: "POST" })
         .map(([name, value]) => ({ name, value }))
         .sort((a, b) => b.value - a.value)
         .slice(0, 6),
-      ticketStatus: [...ticketStatus.entries()].map(([name, value]) => ({ name, value })),
+      ticketStatus: [...ticketStatus.entries()].map(([name, value]) => ({
+        name,
+        value,
+      })),
       recentLogins: logins.data ?? [],
-      health: { database: "ok", api: "ok", checkedAt: new Date().toISOString() },
+      health: {
+        database: "ok",
+        api: "ok",
+        checkedAt: new Date().toISOString(),
+      },
     };
   });
 
@@ -499,9 +511,10 @@ export const saveNotification = createServerFn({ method: "POST" })
       const { error } = await client.from("notifications").update(payload).eq("id", data.id);
       if (error) throw new Error(error.message);
     } else {
-      const { error } = await client
-        .from("notifications")
-        .insert({ ...payload, status: data.scheduledFor ? "scheduled" : "draft" });
+      const { error } = await client.from("notifications").insert({
+        ...payload,
+        status: data.scheduledFor ? "scheduled" : "draft",
+      });
       if (error) throw new Error(error.message);
     }
     await logActivity(
@@ -634,7 +647,7 @@ export const listContentBlocks = createServerFn({ method: "POST" })
       .parse(data ?? {}),
   )
   .handler(async ({ data, context }) => {
-    await requireAdmin(context as Ctx);
+    await requireAdmin(context as Ctx, "content.view");
     const client = await admin();
     let q = client.from("content_blocks").select("*");
     if (data.blockType !== "all") q = q.eq("block_type", data.blockType);
@@ -662,8 +675,18 @@ export const saveContentBlock = createServerFn({ method: "POST" })
         title: z.string().trim().min(2).max(200),
         subtitle: z.string().trim().max(300).optional(),
         body: z.string().trim().max(20000).optional(),
-        imageUrl: z.string().trim().max(600).optional(),
-        linkUrl: z.string().trim().max(600).optional(),
+        imageUrl: z
+          .string()
+          .trim()
+          .max(600)
+          .refine((value) => !value || !!safePublicUrl(value), "Use a relative or HTTPS image URL.")
+          .optional(),
+        linkUrl: z
+          .string()
+          .trim()
+          .max(600)
+          .refine((value) => !value || !!safePublicUrl(value), "Use a relative or HTTPS link.")
+          .optional(),
         linkLabel: z.string().trim().max(80).optional(),
         placement: z.string().trim().max(60).default("home"),
         position: z.number().int().min(0).max(999).default(0),
@@ -672,8 +695,18 @@ export const saveContentBlock = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
-    const me = await requireAdmin(context as Ctx);
+    const me = await requireAdmin(context as Ctx, "content.edit");
+    if (data.active) await requireAdmin(context as Ctx, "content.publish");
     const client = await admin();
+    if (data.id) {
+      const { data: existing, error } = await client
+        .from("content_blocks")
+        .select("active")
+        .eq("id", data.id)
+        .maybeSingle();
+      if (error || !existing) throw new Error("This content could not be found.");
+      if (existing.active) await requireAdmin(context as Ctx, "content.publish");
+    }
     const payload = {
       block_type: data.blockType,
       slug: data.slug,
@@ -689,10 +722,15 @@ export const saveContentBlock = createServerFn({ method: "POST" })
       published_at: data.active ? new Date().toISOString() : null,
       created_by: me.userId,
     };
-    const { error } = data.id
-      ? await client.from("content_blocks").update(payload).eq("id", data.id)
-      : await client.from("content_blocks").insert(payload);
-    if (error) throw new Error(error.message);
+    const { data: saved, error } = data.id
+      ? await client
+          .from("content_blocks")
+          .update(payload)
+          .eq("id", data.id)
+          .select("id")
+          .maybeSingle()
+      : await client.from("content_blocks").insert(payload).select("id").single();
+    if (error || !saved) throw new Error("Content could not be saved. Please try again.");
     await logActivity(me.userId, "content_saved", "cms", `${data.blockType}: ${data.title}`);
     return { ok: true };
   });
@@ -701,8 +739,15 @@ export const deleteContentBlock = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
-    const me = await requireAdmin(context as Ctx);
+    const me = await requireAdmin(context as Ctx, "content.edit");
     const client = await admin();
+    const { data: existing, error: readError } = await client
+      .from("content_blocks")
+      .select("active")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (readError) throw new Error("Content is temporarily unavailable.");
+    if (existing?.active) await requireAdmin(context as Ctx, "content.publish");
     const { error } = await client.from("content_blocks").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     await logActivity(me.userId, "content_deleted", "cms", data.id);
@@ -723,6 +768,7 @@ export const getPublicContent = createServerFn({ method: "POST" })
       )
       .eq("active", true)
       .eq("placement", data.placement)
+      .not("published_at", "is", null)
       .order("position");
     return { rows: rows ?? [] };
   });
@@ -741,7 +787,11 @@ export const getTwoFactorStatus = createServerFn({ method: "GET" })
       .maybeSingle();
     const { verifyUnlockToken, readUnlockToken } = await import("@/lib/totp.server");
     const unlocked = verifyUnlockToken(readUnlockToken(getRequestHeader("cookie")), me.userId);
-    return { enabled: Boolean(data?.enabled), confirmedAt: data?.confirmed_at ?? null, unlocked };
+    return {
+      enabled: Boolean(data?.enabled),
+      confirmedAt: data?.confirmed_at ?? null,
+      unlocked,
+    };
   });
 
 export const startTwoFactorSetup = createServerFn({ method: "POST" })
@@ -787,7 +837,11 @@ export const confirmTwoFactor = createServerFn({ method: "POST" })
     const codes = generateRecoveryCodes();
     await client
       .from("admin_2fa")
-      .update({ enabled: true, confirmed_at: new Date().toISOString(), recovery_codes: codes })
+      .update({
+        enabled: true,
+        confirmed_at: new Date().toISOString(),
+        recovery_codes: codes,
+      })
       .eq("user_id", me.userId);
     setResponseHeader("set-cookie", unlockCookie(signUnlockToken(me.userId)));
     await logActivity(me.userId, "2fa_enabled", "security", "Two-factor authentication enabled");
@@ -818,7 +872,9 @@ export const verifyTwoFactor = createServerFn({ method: "POST" })
     if (isRecovery) {
       await client
         .from("admin_2fa")
-        .update({ recovery_codes: (row.recovery_codes ?? []).filter((c: string) => c !== code) })
+        .update({
+          recovery_codes: (row.recovery_codes ?? []).filter((c: string) => c !== code),
+        })
         .eq("user_id", me.userId);
     }
     setResponseHeader("set-cookie", unlockCookie(signUnlockToken(me.userId)));

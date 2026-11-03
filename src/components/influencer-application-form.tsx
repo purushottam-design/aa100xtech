@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { usePublicSite } from "@/hooks/use-public-site";
 import "@/app/influencers/influencers.css";
 import {
   influencerApplicationSchema,
@@ -30,6 +31,7 @@ const lines = (value: string) =>
     .map((v) => v.trim())
     .filter(Boolean);
 export function InfluencerApplicationForm() {
+  const publicSite = usePublicSite();
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -364,8 +366,8 @@ export function InfluencerApplicationForm() {
               <span>
                 I consent to publication of the public information described above after admin
                 review and approval. I can request withdrawal of publication consent by contacting{" "}
-                <a href="mailto:customer.care@aa100xtech.com" className="text-primary underline">
-                  customer.care@aa100xtech.com
+                <a href={`mailto:${publicSite.email}`} className="text-primary underline">
+                  {publicSite.email}
                 </a>
                 . *
               </span>

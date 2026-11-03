@@ -13,6 +13,29 @@ function json(body: unknown, status: number, headers = new Headers()): Response 
   return new Response(JSON.stringify(body), { status, headers });
 }
 
+function rpcRequestOrigin(request: Request): string | null {
+  const direct = new URL(request.url).origin;
+  const tunnel =
+    process.env.NODE_ENV === "development" ? process.env["DEV_TUNNEL_ORIGIN"]?.trim() : undefined;
+  if (!tunnel) return direct;
+  try {
+    const configured = new URL(tunnel);
+    if (configured.protocol !== "https:" || configured.origin !== tunnel) return null;
+    // dev:ngrok binds Next.js to loopback; the ngrok agent supplies this pair.
+    // Never resolve an origin from the browser's Origin header or a proxy chain.
+    if (
+      request.headers.get("x-forwarded-proto") === "https" &&
+      request.headers.get("x-forwarded-host")?.toLowerCase() === configured.host
+    )
+      return configured.origin;
+    // Preserve direct localhost access; external Origin headers still fail the
+    // comparison below when forwarding is absent, malformed or mismatched.
+    return direct;
+  } catch {
+    return null;
+  }
+}
+
 /** Framework-independent transport, exercised with mock handlers without database writes. */
 export async function handleRpc(
   request: Request,
@@ -21,10 +44,12 @@ export async function handleRpc(
 ): Promise<Response> {
   // The custom header plus no CORS response prevents cross-site form/RPC submission.
   const origin = request.headers.get("origin");
+  const requestOrigin = rpcRequestOrigin(request);
   if (
     request.headers.get("x-aa-rpc") !== "1" ||
     request.headers.get("sec-fetch-site") === "cross-site" ||
-    (origin !== null && origin !== new URL(request.url).origin)
+    requestOrigin === null ||
+    (origin !== null && origin !== requestOrigin)
   ) {
     return json({ error: { message: "Cross-site request rejected." } }, 403);
   }

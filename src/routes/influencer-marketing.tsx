@@ -14,6 +14,8 @@ import {
   Wallet,
 } from "lucide-react";
 
+import { CampaignOffers } from "@/components/campaign-offers";
+import { Price } from "@/components/currency-provider";
 import { SectionHeading } from "@/components/section-heading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -75,7 +77,7 @@ const campaignTypes = [
   },
   {
     title: "Giveaways & contests",
-    body: "Fast follower and email-list growth with clear rules and tracking.",
+    body: "Campaigns with clear entry rules, content plans and reporting.",
   },
   {
     title: "Long-term ambassadors",
@@ -120,18 +122,26 @@ function InfluencerMarketingPage() {
             Influencer Marketing
           </Badge>
           <h1 className="max-w-4xl text-4xl font-bold leading-[1.06] sm:text-6xl">
-            Influencer campaigns that <span className="text-gradient-ember">actually convert</span>.
+            Influencer campaigns with{" "}
+            <span className="text-gradient-ember">purpose and creativity</span>.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
             We plan, run and report influencer marketing campaigns for brands — vetted creators,
             managed execution and transparent ROI, end to end.
           </p>
+          <p className="mt-6 text-xl font-semibold text-primary">
+            Starting at <Price value="₹500" />
+          </p>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Final campaign pricing depends on scope and an approved quotation. Views, followers,
+            virality, leads and revenue are not guaranteed.
+          </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <Link to="/contact">Start a campaign</Link>
+              <Link to="/proposal?kind=influencer&plan=influencer-marketing">Start a campaign</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="/influencer-success-program">For creators: success program</Link>
+              <Link to="/influencer-programs">Explore Influencer Programs</Link>
             </Button>
           </div>
 
@@ -146,6 +156,7 @@ function InfluencerMarketingPage() {
         </div>
       </section>
 
+      <CampaignOffers />
       <section className="border-b border-border/60 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading

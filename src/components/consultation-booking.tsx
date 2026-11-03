@@ -42,6 +42,8 @@ import {
   type IciciCheckoutStatus,
 } from "@/lib/icici-checkout";
 import { useSession } from "@/hooks/use-session";
+import { consultationDateToday, consultationScheduleError } from "@/lib/consultation-schedule";
+import { site } from "@/data/site";
 import { Textarea } from "@/components/ui/textarea";
 import {
   consultationPlans,
@@ -146,8 +148,13 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(defaultPaymentGateway);
   const [pendingVerification, setPendingVerification] = useState<PaymentVerification | null>(null);
   const [iciciAvailable, setIciciAvailable] = useState(false);
+  const [iciciChecking, setIciciChecking] = useState(true);
+  const [iciciUnavailableReason, setIciciUnavailableReason] = useState<string>();
   const [checkout, setCheckout] = useState<CheckoutCapability | null>(null);
-  const draftCheckout = useRef<{ serialized: string; capability: CheckoutCapability } | null>(null);
+  const draftCheckout = useRef<{
+    serialized: string;
+    capability: CheckoutCapability;
+  } | null>(null);
   const submissionInFlight = useRef(false);
   const submissionRevision = useRef(0);
   const bookingAttempt = useRef<ConsultationAttempt | null>(null);
@@ -170,19 +177,51 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    let active = true;
-    void fetchIciciAvailability()
-      .then((response) => (response.ok ? response.json() : null))
-      .then((result) => {
-        if (active) setIciciAvailable((result?.available ?? result?.icici) === true);
-      })
-      .catch(() => {
-        if (active) setIciciAvailable(false);
-      });
-    return () => {
-      active = false;
+    let controller: AbortController;
+    const refresh = () => {
+      controller?.abort();
+      controller = new AbortController();
+      const { signal } = controller;
+      setIciciAvailable(false);
+      setIciciChecking(true);
+      setIciciUnavailableReason(undefined);
+      void fetchIciciAvailability(signal)
+        .then((response) => {
+          if (!response.ok) throw new Error("Availability request failed");
+          return response.json();
+        })
+        .then((result) => {
+          if (signal.aborted) return;
+          setIciciAvailable((result?.available ?? result?.icici) === true);
+          if (result?.code === "ICICI_WRONG_ORIGIN")
+            setIciciUnavailableReason("Open the configured HTTPS website to use ICICI Bank.");
+          else if (result?.code === "ICICI_UAT_TEST_ACCESS_REQUIRED")
+            setIciciUnavailableReason(
+              "Sign in as a Super Administrator on this website to test ICICI Bank UAT.",
+            );
+          else if (
+            result?.code === "CHECKOUT_STORAGE_UNAVAILABLE" ||
+            result?.code === "PAYMENT_STORAGE_UNAVAILABLE"
+          )
+            setIciciUnavailableReason("ICICI Bank booking preparation is temporarily unavailable.");
+        })
+        .catch(() => {
+          if (!signal.aborted)
+            setIciciUnavailableReason("Could not check ICICI Bank availability. Please retry.");
+        })
+        .finally(() => {
+          if (!signal.aborted) setIciciChecking(false);
+        });
     };
-  }, [session?.access_token]);
+    refresh();
+    window.addEventListener("focus", refresh);
+    window.addEventListener("online", refresh);
+    return () => {
+      controller.abort();
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("online", refresh);
+    };
+  }, [session?.access_token, isOpen]);
 
   useEffect(() => {
     let active = true;
@@ -268,6 +307,10 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
       e.preferredDate = "Pick a future date.";
     if (!/^\d{2}:\d{2}$/.test(form.preferredTime)) e.preferredTime = "Pick a time.";
     if (!form.timezone) e.timezone = "Time zone is required.";
+    if (planId && !e.preferredDate && !e.preferredTime && !e.timezone) {
+      const message = consultationScheduleError({ ...form, planId });
+      if (message) e.preferredTime = message;
+    }
     if (!form.meetingPlatform) e.meetingPlatform = "Select a meeting platform.";
     if (form.projectDescription.trim().length < 10)
       e.projectDescription = "Tell us a bit more (min 10 characters).";
@@ -276,7 +319,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   };
 
   const proceedToPayment = async () => {
-    if (!plan || submissionInFlight.current) return;
+    if (!plan || submissionInFlight.current || iciciChecking) return;
     if (!validate()) {
       toast.error("Please fix the highlighted fields.");
       return;
@@ -342,7 +385,9 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
       if (revision !== submissionRevision.current) return;
       if (!res.ok) {
         if (process.env.NODE_ENV === "development") {
-          console.warn("Consultation booking preparation failed", { code: res.code });
+          console.warn("Consultation booking preparation failed", {
+            code: res.code,
+          });
         }
         toast.error(res.error);
         return;
@@ -414,6 +459,10 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
 
   const payNow = async () => {
     if (!order || !plan || paying) return;
+    if (paymentGateway === "icici" && (iciciChecking || !iciciAvailable || !checkout)) {
+      toast.error("ICICI Bank payments are currently unavailable. Please choose Razorpay.");
+      return;
+    }
     let paymentOrder = order;
     if (checkout) {
       setPaying(true);
@@ -513,7 +562,9 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
       setPaying(false);
       setStep("failed");
       try {
-        await markConsultationPaymentFailed({ data: { bookingId: paymentOrder.bookingId } });
+        await markConsultationPaymentFailed({
+          data: { bookingId: paymentOrder.bookingId },
+        });
       } catch {
         /* non-blocking */
       }
@@ -612,12 +663,17 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                 <Field label="Preferred Date" required error={errors.preferredDate}>
                   <Input
                     type="date"
+                    min={consultationDateToday(form.timezone)}
                     value={form.preferredDate}
                     onChange={(e) => setField("preferredDate", e.target.value)}
                     className="date-input-white-icon"
                   />
                 </Field>
                 <Field label="Preferred Time" required error={errors.preferredTime}>
+                  <p className="text-xs text-muted-foreground">
+                    Business hours: {site.hours} ({site.businessHours.timeZone}
+                    ). Your selected time zone is converted automatically.
+                  </p>
                   <Input
                     type="time"
                     value={form.preferredTime}
@@ -655,7 +711,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                 <Button variant="outline" onClick={() => setStep("plans")} disabled={creating}>
                   Change Plan
                 </Button>
-                <Button onClick={proceedToPayment} disabled={creating}>
+                <Button onClick={proceedToPayment} disabled={creating || iciciChecking}>
                   {creating ? (
                     <>
                       <Loader2 className="size-4 animate-spin" /> Creating Secure Payment...
@@ -699,13 +755,21 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                 amount={order.amount}
                 disabled={paying}
                 iciciAvailable={iciciAvailable && !!checkout}
+                iciciChecking={iciciChecking}
+                iciciUnavailableReason={iciciUnavailableReason}
               />
 
               <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                 <Button variant="outline" onClick={() => setStep("details")} disabled={paying}>
                   Back
                 </Button>
-                <Button onClick={payNow} disabled={paying}>
+                <Button
+                  onClick={payNow}
+                  disabled={
+                    paying ||
+                    (paymentGateway === "icici" && (iciciChecking || !iciciAvailable || !checkout))
+                  }
+                >
                   {paying ? (
                     <>
                       <Loader2 className="size-4 animate-spin" /> Opening Secure Checkout...
@@ -966,18 +1030,14 @@ function PlanCard({
 }
 
 function FloatingButton() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
-
   return (
     <Link
       to="/consultation"
       aria-label="Book Consultation"
-      className="fixed bottom-5 left-4 z-40 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:bottom-8 sm:left-6"
+      className="fixed bottom-8 left-6 z-40 hidden items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl lg:inline-flex"
     >
       <CalendarDays className="size-4" />
-      <span className="hidden xs:inline sm:inline">Book Consultation</span>
+      <span>Book Consultation</span>
     </Link>
   );
 }

@@ -1,5 +1,5 @@
 const assert = require("node:assert/strict");
-const { createHmac } = require("node:crypto");
+const { createHmac, webcrypto } = require("node:crypto");
 const { test } = require("node:test");
 const { PGlite } = require("@electric-sql/pglite");
 const fs = require("node:fs");
@@ -39,12 +39,125 @@ function bankHarness(mode = "sorted-fields", responses = []) {
           const { body, hash } = signing.signMinifiedJson(data, secret);
           return new Response(body, { headers: { securehash: hash } });
         }
-        return Response.json({ ...data, secureHash: signing.signSortedFields(data, secret) });
+        return Response.json({
+          ...data,
+          secureHash: signing.signSortedFields(data, secret),
+        });
       },
     },
   );
   return { bank, calls };
 }
+
+test("transaction hashes match the supplied Web Crypto logic and change with transaction data", async () => {
+  const payload = {
+    txnDate: "20241121115413",
+    transactionType: "SALE",
+    returnURL: "http://localhost:3000/consultation",
+    payType: 0,
+    merchantTxnNo: "757588587575",
+    merchantId: "T_S00017",
+    customerName: "Narayan",
+    customerMobileNo: "917709356362",
+    customerEmailID: "narayan.kapase@phicommerce.com",
+    currencyCode: "356",
+    amount: "100.00",
+    aggregatorID: "A100000000007164",
+    addlParam2: "111",
+    addlParam1: "000",
+    secureHash: "excluded",
+  };
+  const encoder = new TextEncoder();
+  const key = await webcrypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const text = Object.keys(payload)
+    .sort()
+    .filter((key) => key !== "secureHash")
+    .map((key) => payload[key])
+    .join("");
+  const expected = Buffer.from(
+    await webcrypto.subtle.sign("HMAC", key, encoder.encode(text)),
+  ).toString("hex");
+  const bank = bankHarness().bank;
+  assert.equal(bank.generateSecureHash(payload, secret), expected);
+  assert.equal(
+    JSON.parse(signing.signedJson(payload, secret, "sorted-fields").body).secureHash,
+    expected,
+  );
+  for (const patch of [
+    { merchantTxnNo: "NEXT1" },
+    { amount: "101.00" },
+    { txnDate: "20241121115414" },
+  ])
+    assert.notEqual(bank.generateSecureHash({ ...payload, ...patch }, secret), expected);
+});
+
+test("localhost consultation return is allowed only in development with matching origin", () => {
+  const local = {
+    ...env,
+    NODE_ENV: "development",
+    ICICI_RETURN_URL: "http://localhost:3000/consultation",
+  };
+  const bank = load("src/lib/icici.server.ts", {}, { process: { env: local } });
+  const config = bank.iciciUatConfig();
+  assert.equal(config.returnURL, local.ICICI_RETURN_URL);
+  const origin = load("src/lib/icici-origin.server.ts", {}, { process: { env: local } });
+  origin.assertIciciOrigin(
+    new Request("http://localhost:3000/api/payments/icici/initiate"),
+    config.origin,
+  );
+  assert.throws(() =>
+    origin.assertIciciOrigin(new Request("http://attacker.test/"), config.origin),
+  );
+  for (const patch of [
+    { NODE_ENV: "production" },
+    { ICICI_RETURN_URL: "http://attacker.test/consultation" },
+    { ICICI_RETURN_URL: "http://localhost:3000/consultation?forged=1" },
+  ]) {
+    const invalid = load(
+      "src/lib/icici.server.ts",
+      {},
+      { process: { env: { ...local, ...patch } } },
+    );
+    assert.throws(() => invalid.iciciUatConfig());
+  }
+});
+
+test("local consultation bank POST rewrites to verified callback while page GET renders normally", () => {
+  const { NextRequest } = require("next/server");
+  const { proxy } = load(
+    "src/proxy.ts",
+    {},
+    {
+      process: {
+        env: {
+          NODE_ENV: "development",
+          ICICI_RETURN_URL: "http://localhost:3000/consultation",
+        },
+      },
+    },
+  );
+  const post = new NextRequest("http://localhost:3000/consultation?forged=1", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: "merchantTxnNo=REF1&secureHash=untrusted",
+  });
+  assert.equal(
+    proxy(post).headers.get("x-middleware-rewrite"),
+    "http://localhost:3000/api/payments/icici/callback",
+  );
+  assert.equal(
+    proxy(new NextRequest("http://localhost:3000/consultation")).headers.get(
+      "x-middleware-rewrite",
+    ),
+    null,
+  );
+});
 
 test("ICICI signing modes have independent preimages, transport and verification without fallback", () => {
   const input = {
@@ -113,7 +226,9 @@ test("ICICI configuration is UAT-only, explicitly confirmed and never inferred f
     { ICICI_ENVIRONMENT: "production" },
     { ICICI_SECRET_KEY: "" },
     { ICICI_RETURN_URL: "http://uat.example.test/api/payments/icici/callback" },
-    { ICICI_RETURN_URL: "https://uat.example.test/api/payments/icici/callback?attacker=1" },
+    {
+      ICICI_RETURN_URL: "https://uat.example.test/api/payments/icici/callback?attacker=1",
+    },
     { ICICI_BASE_URL: "https://pgpay.icicibank.com/pg/api/v2/initiateSale" },
   ]) {
     const bank = load("src/lib/icici.server.ts", {}, { process: { env: { ...env, ...patch } } });
@@ -138,6 +253,7 @@ for (const mode of ["sorted-fields", "json-v2"]) {
       amountPaise: 2_000_000,
       email: "synthetic@example.test",
       name: "Synthetic Tester",
+      phone: "917709356362",
     });
     assert.equal(
       result.redirectUrl,
@@ -147,6 +263,9 @@ for (const mode of ["sorted-fields", "json-v2"]) {
     assert.equal(request.amount, "20000.00");
     assert.equal(request.currencyCode, "356");
     assert.equal(request.payType, 0);
+    assert.equal(request.customerMobileNo, "917709356362");
+    if (mode === "sorted-fields")
+      assert.equal(request.secureHash, signing.signSortedFields(request, secret));
     assert.equal(request.returnURL, env.ICICI_RETURN_URL);
     assert.match(request.txnDate, /^\d{14}$/);
     assert.match(h.calls[0].url, /^https:\/\/pgpayuat\.icicibank\.com\//);
@@ -158,7 +277,11 @@ for (const mode of ["sorted-fields", "json-v2"]) {
       false,
     );
     const bad = bankHarness(mode, [
-      { responseCode: "R1000", redirectURI: "https://attacker.test/checkout", tranCtx: "context" },
+      {
+        responseCode: "R1000",
+        redirectURI: "https://attacker.test/checkout",
+        tranCtx: "context",
+      },
     ]);
     await assert.rejects(
       bad.bank.initiateIciciSale({
@@ -220,7 +343,10 @@ test("ICICI STATUS success requires independent signed matching transaction, amo
   ]) {
     const h = bankHarness("sorted-fields", [{ ...valid, ...patch }]);
     await assert.rejects(
-      h.bank.queryIciciStatus({ reference: "IC123456789012345678", amountPaise: 2_000_000 }),
+      h.bank.queryIciciStatus({
+        reference: "IC123456789012345678",
+        amountPaise: 2_000_000,
+      }),
     );
   }
   for (const [patch, expected] of [
@@ -232,8 +358,12 @@ test("ICICI STATUS success requires independent signed matching transaction, amo
   ]) {
     const h = bankHarness("sorted-fields", [{ ...valid, ...patch }]);
     assert.equal(
-      (await h.bank.queryIciciStatus({ reference: "IC123456789012345678", amountPaise: 2_000_000 }))
-        .status,
+      (
+        await h.bank.queryIciciStatus({
+          reference: "IC123456789012345678",
+          amountPaise: 2_000_000,
+        })
+      ).status,
       expected,
     );
   }
@@ -249,7 +379,10 @@ test("ICICI form callbacks include unknown POST fields in signatures and reject 
     txnID: "TXN123",
     futureField: "must-sign",
   };
-  const signed = { ...fields, secureHash: signing.signSortedFields(fields, secret) };
+  const signed = {
+    ...fields,
+    secureHash: signing.signSortedFields(fields, secret),
+  };
   assert.equal(bank.verifyIciciCallback(signed), fields.merchantTxnNo);
   assert.throws(
     () => bank.verifyIciciCallback({ ...signed, futureField: "changed" }),
@@ -270,7 +403,7 @@ const bookingFixture = {
   country: "India",
   service: "Website Development",
   preferredDate: "2027-01-01",
-  preferredTime: "10:00",
+  preferredTime: "11:00",
   timezone: "Asia/Kolkata",
   meetingPlatform: "Google Meet",
   projectDescription: "Synthetic booking used only in offline tests.",
@@ -407,23 +540,39 @@ function checkoutHarness({ initiationFails = false } = {}) {
     },
     { process: { env: { ...env, RAZORPAY_KEY_ID: "rzp_test_fixture" } } },
   );
-  return { api, sessions, bookings, counts: () => ({ bankStarts, razorpayStarts, statusChecks }) };
+  return {
+    api,
+    sessions,
+    bookings,
+    counts: () => ({ bankStarts, razorpayStarts, statusChecks }),
+  };
 }
-const capability = { id: "00000000-0000-4000-8000-000000000001", token: "b".repeat(64) };
+const capability = {
+  id: "00000000-0000-4000-8000-000000000001",
+  token: "b".repeat(64),
+};
 
 test("ICICI checkout reservation prevents concurrent charges, provider switching and repeat initiation", async () => {
   const h = checkoutHarness();
   // Use a real supported service name, retaining the rest of the synthetic booking.
   const plans = load("src/data/consultations.ts");
   const booking = { ...bookingFixture, service: plans.consultationServices[0] };
-  const prepared = await h.api.prepareCheckout({ ...capability, booking, amount: 1 });
+  const prepared = await h.api.prepareCheckout({
+    ...capability,
+    booking,
+    amount: 1,
+  });
   assert.equal(prepared.amount_paise, 2_000_000);
   const calls = await Promise.allSettled([
     h.api.startCheckout({ ...capability, gateway: "icici" }),
     h.api.startCheckout({ ...capability, gateway: "icici" }),
   ]);
   assert.equal(calls.filter((result) => result.status === "fulfilled").length, 1);
-  assert.deepEqual(h.counts(), { bankStarts: 1, razorpayStarts: 0, statusChecks: 0 });
+  assert.deepEqual(h.counts(), {
+    bankStarts: 1,
+    razorpayStarts: 0,
+    statusChecks: 0,
+  });
   await h.api.startCheckout({ ...capability, gateway: "icici" });
   assert.equal(h.counts().bankStarts, 1);
   await assert.rejects(
@@ -435,7 +584,10 @@ test("ICICI checkout reservation prevents concurrent charges, provider switching
     /could not be found/,
   );
   await assert.rejects(
-    h.api.prepareCheckout({ ...capability, booking: { ...booking, planId: "quick" } }),
+    h.api.prepareCheckout({
+      ...capability,
+      booking: { ...booking, planId: "quick" },
+    }),
     /different booking details/,
   );
 });
@@ -452,7 +604,11 @@ test("an ambiguous ICICI initiation is reconciled without issuing a second bank 
   const retry = await h.api.startCheckout({ ...capability, gateway: "icici" });
   assert.equal(retry.pending, true);
   await h.api.checkoutStatus(capability);
-  assert.deepEqual(h.counts(), { bankStarts: 1, razorpayStarts: 0, statusChecks: 1 });
+  assert.deepEqual(h.counts(), {
+    bankStarts: 1,
+    razorpayStarts: 0,
+    statusChecks: 1,
+  });
 });
 
 test("ICICI callback route ignores query claims, rejects duplicate fields and acknowledges advice only after reconciliation", async () => {
@@ -490,7 +646,11 @@ test("ICICI callback route ignores query claims, rejects duplicate fields and ac
   const request = (body) =>
     new Request(
       "https://uat.example.test/api/payments/icici/callback?responseCode=paid&merchantTxnNo=forged",
-      { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body },
+      {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body,
+      },
     );
   const callback = await routes.receiveIciciCallback(request(form));
   assert.equal(callback.status, 303);

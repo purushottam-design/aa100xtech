@@ -85,12 +85,11 @@ function Hero() {
               <Sparkles className="size-3.5" /> Expert IT Consultation
             </Badge>
             <h1 className="mt-6 text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl">
-              Book a 1-on-1 <span className="text-gradient-ember">Consultation</span> With Our IT
-              Experts
+              Talk to Our IT &amp; Marketing Experts
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Get professional guidance for your website, software, mobile app, AI solution, cloud
-              infrastructure, or digital transformation project.
+              Connect with our team to discuss your website, application, digital marketing,
+              branding, or business technology requirements.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button size="lg" className="glow-ring" onClick={scrollToPlans}>
@@ -151,7 +150,7 @@ const stats = [
   { icon: Rocket, value: "200+", label: "Projects Completed" },
   { icon: Target, value: "98%", label: "Client Satisfaction" },
   { icon: Code2, value: "40+", label: "Technologies" },
-  { icon: Users, value: "1+", label: "Years Experience" },
+  { icon: Users, value: "10+", label: "Years of Team Experience" },
 ];
 
 function Stats() {
@@ -397,6 +396,9 @@ function PlanCard({
   badge?: string;
   onBook: (id: string) => void;
 }) {
+  // Prevent clicks on server-rendered cards before their handlers are attached.
+  const [interactive, setInteractive] = useState(false);
+  useEffect(() => setInteractive(true), []);
   return (
     <div
       className={`surface-card relative flex flex-col p-6 transition-all hover:-translate-y-1 ${
@@ -420,6 +422,7 @@ function PlanCard({
       <Button
         className="mt-6 w-full"
         variant={featured ? "default" : "outline"}
+        disabled={!interactive}
         onClick={() => onBook(id)}
       >
         {buttonLabel} <ArrowRight className="size-4" />
@@ -478,7 +481,10 @@ function PremiumPlans() {
 }
 
 const comparisonRows: { label: string; values: string[] }[] = [
-  { label: "Duration", values: ["15 min", "30 min", "1 hr", "1.5 hrs", "2 hrs", "3 hrs"] },
+  {
+    label: "Duration",
+    values: ["15 min", "30 min", "1 hr", "1.5 hrs", "2 hrs", "3 hrs"],
+  },
   {
     label: "Price",
     values: ["₹2,500", "₹5,000", "₹10,000", "₹20,000", "₹30,000", "₹50,000"],
@@ -498,20 +504,19 @@ const comparisonRows: { label: string; values: string[] }[] = [
     label: "Expert Level",
     values: ["Consultant", "Consultant", "Senior", "Senior expert", "Architect", "Expert team"],
   },
-  { label: "Architecture Guidance", values: ["—", "—", "Yes", "Yes", "Yes", "Yes"] },
-  { label: "Business Analysis", values: ["—", "Basic", "Yes", "Yes", "Yes", "Yes"] },
+  {
+    label: "Architecture Guidance",
+    values: ["—", "—", "Yes", "Yes", "Yes", "Yes"],
+  },
+  {
+    label: "Business Analysis",
+    values: ["—", "Basic", "Yes", "Yes", "Yes", "Yes"],
+  },
   { label: "Roadmap", values: ["—", "—", "Yes", "Yes", "Yes", "Long-term"] },
   { label: "AI Strategy", values: ["—", "—", "—", "Yes", "Yes", "Yes"] },
 ];
 
-const comparisonCols = [
-  "Quick",
-  "Standard",
-  "Professional",
-  "Premium",
-  "Enterprise",
-  "Executive",
-];
+const comparisonCols = ["Quick", "Standard", "Professional", "Premium", "Enterprise", "Executive"];
 
 function Comparison() {
   return (
@@ -550,18 +555,46 @@ function Comparison() {
 }
 
 const audience = [
-  { icon: Rocket, title: "Startups", body: "Validate your idea and plan an efficient MVP build." },
-  { icon: Building2, title: "Businesses", body: "Modernise systems and improve digital presence." },
+  {
+    icon: Rocket,
+    title: "Startups",
+    body: "Validate your idea and plan an efficient MVP build.",
+  },
+  {
+    icon: Building2,
+    title: "Businesses",
+    body: "Modernise systems and improve digital presence.",
+  },
   {
     icon: ShieldCheck,
     title: "Enterprises",
     body: "Plan secure, scalable and compliant architecture.",
   },
-  { icon: Users, title: "Founders", body: "Get honest technical direction before you commit." },
-  { icon: LineChart, title: "Investors", body: "Assess technical feasibility and delivery risk." },
-  { icon: Code2, title: "Developers", body: "Review architecture, stack choices and performance." },
-  { icon: Workflow, title: "Product Teams", body: "Turn roadmaps into realistic delivery plans." },
-  { icon: Globe, title: "Organizations", body: "Digitise operations with automation and AI." },
+  {
+    icon: Users,
+    title: "Founders",
+    body: "Get honest technical direction before you commit.",
+  },
+  {
+    icon: LineChart,
+    title: "Investors",
+    body: "Assess technical feasibility and delivery risk.",
+  },
+  {
+    icon: Code2,
+    title: "Developers",
+    body: "Review architecture, stack choices and performance.",
+  },
+  {
+    icon: Workflow,
+    title: "Product Teams",
+    body: "Turn roadmaps into realistic delivery plans.",
+  },
+  {
+    icon: Globe,
+    title: "Organizations",
+    body: "Digitise operations with automation and AI.",
+  },
 ];
 
 function WhoFor() {

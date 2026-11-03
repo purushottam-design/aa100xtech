@@ -1,3 +1,4 @@
+import { site } from "./site";
 export type Role = {
   title: string;
   line: string;
@@ -95,7 +96,11 @@ const scorecard = [
     body: "Would we send this to a paying client without touching it?",
     pts: 40,
   },
-  { name: "Speed", body: "Did each milestone land on its date, or did the date move?", pts: 25 },
+  {
+    name: "Speed",
+    body: "Did each milestone land on its date, or did the date move?",
+    pts: 25,
+  },
   {
     name: "Cost efficiency",
     body: "What did it cost in tools, credits and hours — and could it be cheaper at 100 units?",
@@ -118,8 +123,8 @@ export const globalCohort: CareersCohort = {
   lede: "AA100X Tech is opening 30 remote seats across 11 product lines. Skip the resume theatre — shortlisted candidates get one real client-grade brief and 10 days to ship it. Ship it well and the role is confirmed on day 10.",
   kicker: "Kaam bolega. Resume baad mein.",
   seats: 30,
-  email: "careers@aa100xtech.com",
-  whatsapp: "+919031838342",
+  email: site.hrEmail,
+  whatsapp: site.phoneHref.replace("tel:", ""),
   stats: [
     { value: "30", label: "Seats open" },
     { value: "11", label: "Product lines" },
@@ -146,7 +151,7 @@ export const globalCohort: CareersCohort = {
     ],
   },
   rolesIntro:
-    "Every role below shows the exact trial task before you apply. Nothing is hidden until \"round three\" — there is no round three. Apply to one role only; you get one brief.",
+    'Every role below shows the exact trial task before you apply. Nothing is hidden until "round three" — there is no round three. Apply to one role only; you get one brief.',
   roles: [
     {
       title: "Frontend web developer",
@@ -165,7 +170,8 @@ export const globalCohort: CareersCohort = {
       briefDays: 10,
       brief:
         "Ship a three-screen working app — onboarding, upload, result — wired to a real API, not mock data. Hand over an installable build.",
-      deliver: "Signed APK or TestFlight link, repo, and a short screen recording of the full flow.",
+      deliver:
+        "Signed APK or TestFlight link, repo, and a short screen recording of the full flow.",
       tools: ["React Native", "Flutter", "Firebase", "Supabase"],
     },
     {
@@ -175,7 +181,8 @@ export const globalCohort: CareersCohort = {
       briefDays: 10,
       brief:
         "Build one agent that takes an inbound lead form, enriches it, scores it, drafts a reply in our tone, and logs it — end to end, with zero manual steps in the middle.",
-      deliver: "The working workflow, a recorded test run on ten fake leads, and your cost per 1,000 leads.",
+      deliver:
+        "The working workflow, a recorded test run on ten fake leads, and your cost per 1,000 leads.",
       tools: ["n8n", "Make.com", "Claude / OpenAI API", "Webhooks"],
     },
     {
@@ -195,7 +202,8 @@ export const globalCohort: CareersCohort = {
       briefDays: 10,
       brief:
         "Turn a 20-page product doc into a support agent. It should answer 20 test questions correctly, escalate the three it shouldn't touch, and never invent a fact it wasn't given.",
-      deliver: "A live chat widget plus an accuracy log showing all 23 test cases and their outcomes.",
+      deliver:
+        "A live chat widget plus an accuracy log showing all 23 test cases and their outcomes.",
       tools: ["Claude / OpenAI API", "Vector search", "Chat widgets", "Ticketing"],
     },
     {
@@ -226,7 +234,8 @@ export const globalCohort: CareersCohort = {
       briefDays: 7,
       brief:
         "Twenty-five raw property photos into twenty-five finished ones — straightened, colour matched, windows recovered, skies replaced where they need it. Batch consistency counts more than any single hero shot.",
-      deliver: "The full before-and-after set and the preset or action you built to keep them consistent.",
+      deliver:
+        "The full before-and-after set and the preset or action you built to keep them consistent.",
       tools: ["Lightroom", "Photoshop", "Topaz"],
     },
     {
@@ -236,7 +245,8 @@ export const globalCohort: CareersCohort = {
       briefDays: 10,
       brief:
         "One 60-second brand film and three 15-second vertical cuts, all from the same footage pack we send you. Licensed music, burned captions, brand end card.",
-      deliver: "Four exports at the right specs, plus the project file so someone else could pick it up.",
+      deliver:
+        "Four exports at the right specs, plus the project file so someone else could pick it up.",
       tools: ["Premiere Pro", "After Effects", "DaVinci Resolve", "ffmpeg"],
     },
     {
@@ -365,8 +375,8 @@ export const londonCohort: CareersCohort = {
   headlineAccent: "No London commute.",
   lede: "AA100X Tech already runs product lines out of Dubai, Mumbai and New York. We're opening the London studio to serve UK clients on UK hours — starting with twelve people. Skip the interview rounds: shortlisted candidates get one real client brief and ten days to ship it.",
   seats: 12,
-  email: "careers-uk@aa100xtech.com",
-  whatsapp: "+919031838342",
+  email: site.hrEmail,
+  whatsapp: site.phoneHref.replace("tel:", ""),
   stats: [
     { value: "London", label: "Base · your working day" },
     { value: "Dubai", label: "Overlaps your morning" },
@@ -406,7 +416,7 @@ export const londonCohort: CareersCohort = {
     ],
   },
   rolesIntro:
-    "Every role shows its exact trial task. Nothing is held back for \"round three\" — there is no round three. Apply to one role only; you get one brief. You'll need the right to work in the UK, and you can be anywhere in the country.",
+    'Every role shows its exact trial task. Nothing is held back for "round three" — there is no round three. Apply to one role only; you get one brief. You\'ll need the right to work in the UK, and you can be anywhere in the country.',
   roles: [
     {
       title: "AI video producer — property",
@@ -426,7 +436,8 @@ export const londonCohort: CareersCohort = {
       briefDays: 7,
       brief:
         "Twenty-five raw photos of a period conversion into twenty-five finished ones — verticals straightened, blown windows recovered, mixed tungsten and daylight balanced, flat grey sky replaced. Batch consistency counts more than any single hero shot.",
-      deliver: "The full before-and-after set, plus the preset you built to keep the batch consistent.",
+      deliver:
+        "The full before-and-after set, plus the preset you built to keep the batch consistent.",
       tools: ["Lightroom", "Photoshop", "Topaz"],
     },
     {
@@ -457,8 +468,7 @@ export const londonCohort: CareersCohort = {
       briefDays: 10,
       brief:
         "Stand up one outbound campaign to 200 London and South East estate agencies — one AI voice script, one four-email sequence. UK business hours only, a working one-click opt-out in every email, and no calling anyone on the TPS list.",
-      deliver:
-        "Connect rate, reply rate, demos booked, and your real cost per booked call in £.",
+      deliver: "Connect rate, reply rate, demos booked, and your real cost per booked call in £.",
       tools: ["Bland AI", "Retell AI", "Instantly.ai", "Make.com"],
     },
     {
@@ -478,7 +488,8 @@ export const londonCohort: CareersCohort = {
       briefDays: 10,
       brief:
         "One 60-second brand film and three 15-second verticals, all from the same footage pack. Properly licensed music, burned captions, brand end card.",
-      deliver: "Four exports at spec, plus the project file so someone else could pick it up tomorrow.",
+      deliver:
+        "Four exports at spec, plus the project file so someone else could pick it up tomorrow.",
       tools: ["Premiere Pro", "After Effects", "DaVinci Resolve", "ffmpeg"],
     },
     {

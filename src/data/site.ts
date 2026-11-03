@@ -1,6 +1,6 @@
 export const site = {
   name: "AA100XTech",
-  legalName: "Absolute Advancement 100X Tech",
+  legalName: "Absolute Advancement 100X Tech Pvt. Ltd.",
   tagline: "Premium digital & IT engineering studio",
   email: "customer.care@aa100xtech.com",
   phone: "+91 90318 38342",
@@ -8,26 +8,28 @@ export const site = {
   address: "101 City Plaza, Kidwaipuri, Patna, Bihar - 800001, India",
   mapUrl:
     "https://www.google.com/maps/search/?api=1&query=City+Plaza+Kidwaipuri+Patna+Bihar+800001",
-  hours: "Mon – Sat: 10:00 AM – 7:00 PM",
+  hours: "11:00 AM – 5:00 PM",
+  businessHours: { start: 11, end: 17, timeZone: "Asia/Calcutta" },
+  consultationUrl: "/consultation",
+  origin: "https://aa100xtech.com",
+  hrEmail: "hr@aa100xtech.com",
+  phoneApprovalPending: true,
   gstin: "10ABCCA6080A1ZH",
   domain: "www.aa100xtech.com",
 } as const;
 
-export const navLinks = [
+export const navLinks: readonly { to: string; label: string; href?: string }[] = [
   { to: "/", label: "Home" },
   { to: "/services", label: "Services" },
-  { to: "/clients", label: "Our Top Clients" },
-  { to: "/be-the-one", label: "Be The One" },
-  { to: "/creator-moves-365", label: "Creator Moves 365" },
-  { to: "/founders", label: "Founder", href: "https://theamanlife.com/" },
-  // { to: "/real-estate", label: "Real Estate Services" },
+  { to: "/portfolio", label: "Portfolio" },
+  { to: "/business-plans", label: "Business Plans" },
+  { to: "/consultation", label: "Consultation" },
+  { to: "/contact", label: "Contact" },
   { to: "/careers", label: "Careers" },
 ] as const;
 
 // Keep footer links and the underlying pages available.
-export const headerNavLinks = navLinks.filter(
-  (link) => link.to !== "/creator-moves-365" && link.to !== "/careers",
-);
+export const headerNavLinks = navLinks.filter((link) => link.to !== "/careers");
 
 // Re-enable navigation account controls without changing authentication routes.
 export const showAuthButtons = true;
@@ -44,15 +46,16 @@ export const marketingLinks = [
     label: "Social Media Marketing",
   },
   { to: "/influencer-marketing", label: "Influencer Marketing" },
+  { to: "/influencer-programs", label: "Influencer Programs" },
 ] as const;
 
 export const moreLinks = [
   { to: "/about", label: "About" },
-  { to: "/portfolio", label: "Portfolio" },
   { to: "/partners", label: "Partners" },
   { to: "/affiliates", label: "Affiliates" },
-  { to: "/consultation", label: "Book a consultation" },
-  { to: "/contact", label: "Contact" },
+  { to: "/founders", label: "Aman" },
+  { to: "/influencer-marketing", label: "Influencer Marketing" },
+  { to: "/influencer-programs", label: "Influencer Programs" },
 ] as const;
 
 export const legalLinks = [
@@ -67,15 +70,22 @@ export const legalLinks = [
 export const heroStats = [
   { value: 200, suffix: "+", label: "Projects completed" },
   { value: 98, suffix: "%", label: "Client satisfaction" },
-  { value: 24, suffix: "/7", label: "Support available" },
+  { value: 10, suffix: "+", label: "Years of team experience" },
 ];
 
 export const clients = [
-  { name: "Worldwide Prominent Properties", url: "https://worldwideprominentproperties.com/" },
+  {
+    name: "Worldwide Prominent Properties",
+    url: "https://worldwideprominentproperties.com/",
+  },
   { name: "EcoBlossom Creations", url: "https://ecoblossomcreations.com/" },
   { name: "Tasty Foods Delights", url: "https://tastyfoodsdelights.com/" },
-  { name: "PicEmpire", url: "https://picempire.ai/" },
-  { name: "Shakti Sphere Lifestyle", url: "https://shaktispherelifestyle.com/" },
+  { name: "CreatorsMove365.ai", url: "https://creatormoves365.ai/" },
+  { name: "CreatorsMove365.com", url: "https://creatormoves365.com/" },
+  {
+    name: "Shakti Sphere Lifestyle",
+    url: "https://shaktispherelifestyle.com/",
+  },
 ];
 
 export const whyChooseUs = [

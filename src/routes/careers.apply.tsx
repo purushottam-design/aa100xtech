@@ -2,7 +2,7 @@
 
 import { Link } from "@/lib/navigation";
 import { ArrowLeft, Loader2, Upload } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { globalCohort } from "@/data/careers";
-import { supabase } from "@/integrations/supabase/client";
+import { submitWebsiteRequest } from "@/lib/website-requests";
+import { site } from "@/data/site";
 
 const title = "Candidate Task Submission — Careers | AA100XTech";
 const description =
@@ -26,6 +27,8 @@ export default CandidateApplyPage;
 
 function CandidateApplyPage() {
   const [submitting, setSubmitting] = useState(false);
+  const openedAt = useRef(Date.now());
+  const requestId = useRef<string | null>(null);
   const [role, setRole] = useState("");
   const [fileName, setFileName] = useState("");
 
@@ -33,52 +36,46 @@ function CandidateApplyPage() {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
+    if (submitting) return;
+    const value = (key: string) => String(fd.get(key) ?? "").trim();
     const file = fd.get("file");
+    requestId.current ??= crypto.randomUUID();
     setSubmitting(true);
-
-    let filePath: string | null = null;
-    if (file instanceof File && file.size > 0) {
-      if (file.size > 50 * 1024 * 1024) {
-        setSubmitting(false);
-        toast.error("File is larger than 50 MB — please share a download link instead.");
-        return;
-      }
-      const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `${crypto.randomUUID()}/${safe}`;
-      const { error: uploadError } = await supabase.storage
-        .from("candidate-uploads")
-        .upload(path, file);
-      if (uploadError) {
-        setSubmitting(false);
-        toast.error("Upload failed. Please try a smaller file or a link.");
-        return;
-      }
-      filePath = path;
+    try {
+      await submitWebsiteRequest(
+        {
+          id: requestId.current,
+          startedAt: openedAt.current,
+          kind: "career",
+          name: value("full_name"),
+          email: value("email"),
+          phone: value("phone"),
+          role,
+          requirements: value("task_title"),
+          hours: value("hours_needed"),
+          availability: value("availability"),
+          expectedCost: value("expected_cost"),
+          portfolio: value("portfolio_url"),
+          experience: value("experience"),
+          message: value("deliverables"),
+        },
+        file instanceof File && file.size ? file : undefined,
+      );
+      toast.success("Your application has been saved for HR review.");
+      form.reset();
+      setRole("");
+      setFileName("");
+      requestId.current = null;
+      openedAt.current = Date.now();
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Could not save your application. Please contact " + site.hrEmail,
+      );
+    } finally {
+      setSubmitting(false);
     }
-
-    const { error } = await supabase.from("candidate_submissions").insert({
-      full_name: String(fd.get("full_name") ?? ""),
-      email: String(fd.get("email") ?? ""),
-      phone: String(fd.get("phone") ?? ""),
-      role_applied: role,
-      task_title: String(fd.get("task_title") ?? ""),
-      hours_needed: String(fd.get("hours_needed") ?? ""),
-      availability: String(fd.get("availability") ?? ""),
-      expected_cost: String(fd.get("expected_cost") ?? ""),
-      deliverables: String(fd.get("deliverables") ?? ""),
-      portfolio_url: String(fd.get("portfolio_url") ?? ""),
-      file_path: filePath,
-    });
-
-    setSubmitting(false);
-    if (error) {
-      toast.error("Could not send your submission. Please try again.");
-      return;
-    }
-    toast.success("Submission received — we review every brief plan within 48 hours.");
-    form.reset();
-    setRole("");
-    setFileName("");
   }
 
   return (
@@ -156,7 +153,11 @@ function CandidateApplyPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="expected_cost">Your cost / rate</Label>
-                <Input id="expected_cost" name="expected_cost" placeholder="₹ per task or per month" />
+                <Input
+                  id="expected_cost"
+                  name="expected_cost"
+                  placeholder="₹ per task or per month"
+                />
               </div>
             </div>
 
@@ -170,6 +171,16 @@ function CandidateApplyPage() {
                 placeholder="List the files, formats, revisions and the day-by-day plan you will follow."
               />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="experience">Experience</Label>
+              <Textarea
+                id="experience"
+                name="experience"
+                maxLength={1000}
+                rows={3}
+                placeholder="Describe your relevant experience"
+              />
+            </div>
 
             <div className="grid gap-2">
               <Label htmlFor="portfolio_url">Portfolio / previous work link</Label>
@@ -177,7 +188,7 @@ function CandidateApplyPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="file">Upload your work (max 50 MB)</Label>
+              <Label htmlFor="file">Resume / work sample (PDF, max 5 MB)</Label>
               <label
                 htmlFor="file"
                 className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-border/70 bg-surface-2/50 px-4 py-5 text-sm text-muted-foreground transition-colors hover:border-primary/50"
@@ -189,6 +200,7 @@ function CandidateApplyPage() {
                 id="file"
                 name="file"
                 type="file"
+                accept="application/pdf,.pdf"
                 className="sr-only"
                 onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")}
               />

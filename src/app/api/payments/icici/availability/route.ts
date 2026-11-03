@@ -3,9 +3,6 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const development = process.env.NODE_ENV === "development";
-  // Temporary server diagnostic: this approval flag is nonsecret.
-  if (development)
-    console.log("ICICI_UAT_MERCHANT_CONFIRMED:", process.env["ICICI_UAT_MERCHANT_CONFIRMED"]);
   const result = await iciciAvailability(request);
   if (development && !result.available)
     console.warn(`[ICICI availability] ${JSON.stringify(result)}`);

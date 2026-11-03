@@ -1,6 +1,6 @@
 # ICICI PG v2: UAT integration
 
-The implementation is UAT-only. The current signing mode is `sorted-fields`, as instructed by the merchant and confirmed against the supplied bank reference. The merchant explicitly confirmed that bank activation/return-URL registration is still pending, so `ICICI_UAT_MERCHANT_CONFIRMED=false` and no bank transaction has been attempted. See [current readiness report](icici-availability.md). Existing Razorpay credentials, SDK, order/verification functions, pricing and page layout are preserved.
+The implementation is UAT-only. The current signing mode is `sorted-fields`, as instructed by the merchant and confirmed against the supplied bank reference. Local configuration permits controlled Super Administrator testing while `ICICI_UAT_TESTS_PASSED=false`. An isolated UAT Initiate Sale response has been verified, but STATUS is blocked and no payment has completed. See the [current verification report](icici-uat-verification.md) for actual results, authorization/schema limitations and remaining bank dependencies. Existing Razorpay credentials, SDK, order/verification functions, pricing and page layout are preserved.
 
 ## Document reconciliation
 
@@ -22,6 +22,18 @@ Interface p40 explicitly defines STATUS requests as form-encoded. They use field
 Form callbacks/advice always use the documented field hash over **POST body fields only**. URL query parameters are excluded. Duplicate form keys, missing/malformed hashes, tampering, wrong merchant/aggregator/reference and transaction mismatches are rejected. The adapter supports the default form-encoded payment advice; JSON advice requires a separately confirmed onboarding contract and is rejected for now.
 
 ## Server configuration
+
+### Local guest testing
+
+At the owner's request, `.env.development.local` now enables
+`ICICI_UAT_GUEST_CHECKOUT=true`. With test mode enabled, guests can prepare and
+initiate consultation checkout on the exact configured `DEV_TUNNEL_ORIGIN`
+without login/signup. This opt-in requires `NODE_ENV=development`, trusted HTTPS
+forwarding and a matching callback origin; it has no effect in production builds.
+Origin/CSRF checks, checkout capabilities, bank signature verification and
+independent STATUS settlement remain enforced. It never sets
+`ICICI_UAT_TESTS_PASSED=true`. Use the ngrok HTTPS page rather than localhost.
+The unresolved bank STATUS HTTP 403 still prevents verified completion.
 
 Use a separate HTTPS UAT deployment and test Supabase database. Do not use real customer booking information. Keep merchant secrets in server environment settings; never add `NEXT_PUBLIC_` credentials. Existing `.env` values were not modified.
 
@@ -51,6 +63,8 @@ ICICI_UAT_TEST_MODE=true
 ```
 
 `ICICI_RETURN_URL` must be HTTPS, at most 128 characters, use the exact callback path and contain no user credentials, query string or fragment. The application origin must match it. Have ICICI register it and any required source IP/certificate allowlists. Register `/api/payments/icici/advice` on that origin for form-encoded payment advice.
+
+For local development (`npm run dev`) only, `ICICI_RETURN_URL=http://localhost:3000/consultation` is also supported. Set `ICICI_SIGNING_MODE=sorted-fields`, keep the bank secret in server-only `ICICI_SECRET_KEY`, and set `ICICI_TRUST_PROXY=false`. Browse `http://localhost:3000`. Each initiation signs the actual transaction fields, including amount, reference, customer mobile number, return URL and timestamp, with the sorted-value HMAC-SHA256 algorithm. Form POSTs to `/consultation` are internally rewritten to the verified callback handler, which reconciles bank status before returning to the page. The bank must permit this return URL; server-to-server advice cannot reach localhost. Existing UAT activation and access gates still apply. Production builds require the HTTPS callback URL above.
 
 The current merchant instruction selects **method 1**, `ICICI_SIGNING_MODE=sorted-fields`, matching API guide p6 and the Node.js reference p3. Use `json-v2` only for a separately confirmed Hash Calculation v2 contract. Do not infer it from `/v2/initiateSale` or try another mode after a failure.
 

@@ -80,6 +80,59 @@ test("RPC allowlist, HTTP methods and cross-site request protection", async () =
   assert.equal((await result.json()).data, 1);
 });
 
+test("explicit development tunnel forwarding preserves same-origin and auth boundaries", async () => {
+  const tunnel = "https://tractor-nautical-snowbird.ngrok-free.dev";
+  let calls = 0;
+  const registry = { "test/run": createServerFn({ method: "POST" }).handler(async () => ++calls) };
+  const forwarded = {
+    origin: tunnel,
+    "x-forwarded-host": new URL(tunnel).host,
+    "x-forwarded-proto": "https",
+  };
+  const send = (env, headers = forwarded, host = "http://localhost:3000") => {
+    const transport = load(
+      "src/lib/backend/transport.server.ts",
+      {
+        "./request-context.server": context,
+      },
+      { process: { env } },
+    );
+    return transport.handleRpc(
+      new Request(`${host}/api/rpc/test/run`, {
+        method: "POST",
+        headers: { "x-aa-rpc": "1", "content-type": "application/json", ...headers },
+        body: JSON.stringify({ data: {} }),
+      }),
+      "test/run",
+      registry,
+    );
+  };
+  const dev = { NODE_ENV: "development", DEV_TUNNEL_ORIGIN: tunnel };
+  assert.equal((await send(dev)).status, 200);
+  assert.equal((await send(dev, { origin: "http://localhost:3000" })).status, 200);
+  assert.equal(calls, 2);
+  for (const headers of [
+    { ...forwarded, origin: "https://attacker.example" },
+    { ...forwarded, origin: "null" },
+    { ...forwarded, "x-forwarded-proto": "http" },
+    { ...forwarded, "x-forwarded-proto": "https,http" },
+    { ...forwarded, "x-forwarded-host": "attacker.example" },
+    { ...forwarded, "x-forwarded-host": `${new URL(tunnel).host},attacker.example` },
+    { ...forwarded, "x-aa-rpc": "0" },
+    { ...forwarded, "sec-fetch-site": "cross-site" },
+    { origin: tunnel },
+  ])
+    assert.equal((await send(dev, headers)).status, 403);
+  for (const env of [
+    { NODE_ENV: "development" },
+    { NODE_ENV: "production", DEV_TUNNEL_ORIGIN: tunnel },
+    { ...dev, DEV_TUNNEL_ORIGIN: `${tunnel}/untrusted-path` },
+    { ...dev, DEV_TUNNEL_ORIGIN: "http://localhost:3000" },
+  ])
+    assert.equal((await send(env)).status, 403);
+  assert.equal(calls, 2, "Rejected requests never reach business logic");
+});
+
 test("Zod validation and malformed JSON reject before the handler", async () => {
   let calls = 0;
   const { z } = require("zod");
