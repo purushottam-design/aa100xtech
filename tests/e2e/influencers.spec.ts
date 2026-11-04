@@ -7,7 +7,7 @@ for (const width of [1440, 768, 390]) {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/influencers", { waitUntil: "domcontentloaded" });
-    await expect(page.locator("h1")).toContainText("Real Business Growth");
+    await expect(page.locator("h1")).toHaveText("Partner With Influence.Grow With Impact.");
     await expect(page.locator("header")).toBeVisible();
     await expect(page.locator("footer")).toBeAttached();
     await expect(page.locator(".ip-spotlight")).toHaveCount(0);
@@ -26,7 +26,8 @@ for (const width of [1440, 768, 390]) {
       path: testInfo.outputPath(`influencers-${width}.png`),
       fullPage: true,
     });
-    await expect(page.getByRole("button", { name: "Join Us", exact: true })).toHaveCount(0);
+    if (width >= 1280)
+      await expect(page.getByRole("button", { name: "Join Us", exact: true })).toBeVisible();
     await page
       .getByRole("link", { name: "Become an Influencer Partner", exact: true })
       .first()
@@ -134,6 +135,9 @@ test("the program join form preserves applicant details on failure and submits t
   const applications: {
     socials: { primary: string; instagram_followers: number };
     program_terms_consent: boolean;
+    submission_id: string;
+    portfolio_url: string;
+    deliverables: string;
   }[] = [];
   await page.route("**/api/influencers/apply", async (route) => {
     const body = route.request().postDataBuffer()?.toString() ?? "";
@@ -158,21 +162,26 @@ test("the program join form preserves applicant details on failure and submits t
     follower_count: "321",
     audience_location: "India",
     motivation: "I want to connect genuine businesses with a trusted technology team.",
+    portfolio_url: "https://example.test/portfolio",
+    collaboration_interests: "Educational creator videos and brand collaborations.",
   }))
     await form.locator(`[name="${name}"]`).fill(value);
   await form.locator('[name="primary_platform"]').selectOption("instagram");
   await form.locator('[name="category"]').selectOption("Technology");
   for (const name of ["program_terms_consent", "processing_consent", "publication_consent"])
     await form.locator(`[name="${name}"]`).check();
-  await form.getByRole("button", { name: "Apply to Join AA100XTech", exact: false }).click();
+  await form.getByRole("button", { name: "Apply as Influencer", exact: false }).click();
   await expect(form.getByRole("alert")).toContainText("could not be saved");
   await expect(form.locator('[name="full_name"]')).toHaveValue("Synthetic Creator");
   expect(applications[0].socials.primary).toBe("instagram");
   expect(applications[0].socials.instagram_followers).toBe(321);
   expect(applications[0].program_terms_consent).toBe(true);
+  expect(applications[0].portfolio_url).toBe("https://example.test/portfolio");
+  expect(applications[0].deliverables).toBe("Educational creator videos and brand collaborations.");
   success = true;
-  await form.getByRole("button", { name: "Apply to Join AA100XTech", exact: false }).click();
+  await form.getByRole("button", { name: "Apply as Influencer", exact: false }).click();
   await expect(
     page.getByRole("heading", { name: "Your next chapter starts here.", exact: true }),
   ).toBeVisible();
+  expect(applications[0].submission_id).toBe(applications[1].submission_id);
 });

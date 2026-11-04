@@ -1,3 +1,4 @@
+import { withSocialMetadata } from "@/lib/page-metadata";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Check, Layers, Mail } from "lucide-react";
@@ -5,12 +6,12 @@ import { businessPlans, emailEntitlements } from "@/data/business-plans";
 import { Button } from "@/components/ui/button";
 import { ExpertCta } from "@/components/expert-cta";
 import { Price } from "@/components/currency-provider";
-export const metadata: Metadata = {
+export const metadata: Metadata = withSocialMetadata({
   title: "Business & Business+ Plans | AA100XTech",
   description:
     "Explore professional websites, content management and tailored business solutions. Request an approved scope and personalised quotation.",
   alternates: { canonical: "https://aa100xtech.com/business-plans" },
-};
+});
 export default function BusinessPlansPage() {
   return (
     <div>

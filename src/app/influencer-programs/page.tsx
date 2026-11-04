@@ -1,3 +1,4 @@
+import { withSocialMetadata } from "@/lib/page-metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -29,12 +30,12 @@ const serviceIcons = [
   Clapperboard,
   Film,
 ];
-export const metadata: Metadata = {
+export const metadata: Metadata = withSocialMetadata({
   title: "Influencer Programs & Creative Services | AA100XTech",
   description:
     "Explore websites, apps, domains, business email, images, videos, music, albums, music videos and micro dramas for creators.",
   alternates: { canonical: "https://aa100xtech.com/influencer-programs" },
-};
+});
 export default function InfluencerProgramsPage() {
   return (
     <div>

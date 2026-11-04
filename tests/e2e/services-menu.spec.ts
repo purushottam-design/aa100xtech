@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { serviceNavigation } from "../../src/data/service-navigation";
 import { services } from "../../src/data/services";
 
-for (const width of [1024, 1280, 1440]) {
+for (const width of [1280, 1440, 1920]) {
   test(`desktop mega menu hover, keyboard, links and layout at ${width}px`, async ({
     page,
   }, testInfo) => {
@@ -67,7 +67,7 @@ for (const width of [1024, 1280, 1440]) {
   });
 }
 
-for (const width of [375, 768]) {
+for (const width of [375, 768, 1024]) {
   test(`mobile grouped accordion navigation at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 850 });
     await page.goto("/portfolio", { waitUntil: "networkidle" });
@@ -144,7 +144,7 @@ test("shared header works across public routes and every catalog destination res
 test("reduced motion and short desktop viewport keep the mega menu accessible", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1024, height: 600 });
+  await page.setViewportSize({ width: 1280, height: 600 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/services", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Services", exact: true }).hover();

@@ -4,13 +4,37 @@ import { websiteAdmin as db, type NotificationStatus } from "./website-database.
 import { websiteRequestSchema } from "./website-requests";
 import { site } from "@/data/site";
 import { publicSiteSettings } from "./public-site.server";
+import { getPublishedInfluencer } from "./influencers.server";
 
 const digest = (value: string) => createHash("sha256").update(value).digest("hex");
 const json = (body: unknown, status = 200) =>
   Response.json(body, { status, headers: { "cache-control": "no-store" } });
 
 export function validWebsiteOrigin(request: Request) {
-  let expected = new URL(request.url).origin;
+  const transport = new URL(request.url);
+  let expected = transport.origin;
+  // Next dev can reconstruct its internal URL with localhost even when the
+  // browser opened 127.0.0.1. Accept only same-port HTTP loopback hosts locally.
+  if (
+    process.env.NODE_ENV === "development" &&
+    transport.protocol === "http:" &&
+    ["localhost", "127.0.0.1", "[::1]"].includes(transport.hostname)
+  ) {
+    const host = request.headers.get("host");
+    if (host) {
+      try {
+        const local = new URL(`http://${host}`);
+        if (
+          local.host === host.toLowerCase() &&
+          ["localhost", "127.0.0.1", "[::1]"].includes(local.hostname) &&
+          local.port === transport.port
+        )
+          expected = local.origin;
+      } catch {
+        /* An invalid Host never changes the expected origin. */
+      }
+    }
+  }
   const tunnel =
     process.env.NODE_ENV === "development" ? process.env["DEV_TUNNEL_ORIGIN"]?.trim() : undefined;
   if (tunnel) {
@@ -73,7 +97,7 @@ export async function saveWebsiteRequest(request: Request) {
       },
       400,
     );
-  const { website: _trap, startedAt, ...data } = parsed.data;
+  const { website: _trap, startedAt, campaign, ...data } = parsed.data;
   if (Date.now() - startedAt < 2000 || startedAt > Date.now())
     return json(
       {
@@ -82,10 +106,35 @@ export async function saveWebsiteRequest(request: Request) {
       },
       429,
     );
+  if (campaign?.creator) {
+    try {
+      const creator = await getPublishedInfluencer(campaign.creator.slug);
+      if (
+        !creator ||
+        creator.id !== campaign.creator.id ||
+        !creator.consent_confirmed ||
+        creator.publication_status !== "published"
+      )
+        return json(
+          {
+            saved: false,
+            message: "This creator is no longer available. Please select another creator.",
+          },
+          400,
+        );
+      campaign.creator.name = creator.display_name;
+    } catch {
+      return json(
+        { saved: false, message: "The selected creator could not be verified. Please try again." },
+        503,
+      );
+    }
+  }
   const file = form.get("attachment");
   let filePath: string | null = null;
   let fileDigest: string | null = null;
   let uploaded = false;
+  let resumeAttachment: { filename: string; content: string } | undefined;
   if (file instanceof File && file.size) {
     if (
       data.kind !== "career" ||
@@ -115,14 +164,21 @@ export async function saveWebsiteRequest(request: Request) {
         503,
       );
     uploaded = !error;
+    resumeAttachment = { filename: "resume.pdf", content: bytes.toString("base64") };
   }
-  const payload = { ...data, filePath };
+  const payload = {
+    ...data,
+    filePath,
+    ...(campaign ? { campaign: JSON.stringify(campaign) } : {}),
+  };
   const recipient = data.kind === "career" ? site.hrEmail : (await publicSiteSettings()).email;
   const { data: created, error } = await db.rpc("submit_website_request", {
     request_id: data.id,
     request_kind: data.kind,
     request_payload: payload,
-    request_hash: digest(JSON.stringify({ ...data, fileDigest })),
+    request_hash: digest(
+      JSON.stringify({ ...data, fileDigest, ...(campaign ? { campaign } : {}) }),
+    ),
     sender_hash: digest(data.email.toLowerCase()),
     destination: recipient,
   });
@@ -159,6 +215,7 @@ export async function saveWebsiteRequest(request: Request) {
           reply_to: data.email,
           subject: `AA100XTech ${data.kind} request`,
           text: JSON.stringify(payload, null, 2),
+          ...(resumeAttachment ? { attachments: [resumeAttachment] } : {}),
         }),
         signal: AbortSignal.timeout(8000),
       });

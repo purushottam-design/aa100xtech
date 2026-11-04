@@ -10,16 +10,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import {
-  ArrowRight,
-  CalendarDays,
-  Check,
-  CreditCard,
-  Loader2,
-  ShieldCheck,
-  XCircle,
-} from "lucide-react";
+import { ArrowRight, Check, CreditCard, Loader2, ShieldCheck, XCircle } from "lucide-react";
 import { Link } from "@/lib/navigation";
+import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -1030,14 +1023,30 @@ function PlanCard({
 }
 
 function FloatingButton() {
+  const pathname = usePathname();
+  const isMobileApp = pathname === "/app" || pathname.startsWith("/app/");
   return (
-    <Link
-      to="/consultation"
-      aria-label="Book Consultation"
-      className="fixed bottom-8 left-6 z-40 hidden items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl lg:inline-flex"
+    <aside
+      aria-label="Expert consultation"
+      className="fixed inset-x-4 z-40 mx-auto flex max-w-xl items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-[#fffbf5] p-3 shadow-lg sm:px-4"
+      style={{
+        bottom: isMobileApp
+          ? "calc(5rem + env(safe-area-inset-bottom))"
+          : "max(1rem, env(safe-area-inset-bottom))",
+      }}
     >
-      <CalendarDays className="size-4" />
-      <span>Book Consultation</span>
-    </Link>
+      <p className="min-w-0 text-xs font-medium leading-5 text-muted-foreground sm:text-sm">
+        Ready to Talk to an Expert?
+      </p>
+      <Button
+        asChild
+        size="sm"
+        className="shrink-0 whitespace-nowrap rounded-xl text-xs sm:text-sm"
+      >
+        <Link to="/consultation" aria-label="Book Consultation">
+          Book Consultation <ArrowRight aria-hidden="true" className="size-4" />
+        </Link>
+      </Button>
+    </aside>
   );
 }

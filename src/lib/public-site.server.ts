@@ -19,14 +19,14 @@ export async function publicSiteSettings() {
     String(values[key]).length <= max
       ? String(values[key]).trim()
       : fallback;
-  const phone = text("phone", site.phone, 30);
   const email = text("supportEmail", site.email);
   return {
     name: text("siteName", site.name),
     legalName: text("legalName", site.legalName),
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : site.email,
-    phone: /^[+\d\s()-]+$/.test(phone) ? phone : site.phone,
-    phoneHref: /^[+\d\s()-]+$/.test(phone) ? `tel:${phone.replace(/[^+\d]/g, "")}` : site.phoneHref,
+    // Public phone contact was removed; persisted settings must not restore it.
+    phone: site.phone,
+    phoneHref: site.phoneHref,
     address: text("address", site.address),
     hours: site.hours,
   };

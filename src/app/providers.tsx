@@ -22,11 +22,19 @@ export function Providers({ children }: { children: ReactNode }) {
         <ScrollReveals />
         <ConsultationProvider>
           {isMobileApp ? (
-            children
+            <div className="pb-24">{children}</div>
           ) : (
             <div className="flex min-h-screen flex-col">
+              <a
+                href="#main-content"
+                className="sr-only fixed left-4 top-4 z-[100] rounded-lg bg-background px-4 py-3 font-semibold text-foreground shadow-lg focus:not-sr-only"
+              >
+                Skip to content
+              </a>
               <SiteHeader />
-              <main className="flex-1">{children}</main>
+              <main id="main-content" tabIndex={-1} className="flex-1">
+                {children}
+              </main>
               {(pathname === "/" ||
                 pathname === "/services" ||
                 pathname === "/about" ||

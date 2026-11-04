@@ -1,12 +1,13 @@
+import { withSocialMetadata } from "@/lib/page-metadata";
 import type { Metadata } from "next";
 import { InquiryForm } from "@/components/inquiry-form";
 import { inquiryOptions } from "@/data/business-plans";
-export const metadata: Metadata = {
+export const metadata: Metadata = withSocialMetadata({
   title: "Get a Customised Proposal | AA100XTech",
   description:
     "Share your business requirements for a personalised website, app, IT or marketing proposal.",
   alternates: { canonical: "https://aa100xtech.com/proposal" },
-};
+});
 export default async function ProposalPage({
   searchParams,
 }: {

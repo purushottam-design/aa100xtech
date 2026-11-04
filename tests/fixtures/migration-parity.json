@@ -16,18 +16,18 @@
     "src/components/admin-support.tsx": "d718b4eb1c6bd1d74b528df95e9c7a39396d5639b8d33671fe0601a4d1dd1566",
     "src/components/admin-two-factor.tsx": "3385c446bd85941ad96b9083e478ad0781fa1882d2c6e559219d615666fbaea5",
     "src/components/app-shell.tsx": "8661815f705f3f9e407bb7f6139a3b76208855016f181ea169ce9bc1230edf13",
-    "src/components/careers-page.tsx": "e9384c241485f4cf22e93d6ff199acdbbd10dff13693d72563d57546e389a0a7",
-    "src/components/consultation-booking.tsx": "1136d4083e2f383e22799a895a588df51980e0d89f845dfacf4f720d7598e1f7",
+    "src/components/careers-page.tsx": "da847c9eec342c58a3e632efb17b18b62e3a4a97bf6e7fa1e5e78b0923324e2a",
+    "src/components/consultation-booking.tsx": "e899b10d22020edd85b4ed9372aa21f365f04f02029e7905fa5e6df41867d928",
     "src/components/currency-provider.tsx": "cc704fffa0bffddfe9205571b27dee399ca6d999d0e26b012ebe6dfe24301060",
     "src/components/currency-selector.tsx": "1597619e6f746c5006de0f48e6457e54bcf089632148b4da95a3bbbddbb67d4e",
     "src/components/dashboard-login-dialog.tsx": "a81357ec1f993e19af0cd575e5deca13f6a16ac5c23b8ab7a69523e6a8a4f626",
-    "src/components/legal-page.tsx": "5564ad6b3871bcba91c355135e5c8e9e6741c3a78fa0191a859c92c355423716",
+    "src/components/legal-page.tsx": "8cc3676022ba3a3d0b493a2eaea9d640295f93c11eca3d8d6a437bed3def2f99",
     "src/components/logo-marquee.tsx": "fea889bfe60209a447ee1dbe891e13c6d240d7f3b0defdcd14497ab83783382e",
     "src/components/section-heading.tsx": "62f99c83949dc7b5b4e42ae9f2f64ca4af8e18ac4bdbc1dc8d047867c7b2f1c5",
     "src/components/service-demos.tsx": "89c819af605718b6d6d2b05dacddb68d9c7e6e306ba3318036a39f30e6c270cf",
     "src/components/settings-form.tsx": "628d2d6ba25ea2992b3caa76d2bc6581707bde31650382889f5a3c34aa053e58",
-    "src/components/site-footer.tsx": "23ff0daf37bc0da7525556f2aaffd894f27bc9365ee6d1e3bf9c92195961afef",
-    "src/components/site-header.tsx": "9b5345ed6459fcd6d122f0b00bc496dd7a7ed0335a0644e0780e40ef45c3e2af",
+    "src/components/site-footer.tsx": "308bd9b02c3450453eb9dbf0ea6a0a4ad35bfa192c1836d2096d3fa27e712bcf",
+    "src/components/site-header.tsx": "7dba80a0bcd7ba08706a275e015af35d69de5fe70b1d90d98cf76293c809e86d",
     "src/components/stat-counter.tsx": "32a3282f96f81a4b69bdc4a629ba7bd172dfbd7906e514d7ab16eb1b991a0024",
     "src/components/super-admin-console.tsx": "45e79ef604a7ee72c6f9b72252a3452c01882eb08420fdce7695d1853b73d924",
     "src/components/super-admin-overview.tsx": "60026ffd3d163606a64b6adac4ebe40656165fd36dc617be77828aae68782225",
@@ -111,18 +111,18 @@
     "src/routes/app.settings.tsx": "6c034631dc3675277d44f507357978d34bafec7950e7d50d990a79146c4ebb5c",
     "src/routes/auth.tsx": "a182812d8a4c638752480d1ee12682b1dad8ad608350d2779b34c90c6774465f",
     "src/routes/be-the-one.tsx": "39d4bcf79f362f180fdd17f5d82d19cd615f964372ae84a03b96ce7a1279b644",
-    "src/routes/careers.apply.tsx": "ab57ee46310199c9cd757d8546f20c3a93b6dc721caf44d62c287804ed3b52ed",
+    "src/routes/careers.apply.tsx": "14eea7e9bd8cea03d24aab223d4c03e309ec1cbf01f9a861adea10902d6c3bc6",
     "src/routes/careers.index.tsx": "01829d76ff1a0512f2281e6d5b1610b57db3baa462503b755e18d46b145bd55e",
     "src/routes/careers.london.tsx": "074a0e687cde049f13531922ebbc77477f28b4f5096c8b966d3adc5a043e3c79",
     "src/routes/clients.tsx": "badd62ced4ba4fe86b63cf38370fce322b7805dd2309a22e599e8a985ed48d96",
     "src/routes/consultation.tsx": "fa0bc14b2aaa4b5c7fba66626d1b69494421c2bc4a7f1bac7d31f3407b72a29b",
-    "src/routes/contact.tsx": "a97adf2f8e8c09c9ffa9022375e02a61686306a99301947f9a7b3638638ea031",
+    "src/routes/contact.tsx": "e449ec3d5045ab553462f05963fa2fafe7d28c5439fc4a34cdc999f91f436897",
     "src/routes/cookie-policy.tsx": "f3e72d395814e3af9cc3cdb89ff682dd17e98624401216cb867d0d36c0f6adfe",
-    "src/routes/creator-moves-365.tsx": "9f99a71f8bbb09918714bc8811711ffc0c63f63111ac204df6f3c08f83fb2f40",
+    "src/routes/creator-moves-365.tsx": "7ac1bf28f4751e99103ea66b596d5f0b3ffb087e7905a1bf0f062b9cd9a0241f",
     "src/routes/disclaimer.tsx": "2853b744dc76ad99e71b0ac7176a24082ea3f1cbf55c2ca3a4b8829ec6193871",
-    "src/routes/founders.tsx": "f6ff887b18ea8890f1faa42fd993008d0ff572b8fdb43cbb9868be922b8e57e4",
+    "src/routes/founders.tsx": "aafa007380020b5d7fbcb3cde3273c50401d74c94295fdef38d840aea89b99fb",
     "src/routes/index.tsx": "7bc2c40eaa21cc0617ed48341676f0c6534aa918dea643744cefa5353d8f3441",
-    "src/routes/influencer-marketing.tsx": "5c6f77174cfdf94bd63e7a308ae64cd3ac35056f7581940a0b90a910a2e30f22",
+    "src/routes/influencer-marketing.tsx": "3cad5dc88c069447eaf5a9f12d43f710d7d8c8248e9026024455739149fcdea2",
     "src/routes/influencer-success-program.tsx": "4b8e10a5086457c2306f3dfbfb5ccd97c1acd06d187974b9f5ca8e6a981fa1f6",
     "src/routes/partners.apply.tsx": "ee6c7fc872fab33f682932df95b94b31feaa2ace971c3ea793d6411bf1c5294a",
     "src/routes/partners.index.tsx": "bc6bf7287f339eec7fea72c58b4b32162a3234a56eb496d5afca80267c582974",
@@ -132,7 +132,7 @@
     "src/routes/real-estate.tsx": "f16195a1a46f87e45ef3c6c3f837baa6664c689f464ae7f138cb8a8d5177e392",
     "src/routes/refund-policy.tsx": "37895a14bef7e31046010b3abef975d344da93cebbeec8b4bbd8208f85738dcb",
     "src/routes/request-access.tsx": "cc03ab79c841eecd5b3880da5c1fa6786f1b6c8fbca097e4cc54b020d22a9b74",
-    "src/routes/services.$slug.tsx": "8570f526d873d9ab3298cb85b079b23e7b4def1f183f68a6ce0adc4f593f1ddb",
+    "src/routes/services.$slug.tsx": "c3773d8b9dca5dadd68191c0403f4f582934336eed7e2b2f7b13728589e152f1",
     "src/routes/services.explore.$slug.tsx": "fbddabbbe972027cab10dd34ac32fcb5e13bd6c24ec43e4a32f71538b308b23a",
     "src/routes/services.explore.index.tsx": "1ac2f50432675eec269b8d3f776ed779efcebc9741ae2ef93d1c7f8d322dde0b",
     "src/routes/services.index.tsx": "563bfbca3444b1fb943405528203509c9dbd4444719456cf572e467cce623fb8",
@@ -201,7 +201,7 @@
       "text": true
     },
     "src/data/legal.ts": {
-      "hash": "9d47e4f73269f0fe7409b58330b51f8e6eca8e0fb78e0d71f79c7f610a4511d8",
+      "hash": "8e78721342297d0d27fdcc50c4f93d6b223e323d13877b7b123c305e924369f9",
       "text": true
     },
     "src/data/partner-plans.ts": {
@@ -233,7 +233,7 @@
       "text": true
     },
     "src/data/site.ts": {
-      "hash": "e4d8d97456e8370f6eaee1de91ef8543f850396396534485cb6311a497871242",
+      "hash": "e47c01f0f54133d425d74c9465bb44fbd094849be17545dcea1855f681d1cdcf",
       "text": true
     },
     "src/data/technologies.ts": {
@@ -241,7 +241,7 @@
       "text": true
     },
     "src/styles.css": {
-      "hash": "44b4652e52008fb1472c9d35fe75d78058fbcfcb9dfef291bede82c18d915979",
+      "hash": "3ba7ac4ccd658bcc593212179a6065dc0dc2b7969a3bd1928c6c3dd0ae9195d2",
       "text": true
     }
   },
@@ -1633,19 +1633,19 @@
       "legacy": {
         "meta": [
           {
-            "title": "Influencer & Viral Marketing from ₹500 | AA100XTech"
+            "title": "Influencer Marketing Services in India | AA100XTech"
           },
           {
             "name": "description",
-            "content": "Explore influencer and viral marketing services starting at ₹500. Final campaign scope and pricing require an approved quotation; outcomes are not guaranteed."
+            "content": "Grow your brand with influencer marketing services from AA100XTech. Discover creators, plan campaigns, manage collaborations and track performance."
           },
           {
             "property": "og:title",
-            "content": "Influencer & Viral Marketing from ₹500 | AA100XTech"
+            "content": "Influencer Marketing Services in India | AA100XTech"
           },
           {
             "property": "og:description",
-            "content": "Explore influencer and viral marketing services starting at ₹500. Final campaign scope and pricing require an approved quotation; outcomes are not guaranteed."
+            "content": "Grow your brand with influencer marketing services from AA100XTech. Discover creators, plan campaigns, manage collaborations and track performance."
           },
           {
             "property": "og:type",

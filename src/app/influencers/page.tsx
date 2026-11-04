@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  ArrowDown,
   ArrowUpRight,
   Award,
   BadgeCheck,
@@ -12,14 +11,12 @@ import {
   Handshake,
   HeartHandshake,
   Megaphone,
-  MessageCircle,
   MousePointer2,
   Network,
   Quote,
   Rocket,
   Search,
   Send,
-  ShieldCheck,
   ShoppingBag,
   Smartphone,
   Sparkles,
@@ -29,32 +26,43 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { InfluencerProgramApplication } from "@/components/influencer-program-application";
-import { applicationPath } from "@/lib/influencers";
+import {
+  InfluencerPartnerLanding,
+  InfluencerPartnerFinalCta,
+} from "@/components/influencer-partner-landing";
+import { creatorListing } from "@/lib/creator-discovery";
 import { partnerLevels, primaryPlatform } from "@/lib/influencer-program";
 import { getInfluencerProgram } from "@/lib/influencer-program.server";
 import "./influencers.css";
+import "./partner-landing.css";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Influencer Partner Program | AA100XTech",
+  title: "Influencer Partner Program | Join AA100XTECH Creator Network",
   description:
-    "Turn genuine business introductions into shared growth. Join the AA100XTech Influencer Partner Program, explore eligible benefits and explore the program.",
+    "Join the AA100XTECH Influencer Partner Program. Connect with brands, explore creator collaborations, and grow your influence through professional partnerships.",
   alternates: { canonical: "https://aa100xtech.com/influencers" },
   openGraph: {
     type: "website",
-    title: "Your influence. Real business growth. | AA100XTech",
+    title: "Influencer Partner Program | Join AA100XTECH Creator Network",
     description:
-      "Connect businesses with digital solutions. Build lasting partnerships and earn eligible rewards.",
+      "Join the AA100XTECH Influencer Partner Program. Connect with brands, explore creator collaborations, and grow your influence through professional partnerships.",
     url: "https://aa100xtech.com/influencers",
     images: [
       {
-        url: "https://aa100xtech.com/influencers/creator-filmmaker.webp",
-        width: 1200,
-        height: 1067,
-        alt: "A content creator filming in a professional studio",
+        url: "https://aa100xtech.com/influencer-marketing/creator-portrait.webp",
+        width: 720,
+        height: 900,
+        alt: "Editorial creator portrait for the AA100XTECH Influencer Partner Program",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Influencer Partner Program | Join AA100XTECH Creator Network",
+    description:
+      "Join the AA100XTECH Influencer Partner Program. Connect with brands and explore creator collaborations.",
+    images: ["https://aa100xtech.com/influencer-marketing/creator-portrait.webp"],
   },
 };
 
@@ -221,7 +229,8 @@ const faqs = [
 ];
 
 export default async function InfluencersPage() {
-  const { profiles, testimonials, testimonialsUnavailable } = await getInfluencerProgram();
+  const { profiles, unavailable, testimonials, testimonialsUnavailable } =
+    await getInfluencerProgram();
 
   const byId = new Map(profiles.map((profile) => [profile.id, profile]));
   return (
@@ -238,60 +247,7 @@ export default async function InfluencersPage() {
         }}
       />
 
-      <section className="ip-hero ip-container ip-section" aria-labelledby="program-title">
-        <div className="ip-hero-copy">
-          <p className="ip-eyebrow">
-            <Handshake className="size-3.5" /> AA100XTech Influencer Partner Program
-          </p>
-          <h1 id="program-title">
-            Turn Your Influence Into
-            <br />
-            <span className="ip-gradient-text">Real Business Growth.</span>
-          </h1>
-          <p>
-            Partner with AA100XTech and connect businesses with powerful digital solutions.
-            Introduce clients who need websites, mobile apps, e-commerce, SEO or digital marketing
-            and grow together with our technology team.
-          </p>
-          <div className="ip-actions">
-            <Button asChild size="lg">
-              <a href="#join">
-                Join as Influencer <ArrowUpRight className="size-4" />
-              </a>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <a href="#benefits">
-                Explore Benefits <ArrowDown className="size-4" />
-              </a>
-            </Button>
-          </div>
-          <span className="ip-hero-footnote">
-            <ShieldCheck className="size-4" /> Real introductions. Clear terms. Long-term potential.
-          </span>
-        </div>
-        <aside className="ip-growth-note">
-          <span className="ip-icon">
-            <TrendingUp className="size-6" />
-          </span>
-          <p className="ip-overline">Influence, with a bigger purpose</p>
-          <h2>
-            Your network.
-            <br />
-            Their next opportunity.
-            <br />
-            <span>Together, we grow.</span>
-          </h2>
-          <p>
-            Bring genuine clients to AA100XTech, grow with our company and receive eligible
-            partnership benefits and rewards.
-          </p>
-          <div className="ip-growth-signature">
-            <span>YOU INTRODUCE.</span>
-            <ArrowUpRight className="size-4" />
-            <span>WE BUILD.</span>
-          </div>
-        </aside>
-      </section>
+      <InfluencerPartnerLanding profiles={profiles.map(creatorListing)} unavailable={unavailable} />
 
       <section id="benefits" className="ip-tinted ip-section" aria-labelledby="benefits-title">
         <div className="ip-container">
@@ -501,46 +457,6 @@ export default async function InfluencersPage() {
         </div>
       </section>
 
-      <section id="join" className="ip-container ip-section" aria-labelledby="join-title">
-        <div className="ip-join-layout">
-          <div className="ip-join-copy">
-            <p className="ip-eyebrow">
-              <Send className="size-3.5" /> Your next move
-            </p>
-            <h2 id="join-title" className="ip-heading mt-5">
-              Good things begin
-              <br />
-              with an <span className="ip-gradient-text">introduction.</span>
-            </h2>
-            <p className="mt-5 leading-7">
-              Tell us about your audience, your ambitions and the businesses you can connect with
-              our team. We’ll explore the right partnership together.
-            </p>
-            <ul>
-              {[
-                "Individual application review",
-                "Clear, agreed partnership terms",
-                "No automatic public profile",
-                "Private contact details stay private",
-              ].map((text) => (
-                <li key={text}>
-                  <ShieldCheck className="size-4 text-primary" /> {text}
-                </li>
-              ))}
-            </ul>
-            <Link
-              href={applicationPath}
-              className="ip-detailed-application"
-              aria-label="Become an Influencer Partner"
-            >
-              Become an Influencer Partner <ArrowUpRight className="size-4" />
-              <span>Prefer to share a portfolio? Use our existing detailed application.</span>
-            </Link>
-          </div>
-          <InfluencerProgramApplication />
-        </div>
-      </section>
-
       <section className="ip-tinted ip-section" aria-labelledby="faq-title">
         <div className="ip-container ip-faq-layout">
           <div>
@@ -572,35 +488,7 @@ export default async function InfluencersPage() {
         </div>
       </section>
 
-      <section className="ip-container ip-final-wrap">
-        <div className="ip-program-final">
-          <span className="ip-final-decoration" aria-hidden="true">
-            <Network />
-          </span>
-          <p className="ip-overline">YOUR INFLUENCE. A BIGGER IMPACT.</p>
-          <h2>
-            Your Audience Can Create
-            <br />
-            Real Opportunities.
-          </h2>
-          <p>
-            Join the AA100XTech Influencer Partner Program and turn your network into meaningful
-            business collaborations.
-          </p>
-          <div className="ip-actions">
-            <Button asChild size="lg">
-              <a href="#join">
-                Join Now <ArrowUpRight className="size-4" />
-              </a>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/contact">
-                Talk to Our Team <MessageCircle className="size-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <InfluencerPartnerFinalCta />
     </div>
   );
 }

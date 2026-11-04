@@ -10,7 +10,7 @@ for (const width of [375, 768, 1024, 1440]) {
       ["/", "Expert IT & Digital Marketing Solutions"],
       ["/business-plans", "A stronger digital foundation"],
       ["/influencer-programs", "Influencer Programs"],
-      ["/influencer-marketing", "purpose and creativity"],
+      ["/influencer-marketing", "Turn Influence"],
       ["/portfolio", "portfolio"],
       ["/consultation", "Talk to Our IT & Marketing Experts"],
     ]) {
@@ -20,10 +20,11 @@ for (const width of [375, 768, 1024, 1440]) {
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
         route,
       ).toBe(true);
-      await expect(page.getByRole("button", { name: "Join Us", exact: true })).toHaveCount(0);
+      if (width >= 1280)
+        await expect(page.getByRole("button", { name: "Join Us", exact: true })).toBeVisible();
       await expect(page.getByText("Our creator community", { exact: true })).toHaveCount(0);
       if (width < 1024) {
-        await expect(page.locator('a[aria-label="Book Consultation"]')).toBeHidden();
+        await expect(page.locator('a[aria-label="Book Consultation"]')).toBeVisible();
       }
       if (route === "/influencer-marketing") {
         await expect(page.getByText("Starting at ₹500", { exact: true })).toHaveCount(3);
@@ -48,10 +49,11 @@ for (const width of [375, 768, 1024, 1440]) {
     await expect(page.getByText("4 business email accounts", { exact: true })).toBeVisible();
     await page.locator('a[href="/proposal?plan=business"]').first().click();
     await expect(page.locator('select[name="selectedPlan"]')).toHaveValue("business");
-    if (width < 1024) {
+    if (width < 1280) {
       await page.getByRole("button", { name: "Open menu", exact: true }).click();
+      await page.getByRole("dialog").getByRole("button", { name: "More", exact: true }).click();
       await expect(
-        page.getByRole("dialog").getByRole("link", { name: "Business Plans", exact: true }),
+        page.getByRole("dialog").getByRole("link", { name: "Contact Us", exact: true }),
       ).toBeVisible();
     }
     expect(errors).toEqual([]);

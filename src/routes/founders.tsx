@@ -186,9 +186,11 @@ function FoundersPage() {
               <p className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="size-4 text-primary" /> aman@aa100xtech.com
               </p>
-              <p className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="size-4 text-primary" /> {site.phone}
-              </p>
+              {site.phone && (
+                <p className="flex items-center gap-2 text-muted-foreground">
+                  <Phone className="size-4 text-primary" /> {site.phone}
+                </p>
+              )}
               <p className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="size-4 text-primary" /> Patna, Bihar, India
               </p>

@@ -27,6 +27,13 @@ export async function cmsPageMetadata(placement: string, fallback: Metadata): Pr
         description: description ?? undefined,
         ...(image ? { images: [image] } : {}),
       },
+      twitter: {
+        ...fallback.twitter,
+        card: "summary_large_image",
+        title: data.title,
+        description: description ?? undefined,
+        ...(image ? { images: [image] } : {}),
+      },
     };
   } catch {
     return fallback;

@@ -119,12 +119,14 @@ export function LegalPage({
                     {site.email}
                   </a>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Phone className="mt-0.5 size-4 shrink-0 text-primary" />
-                  <a href={site.phoneHref} className="hover:text-foreground">
-                    {site.phone}
-                  </a>
-                </li>
+                {site.phone && (
+                  <li className="flex items-start gap-2">
+                    <Phone className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <a href={site.phoneHref} className="hover:text-foreground">
+                      {site.phone}
+                    </a>
+                  </li>
+                )}
                 <li className="flex items-start gap-2">
                   <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
                   <span>{site.address}</span>

@@ -71,11 +71,19 @@ const skills = [
 ];
 
 const weeklyRhythm = [
-  { day: "Mon", focus: "Strategy", body: "Plan the week: topics, formats and one growth experiment." },
+  {
+    day: "Mon",
+    focus: "Strategy",
+    body: "Plan the week: topics, formats and one growth experiment.",
+  },
   { day: "Tue", focus: "Script", body: "Write hooks and scripts for 3–5 pieces of content." },
   { day: "Wed", focus: "Shoot", body: "Batch-record everything in one focused session." },
   { day: "Thu", focus: "Edit", body: "Cut, caption and schedule the full week." },
-  { day: "Fri", focus: "Engage", body: "Reply to every comment and DM; start 5 new conversations." },
+  {
+    day: "Fri",
+    focus: "Engage",
+    body: "Reply to every comment and DM; start 5 new conversations.",
+  },
   { day: "Sat", focus: "Analyse", body: "Review analytics, save winning posts, note lessons." },
   { day: "Sun", focus: "Learn", body: "Study 3 top creators in your niche and one new skill." },
 ];
@@ -131,6 +139,24 @@ function CreatorMoves365Page() {
             <Button asChild size="lg" variant="outline">
               <Link to="/be-the-one">Explore Be The One</Link>
             </Button>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-5 text-sm text-primary">
+            <a
+              href="https://creatormoves365.ai/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4"
+            >
+              Explore CreatorMoves365.ai (opens in a new tab)
+            </a>
+            <a
+              href="https://creatormoves365.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4"
+            >
+              Explore CreatorMoves365.com (opens in a new tab)
+            </a>
           </div>
 
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

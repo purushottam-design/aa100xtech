@@ -417,6 +417,19 @@ header nav a[aria-current="page"]::after {
   background: var(--brand-orange);
 }
 
+header .site-nav-trigger[data-active="true"] {
+  color: var(--brand-orange);
+}
+
+header .site-nav-trigger[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0.625rem 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--brand-orange);
+}
+
 .marquee-track a {
   background: #ffffff;
   border-color: #f1f5f9;

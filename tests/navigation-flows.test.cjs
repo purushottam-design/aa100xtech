@@ -55,6 +55,7 @@ for (const kind of ["global", "london", "partnership"]) {
       react: {
         useState: (initial) => [initial, (value) => states.push(value)],
         useRef: (initial) => ({ current: initial }),
+        useEffect() {},
       },
       sonner: {
         toast: {
@@ -80,6 +81,8 @@ for (const kind of ["global", "london", "partnership"]) {
       },
       "@/data/partner-plans": { partnerPlans: [] },
       "@/data/partnership": { partnerTiers: [] },
+      "@/data/careers": cohorts,
+      "@/data/site": load("src/data/site.ts"),
     };
     mocks["@/lib/website-requests"] = {
       submitWebsiteRequest: async (data) => {
@@ -93,10 +96,11 @@ for (const kind of ["global", "london", "partnership"]) {
         });
         const result = await insertResult;
         if (result.error) throw new Error("Save failed");
-        return { saved: true };
+        return { saved: true, notification: "sent" };
       },
     };
     const globals = {
+      File,
       crypto: { randomUUID: () => "00000000-0000-4000-8000-000000000001" },
       FormData: class {
         constructor(form) {
@@ -109,15 +113,22 @@ for (const kind of ["global", "london", "partnership"]) {
     };
     const jobs = kind === "global" || kind === "london";
     const module = load(
-      jobs ? "src/components/careers-page.tsx" : "src/routes/partners.apply.tsx",
+      kind === "global"
+        ? "src/components/candidate-application-form.tsx"
+        : jobs
+          ? "src/components/careers-page.tsx"
+          : "src/routes/partners.apply.tsx",
       mocks,
       globals,
     );
-    const tree = jobs
-      ? module.CareersPage({
-          cohort: kind === "global" ? cohorts.globalCohort : cohorts.londonCohort,
-        })
-      : module.default();
+    const tree =
+      kind === "global"
+        ? module.CandidateApplicationForm({ initialRole: "Engineer" })
+        : jobs
+          ? module.CareersPage({
+              cohort: kind === "global" ? cohorts.globalCohort : cohorts.londonCohort,
+            })
+          : module.default();
     const form = findAll(tree, (node) => node.type === "form")[0];
     assert.ok(form);
     if (!jobs) {
@@ -131,6 +142,7 @@ for (const kind of ["global", "london", "partnership"]) {
       full_name: "Test Applicant",
       email: "test@example.com",
       role: "Engineer",
+      task_title: "A global task application",
       hours: "4",
       start: "2026-11-01",
       portfolio: "https://example.com/work",

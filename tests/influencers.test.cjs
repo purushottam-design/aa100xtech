@@ -583,6 +583,12 @@ test("directory search and category, platform and city/state filters combine wit
   function cards(values) {
     let index = 0;
     const ui = load("src/components/influencer-directory.tsx", {
+      "@/lib/creator-discovery": require("./helpers/load-server.cjs")(
+        "src/lib/creator-discovery.ts",
+      ),
+      "@/data/influencer-marketing": require("./helpers/load-server.cjs")(
+        "src/data/influencer-marketing.ts",
+      ),
       react: { useState: () => [values[index++] ?? "", () => {}] },
       "@/lib/influencers": schema,
       "@/components/ui/input": { Input: "Input" },

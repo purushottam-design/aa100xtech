@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { inquiryOptions } from "@/data/business-plans";
+import { campaignDetailsSchema } from "./campaign-enquiry";
 
 export const websiteRequestSchema = z
   .object({
@@ -20,8 +21,17 @@ export const websiteRequestSchema = z
     portfolio: z.string().trim().max(600).default(""),
     website: z.string().max(0).default(""),
     startedAt: z.number().int().positive(),
+    campaign: campaignDetailsSchema.optional(),
   })
   .superRefine((data, ctx) => {
+    if (data.campaign && data.kind !== "influencer")
+      ctx.addIssue({
+        code: "custom",
+        path: ["campaign"],
+        message: "Campaign details require an influencer enquiry.",
+      });
+    if (data.campaign && data.company.length < 2)
+      ctx.addIssue({ code: "custom", path: ["company"], message: "Enter your business name." });
     if (
       data.phone &&
       (!/^[+\d\s().-]+$/.test(data.phone) || data.phone.replace(/\D/g, "").length < 6)

@@ -4,11 +4,18 @@ const load = require("./helpers/load-server.cjs");
 
 test("HR notification uses the approved destination and idempotency key without changing saved status", async () => {
   let created = true,
-    providerOk = true;
+    providerOk = true,
+    databaseError = null;
   const sent = [],
     states = [];
   const db = {
-    rpc: async () => ({ data: created, error: null }),
+    storage: {
+      from: () => ({
+        upload: async () => ({ error: null }),
+        remove: async () => ({ error: null }),
+      }),
+    },
+    rpc: async () => ({ data: databaseError ? null : created, error: databaseError }),
     from: () => ({
       update: (value) => ({
         eq: async () => {
@@ -50,6 +57,12 @@ test("HR notification uses the approved destination and idempotency key without 
   const request = () => {
     const form = new FormData();
     form.set("data", JSON.stringify(input));
+    form.set(
+      "attachment",
+      new File(["%PDF-1.4\nTest resume\n%%EOF"], "applicant-resume.pdf", {
+        type: "application/pdf",
+      }),
+    );
     return new Request("https://aa100xtech.com/api/website/requests", {
       method: "POST",
       headers: { origin: "https://aa100xtech.com", "x-aa-rpc": "1" },
@@ -63,6 +76,13 @@ test("HR notification uses the approved destination and idempotency key without 
   assert.deepEqual(sent[0].body.to, ["hr@aa100xtech.com"]);
   assert.equal(sent[0].headers["Idempotency-Key"], input.id);
   assert.equal(sent[0].url, "https://api.resend.com/emails");
+  assert.equal(sent[0].body.reply_to, input.email);
+  assert.deepEqual(sent[0].body.attachments, [
+    {
+      filename: "resume.pdf",
+      content: Buffer.from("%PDF-1.4\nTest resume\n%%EOF").toString("base64"),
+    },
+  ]);
   created = false;
   await saveWebsiteRequest(request());
   assert.equal(sent.length, 1, "A duplicate never sends a second notification");
@@ -73,6 +93,31 @@ test("HR notification uses the approved destination and idempotency key without 
     notification: "failed",
   });
   assert.equal(states.at(-1), "failed");
+  const sentBeforeFailure = sent.length;
+  databaseError = { code: "PGRST205" };
+  assert.equal((await saveWebsiteRequest(request())).status, 503);
+  assert.equal(
+    sent.length,
+    sentBeforeFailure,
+    "No email is sent when saving the application fails",
+  );
+  databaseError = null;
+  const { saveWebsiteRequest: withoutEmailConfiguration } = load(
+    "src/lib/website-requests.server.ts",
+    { "@/integrations/supabase/client.server": { supabaseAdmin: db } },
+    {
+      File,
+      FormData,
+      process: { env: { NODE_ENV: "production" } },
+      fetch: async () => {
+        throw new Error("Must not call email provider without configuration");
+      },
+    },
+  );
+  assert.deepEqual(await (await withoutEmailConfiguration(request())).json(), {
+    saved: true,
+    notification: "not_configured",
+  });
 });
 
 test("public settings expose only approved fields and cannot override official hours or inject links", async () => {
@@ -103,6 +148,7 @@ test("public settings expose only approved fields and cannot override official h
   assert.equal(result.name, "Approved Company");
   assert.equal(result.email, "public@example.test");
   assert.equal(result.hours, "11:00 AM – 5:00 PM");
-  assert.ok(result.phoneHref.startsWith("tel:"));
+  assert.equal(result.phone, "");
+  assert.equal(result.phoneHref, "");
   assert.equal(JSON.stringify(result).includes("fixture-"), false);
 });

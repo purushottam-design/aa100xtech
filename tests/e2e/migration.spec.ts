@@ -111,7 +111,7 @@ for (const viewport of [
       fullPage: true,
     });
 
-    if (viewport.width < 1024) {
+    if (viewport.width < 1280) {
       await page.getByRole("button", { name: "Open menu" }).click();
       const menu = page.getByRole("dialog");
       await expect(menu).toBeVisible();

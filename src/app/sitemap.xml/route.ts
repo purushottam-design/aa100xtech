@@ -1,4 +1,5 @@
 import { services } from "@/data/services";
+import { serviceTypes } from "@/data/service-types";
 import { listPublishedInfluencers } from "@/lib/influencers.server";
 import { publishedBlog } from "@/lib/published-content.server";
 
@@ -53,6 +54,7 @@ export const GET = async () => {
   const paths = [
     ...staticPaths,
     ...services.map((service) => `/services/${service.slug}`),
+    ...serviceTypes.map((service) => `/services/explore/${service.slug}`),
     ...profiles.map((profile) => `/influencers/${profile.slug}`),
     ...articles.map((article) => `/blog/${article.slug}`),
   ];

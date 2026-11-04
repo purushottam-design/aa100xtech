@@ -122,11 +122,13 @@ function ContactPage() {
                 {site.email}
               </a>
             </InfoCard>
-            <InfoCard icon={<Phone className="size-5" />} label="Phone">
-              <a href={site.phoneHref} className="hover:text-primary">
-                {site.phone}
-              </a>
-            </InfoCard>
+            {site.phone && (
+              <InfoCard icon={<Phone className="size-5" />} label="Phone">
+                <a href={site.phoneHref} className="hover:text-primary">
+                  {site.phone}
+                </a>
+              </InfoCard>
+            )}
             <InfoCard icon={<MapPin className="size-5" />} label="Address">
               <a
                 href={site.mapUrl}

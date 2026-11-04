@@ -14,7 +14,30 @@ function json(body: unknown, status: number, headers = new Headers()): Response 
 }
 
 function rpcRequestOrigin(request: Request): string | null {
-  const direct = new URL(request.url).origin;
+  const transport = new URL(request.url);
+  let direct = transport.origin;
+  // Next dev can reconstruct a loopback request with localhost even when the
+  // browser uses 127.0.0.1. Only trust a loopback Host on the same HTTP port.
+  if (
+    process.env.NODE_ENV === "development" &&
+    transport.protocol === "http:" &&
+    ["localhost", "127.0.0.1", "[::1]"].includes(transport.hostname)
+  ) {
+    const host = request.headers.get("host");
+    if (host) {
+      try {
+        const local = new URL(`http://${host}`);
+        if (
+          local.host === host.toLowerCase() &&
+          ["localhost", "127.0.0.1", "[::1]"].includes(local.hostname) &&
+          local.port === transport.port
+        )
+          direct = local.origin;
+      } catch {
+        // An invalid Host never changes the expected origin.
+      }
+    }
+  }
   const tunnel =
     process.env.NODE_ENV === "development" ? process.env["DEV_TUNNEL_ORIGIN"]?.trim() : undefined;
   if (!tunnel) return direct;

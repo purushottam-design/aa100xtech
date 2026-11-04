@@ -3,8 +3,8 @@ export const site = {
   legalName: "Absolute Advancement 100X Tech Pvt. Ltd.",
   tagline: "Premium digital & IT engineering studio",
   email: "customer.care@aa100xtech.com",
-  phone: "+91 90318 38342",
-  phoneHref: "tel:+919031838342",
+  phone: "",
+  phoneHref: "",
   address: "101 City Plaza, Kidwaipuri, Patna, Bihar - 800001, India",
   mapUrl:
     "https://www.google.com/maps/search/?api=1&query=City+Plaza+Kidwaipuri+Patna+Bihar+800001",
@@ -13,7 +13,7 @@ export const site = {
   consultationUrl: "/consultation",
   origin: "https://aa100xtech.com",
   hrEmail: "hr@aa100xtech.com",
-  phoneApprovalPending: true,
+  phoneApprovalPending: false,
   gstin: "10ABCCA6080A1ZH",
   domain: "www.aa100xtech.com",
 } as const;
@@ -51,11 +51,25 @@ export const marketingLinks = [
 
 export const moreLinks = [
   { to: "/about", label: "About" },
+  { to: "/clients", label: "Our Clients" },
+  { to: "/be-the-one", label: "Be The One" },
+  { to: "/creator-moves-365", label: "Creator Moves 365" },
+  { to: "/influencers", label: "Influencer Partner Program" },
+  { to: "/influencer-success-program", label: "Influencer Success Program" },
   { to: "/partners", label: "Partners" },
   { to: "/affiliates", label: "Affiliates" },
   { to: "/founders", label: "Aman" },
   { to: "/influencer-marketing", label: "Influencer Marketing" },
   { to: "/influencer-programs", label: "Influencer Programs" },
+] as const;
+
+export const programLinks = [
+  { to: "/creator-moves-365", label: "Creator Moves 365" },
+  { to: "/influencers", label: "Influencer Partner Program" },
+  { to: "/influencer-success-program", label: "Influencer Success Program" },
+  { to: "/influencer-programs", label: "Influencer Programs" },
+  { to: "/affiliates", label: "Affiliates" },
+  { to: "/consultation", label: "Consultation" },
 ] as const;
 
 export const legalLinks = [

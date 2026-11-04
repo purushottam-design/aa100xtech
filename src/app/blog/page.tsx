@@ -1,12 +1,13 @@
+import { withSocialMetadata } from "@/lib/page-metadata";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { publishedBlog } from "@/lib/published-content.server";
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
+export const metadata: Metadata = withSocialMetadata({
   title: "Insights | AA100XTech",
   description: "Technology, creative and marketing insights from AA100XTech.",
   alternates: { canonical: "https://aa100xtech.com/blog" },
-};
+});
 export default async function BlogPage() {
   const { rows, unavailable } = await publishedBlog();
   return (

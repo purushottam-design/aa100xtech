@@ -16,5 +16,5 @@ export function usePublicSite() {
     staleTime: 60_000,
     retry: false,
   });
-  return { ...site, ...result.data };
+  return { ...site, ...result.data, phone: site.phone, phoneHref: site.phoneHref };
 }

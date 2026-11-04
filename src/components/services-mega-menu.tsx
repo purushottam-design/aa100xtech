@@ -113,11 +113,12 @@ export function ServicesMegaMenu() {
         disabled={!interactive}
         aria-expanded={open}
         aria-controls={panelId}
+        data-active={pathname.startsWith("/services")}
         onClick={() => {
           cancelClose();
           setOpen((value) => !value);
         }}
-        className={`flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${open || pathname.startsWith("/services") ? "bg-secondary text-foreground" : "text-muted-foreground"}`}
+        className={`site-nav-trigger relative flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${open || pathname.startsWith("/services") ? "bg-secondary text-foreground" : "text-muted-foreground"}`}
       >
         Services{" "}
         <ChevronDown
