@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -9,13 +9,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { influencerApplicationSchema, influencerCategories } from "@/lib/influencers";
 
-export function InfluencerProgramApplication() {
+export function InfluencerProgramApplication({
+  heading = "Let’s get to know you.",
+  submitLabel = "Apply to Join AA100XTech",
+}: {
+  heading?: string;
+  submitLabel?: string;
+} = {}) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
+  const inFlight = useRef(false);
+  const submissionId = useRef<string | null>(null);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (busy) return;
+    if (inFlight.current) return;
     const form = event.currentTarget;
     const fields = new FormData(form);
     const value = (name: string) => String(fields.get(name) ?? "").trim();
@@ -27,6 +35,7 @@ export function InfluencerProgramApplication() {
     const motivation = value("motivation");
     const followers = value("follower_count") ? Number(value("follower_count")) : null;
     const parsed = influencerApplicationSchema.safeParse({
+      submission_id: (submissionId.current ??= crypto.randomUUID()),
       full_name: value("full_name"),
       display_name: value("full_name"),
       email: value("email"),
@@ -47,7 +56,8 @@ export function InfluencerProgramApplication() {
         facebook_followers: primary === "facebook" ? followers : null,
       },
       interest: "both",
-      deliverables: motivation,
+      deliverables: value("collaboration_interests") || motivation,
+      portfolio_url: value("portfolio_url"),
       expected_terms:
         "Partnership eligibility, rewards, scope and costs to be agreed in a written partnership agreement.",
       processing_consent: fields.get("processing_consent") === "on",
@@ -59,6 +69,7 @@ export function InfluencerProgramApplication() {
       setError(parsed.error.issues[0]?.message ?? "Check your application details.");
       return;
     }
+    inFlight.current = true;
     setBusy(true);
     setError("");
     try {
@@ -81,6 +92,7 @@ export function InfluencerProgramApplication() {
           : "Your application could not be saved. Please try again.",
       );
     } finally {
+      inFlight.current = false;
       setBusy(false);
     }
   }
@@ -100,13 +112,17 @@ export function InfluencerProgramApplication() {
       </div>
     );
   return (
-    <form className="ip-application-form" onSubmit={submit}>
+    <form
+      className="ip-application-form"
+      onSubmit={submit}
+      aria-label="Influencer partner application"
+    >
       <div className="ip-form-heading">
         <span className="ip-icon">
           <ShieldCheck className="size-5" />
         </span>
         <div>
-          <h3 className="text-xl font-bold">Let’s get to know you.</h3>
+          <h3 className="text-xl font-bold">{heading}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             Your details stay private while we review your application.
           </p>
@@ -203,6 +219,27 @@ export function InfluencerProgramApplication() {
           />
         </div>
         <div className="ip-form-field col-span-full">
+          <Label htmlFor="program-portfolio">Portfolio URL</Label>
+          <Input
+            id="program-portfolio"
+            name="portfolio_url"
+            type="url"
+            maxLength={500}
+            placeholder="https://your-portfolio.com"
+          />
+        </div>
+        <div className="ip-form-field col-span-full">
+          <Label htmlFor="program-collaboration">Collaboration Interests</Label>
+          <Textarea
+            id="program-collaboration"
+            name="collaboration_interests"
+            minLength={20}
+            maxLength={2000}
+            rows={3}
+            placeholder="Tell us about the content and collaborations you’d like to work on."
+          />
+        </div>
+        <div className="ip-form-field col-span-full">
           <Label htmlFor="program-motivation">Why do you want to partner with AA100XTech? *</Label>
           <Textarea
             id="program-motivation"
@@ -265,7 +302,7 @@ export function InfluencerProgramApplication() {
           </>
         ) : (
           <>
-            Apply to Join AA100XTech <ArrowUpRight className="size-4" />
+            {submitLabel} <ArrowUpRight className="size-4" />
           </>
         )}
       </Button>

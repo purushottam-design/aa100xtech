@@ -23,11 +23,14 @@ export type CheckoutStart = {
   amount?: number;
   currency?: string;
 };
-export async function fetchIciciAvailability() {
+export async function fetchIciciAvailability(signal?: AbortSignal) {
   return fetch("/api/payments/icici/availability", {
     cache: "no-store",
     credentials: "same-origin",
     headers: await attachSupabaseAuth(),
+    signal: signal
+      ? AbortSignal.any([signal, AbortSignal.timeout(10_000)])
+      : AbortSignal.timeout(10_000),
   });
 }
 export async function iciciRequest<T>(

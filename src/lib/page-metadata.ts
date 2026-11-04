@@ -14,7 +14,7 @@ export type LegacyHead = {
 };
 
 /** Convert the original SEO fields to native App Router metadata without changing their values. */
-export function fromLegacyHead(head: LegacyHead): Metadata {
+export function fromLegacyHead(head: LegacyHead, canonical?: string): Metadata {
   const metadata: Metadata = {};
   const openGraph: Record<string, string> = {};
   const twitter: Record<string, string> = {};
@@ -39,7 +39,8 @@ export function fromLegacyHead(head: LegacyHead): Metadata {
 
   // Next.js replaces nested metadata objects instead of merging their fields.
   // The original root route supplied this default for all child pages.
-  if (Object.keys(openGraph).length) metadata.openGraph = { type: "website", ...openGraph } as Metadata["openGraph"];
+  if (Object.keys(openGraph).length)
+    metadata.openGraph = { type: "website", ...openGraph } as Metadata["openGraph"];
   if (Object.keys(twitter).length) metadata.twitter = twitter as Metadata["twitter"];
   if (Object.keys(other).length) metadata.other = other;
 
@@ -50,6 +51,28 @@ export function fromLegacyHead(head: LegacyHead): Metadata {
     else if (link.rel === "manifest") metadata.manifest = link.href;
   }
   if (Object.keys(icons).length) metadata.icons = icons;
+  if (canonical && !metadata.alternates?.canonical) metadata.alternates = { canonical };
+  return withSocialMetadata(metadata);
+}
+
+export function withSocialMetadata(metadata: Metadata): Metadata {
+  const url = metadata.alternates?.canonical;
+  const text = {
+    ...(typeof metadata.title === "string" ? { title: metadata.title } : {}),
+    ...(metadata.description ? { description: metadata.description } : {}),
+  };
+  metadata.openGraph = {
+    type: "website",
+    ...text,
+    ...metadata.openGraph,
+    ...(url && typeof url === "string" ? { url } : {}),
+  };
+  // Supply page-specific social text instead of inheriting the home page title.
+  metadata.twitter = {
+    card: "summary_large_image",
+    ...text,
+    ...metadata.twitter,
+  };
 
   return metadata;
 }

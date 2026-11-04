@@ -1,4 +1,5 @@
 import "server-only";
+import type { IciciOriginDiagnostics } from "./icici-origin.server";
 import {
   signSortedFields,
   sameHash,
@@ -37,6 +38,7 @@ export class IciciPaymentError extends Error {
       missing?: string[];
       invalid?: string[];
       blocked?: string[];
+      origins?: IciciOriginDiagnostics;
     },
   ) {
     super(message);
@@ -95,6 +97,8 @@ export function iciciUatConfig() {
       { blocked },
     );
   let callback: URL;
+  const localReturn =
+    process.env["NODE_ENV"] === "development" && returnURL === "http://localhost:3000/consultation";
   try {
     callback = new URL(returnURL!);
   } catch {
@@ -106,17 +110,17 @@ export function iciciUatConfig() {
     );
   }
   if (
-    callback.protocol !== "https:" ||
+    (!localReturn && callback.protocol !== "https:") ||
     callback.username ||
     callback.password ||
     callback.search ||
     callback.hash ||
-    callback.pathname !== "/api/payments/icici/callback" ||
+    (!localReturn && callback.pathname !== "/api/payments/icici/callback") ||
     returnURL!.length > 128
   )
     throw new IciciPaymentError(
       "ICICI_CONFIGURATION",
-      "ICICI_RETURN_URL must use HTTPS and /api/payments/icici/callback, be at most 128 characters, and have no credentials, query or fragment.",
+      "ICICI_RETURN_URL must use HTTPS and /api/payments/icici/callback, be at most 128 characters, and have no credentials, query or fragment. Development also accepts http://localhost:3000/consultation.",
       503,
       { invalid: ["ICICI_RETURN_URL"] },
     );
@@ -224,6 +228,7 @@ export async function initiateIciciSale(
     amountPaise: number;
     email: string;
     name: string;
+    phone?: string;
   },
   config = iciciUatConfig(),
 ) {
@@ -261,6 +266,7 @@ export async function initiateIciciSale(
       transactionType: "SALE",
       customerEmailID: input.email,
       customerName: input.name.slice(0, 45),
+      ...(input.phone ? { customerMobileNo: input.phone } : {}),
       returnURL: config.returnURL,
       txnDate: ["year", "month", "day", "hour", "minute", "second"]
         .map((k) => dateParts[k])
@@ -392,12 +398,15 @@ export function iciciUnavailableResponse(): Response {
     { status: 503, headers: { "cache-control": "no-store" } },
   );
 }
-export function assertPaymentOrigin(request: Request): Response | null {
+export function assertPaymentOrigin(
+  request: Request,
+  requestOrigin = new URL(request.url).origin,
+): Response | null {
   const origin = request.headers.get("origin");
   if (
     request.headers.get("x-aa-rpc") !== "1" ||
     request.headers.get("sec-fetch-site") === "cross-site" ||
-    (origin !== null && origin !== new URL(request.url).origin)
+    (origin !== null && origin !== requestOrigin)
   )
     return Response.json(
       { ok: false, error: "Cross-site request rejected." },

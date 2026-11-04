@@ -1,10 +1,11 @@
 "use client";
 
 import { Link } from "@/lib/navigation";
-import { ArrowRight, Check, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, Check } from "lucide-react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { SectionHeading } from "@/components/section-heading";
+import { CandidateApplicationForm } from "@/components/candidate-application-form";
 import {
   Accordion,
   AccordionContent,
@@ -15,11 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+import { submitWebsiteRequest } from "@/lib/website-requests";
 import type { CareersCohort } from "@/data/careers";
 
 export function CareersPage({ cohort }: { cohort: CareersCohort }) {
   const [submitting, setSubmitting] = useState(false);
+  const openedAt = useRef(Date.now());
+  const requestId = useRef<string | null>(null);
 
   const [selectedRole, setSelectedRole] = useState("");
 
@@ -34,23 +37,29 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
       const extra = cohort.extraFields
         ?.map((field) => field.label + ": " + value(field.name))
         .join("\n");
-      const { error } = await supabase.from("candidate_submissions").insert({
-        full_name: value("name"),
+      requestId.current ??= crypto.randomUUID();
+      await submitWebsiteRequest({
+        id: requestId.current,
+        startedAt: openedAt.current,
+        kind: "career",
+        name: value("name"),
         email: value("email"),
         phone: value("phone"),
-        role_applied: value("role"),
-        task_title: "Job application (" + cohort.slug + ")",
-        hours_needed: value("hours"),
+        role: value("role"),
+        requirements: "Job application (" + cohort.slug + ")",
+        hours: value("hours"),
         availability: "Earliest start: " + value("start") + "\n" + (extra ?? ""),
-        portfolio_url: value("portfolio"),
-        deliverables: value("shipped"),
+        portfolio: value("portfolio"),
+        experience: value("experience"),
+        message: value("shipped"),
       });
-      if (error) throw error;
       toast.success("Application received", {
         description: "Your application has been saved for review.",
       });
       form.reset();
       setSelectedRole("");
+      requestId.current = null;
+      openedAt.current = Date.now();
     } catch {
       toast.error(
         "Could not save your application. Please try again or email " + cohort.email + ".",
@@ -61,7 +70,7 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
   }
 
   return (
-    <div className="pb-24">
+    <div>
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,hsl(var(--primary)/0.16),transparent_70%)]" />
@@ -86,7 +95,11 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
                 </a>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link to="/careers/apply">Submit your task plan</Link>
+                <Link
+                  to={cohort.slug === "global" ? "/careers#task-application" : "/careers/apply"}
+                >
+                  Submit your task plan
+                </Link>
               </Button>
               <Button asChild variant="ghost" size="lg">
                 <a href="#trial">See how the 10 days run</a>
@@ -313,17 +326,8 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
               We review applications twice a week. If your portfolio fits the line, the brief lands
               in your inbox with a start date. From there it's on you.
             </p>
-            <Button asChild variant="outline" className="mt-6">
-              <a
-                href={`https://wa.me/${cohort.whatsapp.replace(/\D/g, "")}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <MessageCircle className="size-4" /> Apply on WhatsApp
-              </a>
-            </Button>
             <p className="mt-4 text-sm text-muted-foreground">
-              Prefer email? Write to{" "}
+              Write to{" "}
               <a href={`mailto:${cohort.email}`} className="text-primary hover:underline">
                 {cohort.email}
               </a>{" "}
@@ -331,94 +335,114 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
             </p>
           </div>
 
-          <form
-            onSubmit={onSubmit}
-            className="glass-card grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
-          >
-            <div className="grid gap-2">
-              <Label htmlFor="name">Full name</Label>
-              <Input id="name" name="name" required />
+          {cohort.slug === "global" ? (
+            <div id="task-application" className="scroll-mt-24">
+              <CandidateApplicationForm
+                idPrefix="candidate-"
+                initialRole={selectedRole}
+                onSubmitted={() => setSelectedRole("")}
+              />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="phone">WhatsApp number</Label>
-              <Input id="phone" name="phone" required />
-            </div>
-            <div className="grid gap-2 sm:col-span-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" required />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="role">Role you want</Label>
-              <select
-                id="role"
-                name="role"
-                value={selectedRole}
-                onChange={(event) => setSelectedRole(event.target.value)}
-                required
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="">Choose one</option>
-                {cohort.roles.map((r) => (
-                  <option key={r.title} value={r.title}>
-                    {r.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="hours">Hours a day you can give</Label>
-              <select
-                id="hours"
-                name="hours"
-                required
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="">Choose one</option>
-                {cohort.hoursOptions.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {cohort.extraFields?.map((f) => (
-              <div key={f.name} className="grid gap-2">
-                <Label htmlFor={f.name}>{f.label}</Label>
-                {f.options ? (
-                  <select
-                    id={f.name}
-                    name={f.name}
-                    required
-                    className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-                  >
-                    <option value="">Choose one</option>
-                    {f.options.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <Input id={f.name} name={f.name} />
-                )}
+          ) : (
+            <form
+              onSubmit={onSubmit}
+              className="glass-card grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
+            >
+              <div className="grid gap-2 sm:col-span-2">
+                <Label htmlFor={`${cohort.slug}-experience`}>Experience</Label>
+                <Textarea
+                  id={`${cohort.slug}-experience`}
+                  name="experience"
+                  maxLength={1000}
+                  rows={3}
+                  placeholder="Your relevant experience"
+                />
               </div>
-            ))}
-            <div className="grid gap-2">
-              <Label htmlFor="portfolio">Portfolio or work link</Label>
-              <Input id="portfolio" name="portfolio" required />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="start">Earliest start date</Label>
-              <Input id="start" name="start" type="date" />
-            </div>
-            <div className="grid gap-2 sm:col-span-2">
-              <Label htmlFor="shipped">One thing you've shipped that you're proud of</Label>
-              <Textarea id="shipped" name="shipped" rows={4} required />
-            </div>
-            <Button type="submit" disabled={submitting} className="sm:col-span-2">
-              {submitting ? "Sending…" : "Send application"}
-            </Button>
-          </form>
+              <div className="grid gap-2">
+                <Label htmlFor="name">Full name</Label>
+                <Input id="name" name="name" required />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phone">WhatsApp number</Label>
+                <Input id="phone" name="phone" required />
+              </div>
+              <div className="grid gap-2 sm:col-span-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" name="email" type="email" required />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="role">Role you want</Label>
+                <select
+                  id="role"
+                  name="role"
+                  value={selectedRole}
+                  onChange={(event) => setSelectedRole(event.target.value)}
+                  required
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="">Choose one</option>
+                  {cohort.roles.map((r) => (
+                    <option key={r.title} value={r.title}>
+                      {r.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="hours">Hours a day you can give</Label>
+                <select
+                  id="hours"
+                  name="hours"
+                  required
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="">Choose one</option>
+                  {cohort.hoursOptions.map((h) => (
+                    <option key={h} value={h}>
+                      {h}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {cohort.extraFields?.map((f) => (
+                <div key={f.name} className="grid gap-2">
+                  <Label htmlFor={f.name}>{f.label}</Label>
+                  {f.options ? (
+                    <select
+                      id={f.name}
+                      name={f.name}
+                      required
+                      className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                      <option value="">Choose one</option>
+                      {f.options.map((o) => (
+                        <option key={o} value={o}>
+                          {o}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <Input id={f.name} name={f.name} />
+                  )}
+                </div>
+              ))}
+              <div className="grid gap-2">
+                <Label htmlFor="portfolio">Portfolio or work link</Label>
+                <Input id="portfolio" name="portfolio" required />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="start">Earliest start date</Label>
+                <Input id="start" name="start" type="date" />
+              </div>
+              <div className="grid gap-2 sm:col-span-2">
+                <Label htmlFor="shipped">One thing you've shipped that you're proud of</Label>
+                <Textarea id="shipped" name="shipped" rows={4} required />
+              </div>
+              <Button type="submit" disabled={submitting} className="sm:col-span-2">
+                {submitting ? "Sending…" : "Send application"}
+              </Button>
+            </form>
+          )}
         </div>
       </section>
 
@@ -438,23 +462,14 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
           ))}
         </Accordion>
 
-        <div className="mt-10 rounded-xl border border-border/60 bg-card/40 p-5 text-sm text-muted-foreground">
-          {cohort.slug === "global" ? (
-            <>
-              Hiring in the UK?{" "}
-              <Link to="/careers/london" className="text-primary hover:underline">
-                See the London cohort — 12 seats →
-              </Link>
-            </>
-          ) : (
-            <>
-              Outside the UK?{" "}
-              <Link to="/careers" className="text-primary hover:underline">
-                See the global cohort — 30 remote seats →
-              </Link>
-            </>
-          )}
-        </div>
+        {cohort.slug !== "global" && (
+          <div className="mt-10 rounded-xl border border-border/60 bg-card/40 p-5 text-sm text-muted-foreground">
+            Outside the UK?{" "}
+            <Link to="/careers" className="text-primary hover:underline">
+              See the global cohort — 30 remote seats →
+            </Link>
+          </div>
+        )}
       </section>
     </div>
   );

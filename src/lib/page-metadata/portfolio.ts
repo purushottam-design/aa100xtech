@@ -1,22 +1,29 @@
 import { fromLegacyHead } from "@/lib/page-metadata";
 
-// Original page metadata, preserved during the App Router migration.
 export const metadata = fromLegacyHead({
-  "meta": [
+  meta: [
     {
-      "title": "Portfolio — Websites, Apps & Platforms by AA100XTech"
+      title: "Portfolio: Websites & Digital Platforms | AA100XTech",
     },
     {
-      "name": "description",
-      "content": "Selected work from AA100XTech: real-estate platforms, AI products, e-commerce storefronts and growth campaigns built with MERN, Next.js and TypeScript."
+      name: "description",
+      content:
+        "Explore existing AA100XTech website and digital platform work, filter projects and discuss your next project with our team.",
     },
     {
-      "property": "og:title",
-      "content": "Portfolio — Websites, Apps & Platforms by AA100XTech"
+      property: "og:title",
+      content: "Portfolio: Websites & Digital Platforms | AA100XTech",
     },
     {
-      "property": "og:description",
-      "content": "Selected work from AA100XTech: real-estate platforms, AI products, e-commerce storefronts and growth campaigns built with MERN, Next.js and TypeScript."
-    }
-  ]
+      property: "og:description",
+      content:
+        "Explore existing AA100XTech website and digital platform work, filter projects and discuss your next project with our team.",
+    },
+  ],
+  links: [
+    {
+      rel: "canonical",
+      href: "https://aa100xtech.com/portfolio",
+    },
+  ],
 });

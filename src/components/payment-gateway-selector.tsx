@@ -8,12 +8,16 @@ export function PaymentGatewaySelector({
   amount,
   disabled = false,
   iciciAvailable = false,
+  iciciChecking = false,
+  iciciUnavailableReason,
 }: {
   selected: PaymentGateway;
   onChange: (gateway: PaymentGateway) => void;
   amount: number;
   disabled?: boolean;
   iciciAvailable?: boolean;
+  iciciChecking?: boolean;
+  iciciUnavailableReason?: string | undefined;
 }) {
   const payable = new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -30,7 +34,8 @@ export function PaymentGatewaySelector({
         {paymentGateways.map((metadata) => {
           const gateway = {
             ...metadata,
-            available: metadata.id === "icici" ? iciciAvailable : metadata.available,
+            available:
+              metadata.id === "icici" ? iciciAvailable && !iciciChecking : metadata.available,
           };
           return (
             <label
@@ -60,7 +65,16 @@ export function PaymentGatewaySelector({
                 <span id={`${gateway.id}-payment-description`} className="mt-1 block text-xs">
                   {gateway.description}
                   {!gateway.available && (
-                    <span className="mt-1 block font-medium">Currently unavailable</span>
+                    <span className="mt-1 block font-medium" role="status">
+                      <span>
+                        {gateway.id === "icici" && iciciChecking
+                          ? "Checking availability..."
+                          : "Currently unavailable"}
+                      </span>
+                      {gateway.id === "icici" && !iciciChecking && iciciUnavailableReason && (
+                        <span className="mt-1 block">{iciciUnavailableReason}</span>
+                      )}
+                    </span>
                   )}
                 </span>
               </span>

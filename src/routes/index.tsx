@@ -3,7 +3,12 @@ import { ArrowRight, Check, Minus, Sparkles, Star, Zap } from "lucide-react";
 import { LogoMarquee } from "@/components/logo-marquee";
 import { SectionHeading } from "@/components/section-heading";
 import { StatCounter } from "@/components/stat-counter";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { deliverables, marketingPlans, webPlans } from "@/data/pricing";
@@ -11,7 +16,7 @@ import { services } from "@/data/services";
 import { heroStats, whyChooseUs } from "@/data/site";
 import { Price } from "@/components/currency-provider";
 import { TechnologyStack } from "@/components/technology-stack";
-import { FeaturedInfluencers } from "@/components/featured-influencers";
+import { CmsSections } from "@/components/cms-sections";
 
 const title = "AA100XTech — Web, App & Digital Marketing Studio in Patna";
 const description =
@@ -30,7 +35,7 @@ function HomePage() {
       <DeliverablesSection />
       <TechnologyStack />
       <WhyUsSection />
-      <FeaturedInfluencers />
+      <CmsSections placement="home" />
     </div>
   );
 }
@@ -51,12 +56,12 @@ function Hero() {
               <Sparkles className="size-3.5" /> Premium digital agency
             </Badge>
             <h1 className="mt-6 text-4xl font-bold leading-[1.05] sm:text-5xl md:text-6xl">
-              Crafting <span className="text-gradient-ember">digital excellence</span> for
-              ambitious brands
+              Expert IT &amp; Digital Marketing Solutions for Your Business
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              We transform ambitious brands into digital market leaders through custom web design,
-              strategic branding, and data-driven marketing.
+              From website development and mobile applications to digital marketing and influencer
+              campaigns, AA100X TECH brings technology and creative expertise together to help
+              businesses grow.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="glow-ring">
@@ -81,37 +86,44 @@ function Hero() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    Revenue growth
+                    Combined team experience
                   </p>
-                  <p className="mt-1 font-display text-4xl font-bold text-gradient-ember">+128%</p>
+                  <p className="mt-1 font-display text-4xl font-bold text-gradient-ember">
+                    10+ Years
+                  </p>
                 </div>
                 <span className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <Zap className="size-5" />
                 </span>
               </div>
 
-              <div className="mt-6 flex h-36 items-end gap-2">
-                {[28, 42, 36, 58, 70, 64, 86, 100].map((h, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 rounded-t-md"
-                    style={{
-                      height: `${h}%`,
-                      background:
-                        i > 5 ? "var(--gradient-ember)" : "color-mix(in oklab, var(--foreground) 12%, transparent)",
-                    }}
-                  />
+              <div className="mt-6 grid gap-2 text-sm text-muted-foreground">
+                {[
+                  "IT Experts",
+                  "Marketing Specialists",
+                  "Website Developers",
+                  "App Developers",
+                  "Digital Marketing Professionals",
+                  "Game Developers",
+                  "Creative & Media Specialists",
+                ].map((role) => (
+                  <p key={role} className="rounded-lg border border-border/60 px-3 py-2">
+                    {role}
+                  </p>
                 ))}
               </div>
-
+              <p className="mt-5 text-xs text-muted-foreground">
+                10+ Years of Team Experience refers to combined team experience, not the age of the
+                company.
+              </p>
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-surface-2/70 p-4">
-                  <p className="text-xs text-muted-foreground">Happy clients</p>
-                  <p className="mt-1 font-display text-2xl font-bold">200+</p>
+                  <p className="text-xs text-muted-foreground">IT Experts</p>
+                  <p className="mt-1 font-display text-2xl font-bold">Technology</p>
                 </div>
                 <div className="rounded-xl bg-surface-2/70 p-4">
-                  <p className="text-xs text-muted-foreground">Project success</p>
-                  <p className="mt-1 font-display text-2xl font-bold">98%</p>
+                  <p className="text-xs text-muted-foreground">Marketing Specialists</p>
+                  <p className="mt-1 font-display text-2xl font-bold">Creativity</p>
                 </div>
               </div>
             </div>
@@ -225,7 +237,9 @@ function MarketingSection() {
               </p>
               <h3 className="mt-3 font-display text-2xl font-bold">{p.name}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{p.audience}</p>
-              <p className="mt-5 font-display text-3xl font-bold"><Price value={p.price} /></p>
+              <p className="mt-5 font-display text-3xl font-bold">
+                <Price value={p.price} />
+              </p>
               <p className="mt-2 text-sm text-muted-foreground">
                 Core objective: <span className="text-foreground">{p.objective}</span>
               </p>
@@ -299,7 +313,7 @@ function WebPlansSection() {
               </dl>
 
               <Button asChild className="mt-7" variant={p.featured ? "default" : "outline"}>
-                <Link to="/contact">Request proposal</Link>
+                <Link to="/proposal">Get Customised Proposal</Link>
               </Button>
             </div>
           ))}
@@ -359,16 +373,14 @@ function DeliverablesSection() {
 
         <div className="surface-card mt-12 flex flex-col items-start gap-6 p-8 md:flex-row md:items-center md:justify-between">
           <div>
-            <h3 className="font-display text-2xl font-bold">
-              Have a specific custom requirement?
-            </h3>
+            <h3 className="font-display text-2xl font-bold">Have a specific custom requirement?</h3>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
               Looking for complex API integrations, custom Web3/AI workflows, or bespoke designs? We
               can build a solution tailored precisely to your scope.
             </p>
           </div>
           <Button asChild size="lg" className="shrink-0">
-            <Link to="/contact">Get a customized scope proposal</Link>
+            <Link to="/proposal">Get Customised Proposal</Link>
           </Button>
         </div>
       </div>
@@ -378,10 +390,22 @@ function DeliverablesSection() {
 
 function WhyUsSection() {
   const pillars = [
-    { title: "Result-driven", body: "We focus on delivering measurable business outcomes and ROI." },
-    { title: "Innovation first", body: "Cutting-edge technologies and creative problem-solving." },
-    { title: "Expert team", body: "Skilled professionals across engineering, design and growth." },
-    { title: "Always available", body: "24/7 technical support and proactive maintenance." },
+    {
+      title: "Result-driven",
+      body: "We focus on delivering measurable business outcomes and ROI.",
+    },
+    {
+      title: "Innovation first",
+      body: "Cutting-edge technologies and creative problem-solving.",
+    },
+    {
+      title: "Expert team",
+      body: "Skilled professionals across engineering, design and growth.",
+    },
+    {
+      title: "Always available",
+      body: "24/7 technical support and proactive maintenance.",
+    },
   ];
 
   return (

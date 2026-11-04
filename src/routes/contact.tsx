@@ -1,11 +1,10 @@
 "use client";
 
-
 import { Clock, FileText, Mail, MapPin, Phone } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
-import { supabase } from "@/integrations/supabase/client";
+import { submitWebsiteRequest } from "@/lib/website-requests";
 
 import { SectionHeading } from "@/components/section-heading";
 import {
@@ -26,11 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { services } from "@/data/services";
-import { site } from "@/data/site";
-
-const title = "Contact AA100XTech — Patna IT & Digital Agency";
-const description =
-  "Talk to AA100XTech about your website, app, AI or marketing project. Email customer.care@aa100xtech.com, call +91 90318 38342, or visit our Kidwaipuri, Patna office.";
+import { usePublicSite } from "@/hooks/use-public-site";
 
 export default ContactPage;
 
@@ -58,7 +53,10 @@ const faqs = [
 ];
 
 function ContactPage() {
+  const site = usePublicSite();
   const [service, setService] = useState("");
+  const requestId = useRef<string | null>(null);
+  const openedAt = useRef(Date.now());
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -67,31 +65,36 @@ function ContactPage() {
     const data = new FormData(form);
     setSubmitting(true);
 
-    const { error } = await supabase.from("contact_messages").insert({
-      name: String(data.get("name") ?? "").trim(),
-      email: String(data.get("email") ?? "").trim(),
-      phone: String(data.get("phone") ?? "").trim() || null,
-      company: String(data.get("company") ?? "").trim() || null,
-      service: service || null,
-      message: String(data.get("message") ?? "").trim(),
-    });
-
-    setSubmitting(false);
-
-    if (error) {
-      toast.error("Message not sent", {
-        description: "Something went wrong. Please try again or email us directly.",
+    if (submitting) return;
+    const value = (key: string) => String(data.get(key) ?? "").trim();
+    requestId.current ??= crypto.randomUUID();
+    try {
+      await submitWebsiteRequest({
+        id: requestId.current,
+        startedAt: openedAt.current,
+        kind: "contact",
+        name: value("name"),
+        email: value("email"),
+        phone: value("phone"),
+        company: value("company"),
+        selectedPlan: service || "other",
+        requirements: value("message"),
       });
-      return;
+      toast.success("Your message has been saved for our team.");
+      setService("");
+      form.reset();
+      requestId.current = null;
+      openedAt.current = Date.now();
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Your message could not be saved. Please email us directly.",
+      );
+    } finally {
+      setSubmitting(false);
     }
-
-    setService("");
-    form.reset();
-    toast.success("Message sent", {
-      description: "Thanks for reaching out — we typically respond within 24 hours.",
-    });
   };
-
 
   return (
     <div>
@@ -119,11 +122,13 @@ function ContactPage() {
                 {site.email}
               </a>
             </InfoCard>
-            <InfoCard icon={<Phone className="size-5" />} label="Phone">
-              <a href={site.phoneHref} className="hover:text-primary">
-                {site.phone}
-              </a>
-            </InfoCard>
+            {site.phone && (
+              <InfoCard icon={<Phone className="size-5" />} label="Phone">
+                <a href={site.phoneHref} className="hover:text-primary">
+                  {site.phone}
+                </a>
+              </InfoCard>
+            )}
             <InfoCard icon={<MapPin className="size-5" />} label="Address">
               <a
                 href={site.mapUrl}
@@ -156,7 +161,13 @@ function ContactPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email address *</Label>
-                <Input id="email" name="email" type="email" required placeholder="you@company.com" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="you@company.com"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone number</Label>

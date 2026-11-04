@@ -88,7 +88,7 @@ function harness(patch = {}, { authFails = false, notAdmin = false } = {}) {
       ),
     ]),
   );
-  const request = (path, token, host = origin) =>
+  const request = (path, token, host = origin, headers = {}) =>
     new Request(`${host}/api/payments/icici/${path}`, {
       method: "POST",
       headers: {
@@ -96,6 +96,7 @@ function harness(patch = {}, { authFails = false, notAdmin = false } = {}) {
         "x-aa-rpc": "1",
         "content-type": "application/json",
         ...(token ? { authorization: `Bearer ${token}` } : {}),
+        ...headers,
       },
       body: JSON.stringify({ id: "fixture-checkout" }),
     });
@@ -103,8 +104,9 @@ function harness(patch = {}, { authFails = false, notAdmin = false } = {}) {
     env,
     effects,
     request,
-    availability: (token) => checkout.iciciAvailability(request("availability", token)),
-    post: (name, token, host) => routes[name].POST(request(name, token, host)),
+    availability: (token, host, headers) =>
+      checkout.iciciAvailability(request("availability", token, host, headers)),
+    post: (name, token, host, headers) => routes[name].POST(request(name, token, host, headers)),
   };
 }
 
@@ -165,12 +167,119 @@ test("controlled UAT cannot bypass bank activation, approved origin or the live-
   assert.equal(h.effects.initiated, 0);
 });
 
+test("explicit local tunnel guest testing needs no session and never records UAT completion", async () => {
+  const h = harness({
+    NODE_ENV: "development",
+    ICICI_UAT_GUEST_CHECKOUT: "true",
+    ICICI_TRUST_PROXY: "true",
+    DEV_TUNNEL_ORIGIN: origin,
+  });
+  const headers = {
+    origin,
+    "x-forwarded-host": new URL(origin).host,
+    "x-forwarded-proto": "https",
+  };
+  assert.equal((await h.availability(undefined, "http://localhost:3000", headers)).available, true);
+  for (const name of ["checkout", "initiate"])
+    assert.equal((await h.post(name, undefined, "http://localhost:3000", headers)).status, 200);
+  assert.deepEqual(h.effects, { prepared: 1, initiated: 1, validated: 0, authorized: 0 });
+  assert.equal(h.env.ICICI_UAT_TESTS_PASSED, "false");
+});
+
+test("local guest opt-in cannot bypass deployment, activation, tunnel, CSRF or HTTPS checks", async () => {
+  const local = {
+    NODE_ENV: "development",
+    ICICI_UAT_GUEST_CHECKOUT: "true",
+    ICICI_TRUST_PROXY: "true",
+    DEV_TUNNEL_ORIGIN: origin,
+  };
+  const headers = {
+    origin,
+    "x-forwarded-host": new URL(origin).host,
+    "x-forwarded-proto": "https",
+  };
+  for (const patch of [
+    { NODE_ENV: "production" },
+    { ICICI_UAT_GUEST_CHECKOUT: "false" },
+    { DEV_TUNNEL_ORIGIN: undefined },
+    { DEV_TUNNEL_ORIGIN: "https://other.example.test" },
+    { ICICI_TRUST_PROXY: "false" },
+    { ICICI_UAT_TEST_MODE: "false" },
+    { ICICI_UAT_ENABLED: "false" },
+    { ICICI_UAT_MERCHANT_CONFIRMED: "false" },
+    { ICICI_ENVIRONMENT: "production" },
+  ]) {
+    const h = harness({ ...local, ...patch });
+    assert.equal(
+      (await h.availability(undefined, "http://localhost:3000", headers)).available,
+      false,
+    );
+    for (const name of ["checkout", "initiate"])
+      assert.ok((await h.post(name, undefined, "http://localhost:3000", headers)).status >= 400);
+    assert.equal(h.effects.prepared + h.effects.initiated, 0);
+  }
+  for (const patch of [
+    { origin: "https://attacker.example.test" },
+    { "x-forwarded-host": "attacker.example.test" },
+    { "x-forwarded-proto": "http" },
+    { "sec-fetch-site": "cross-site" },
+    { "x-aa-rpc": "0" },
+  ]) {
+    const h = harness(local);
+    assert.equal(
+      (await h.post("initiate", undefined, "http://localhost:3000", { ...headers, ...patch }))
+        .status,
+      403,
+    );
+    assert.equal(h.effects.initiated, 0);
+  }
+});
+
 test("only a genuinely completed UAT flag opens the existing customer UAT path", async () => {
   const h = harness({ ICICI_UAT_TESTS_PASSED: "true", ICICI_UAT_TEST_MODE: "false" });
   assert.equal((await h.availability()).available, true);
   assert.equal((await h.post("initiate")).status, 200);
   assert.equal(h.effects.validated, 0);
   assert.equal(h.effects.initiated, 1);
+});
+
+test("trusted forwarding is shared by availability, tester access, preparation and initiation", async () => {
+  const h = harness({ ICICI_TRUST_PROXY: "true" });
+  const internal = "http://localhost:3000";
+  const headers = {
+    origin,
+    "x-forwarded-host": new URL(origin).host,
+    "x-forwarded-proto": "https",
+  };
+  assert.equal((await h.availability("fixture-user-token", internal, headers)).available, true);
+  for (const name of ["checkout", "initiate"])
+    assert.equal((await h.post(name, "fixture-user-token", internal, headers)).status, 200);
+  // Passing the origin check never substitutes for authenticated tester access.
+  assert.equal((await h.post("initiate", undefined, internal, headers)).status, 403);
+  assert.equal(h.effects.initiated, 1);
+});
+
+test("proxy-aware JSON requests retain CSRF, HTTPS, host and activation checks before side effects", async () => {
+  for (const headers of [
+    { origin: "https://attacker.example.test" },
+    { origin: "null" },
+    { "sec-fetch-site": "cross-site" },
+    { "x-aa-rpc": "0" },
+    { "x-forwarded-host": "attacker.example.test" },
+    { "x-forwarded-host": "uat.example.test,attacker.example.test" },
+    { "x-forwarded-proto": "http" },
+  ]) {
+    const h = harness({ ICICI_TRUST_PROXY: "true", ICICI_UAT_TESTS_PASSED: "true" });
+    const response = await h.post("initiate", undefined, "http://localhost:3000", {
+      origin,
+      "x-forwarded-host": new URL(origin).host,
+      "x-forwarded-proto": "https",
+      ...headers,
+    });
+    assert.equal(response.status, 403);
+    assert.equal(h.effects.initiated, 0);
+    assert.equal(h.effects.validated, 0);
+  }
 });
 
 test("the ICICI browser client forwards its existing session for availability and initiation", async () => {

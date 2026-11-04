@@ -1,18 +1,22 @@
 "use client";
 
 import { Link } from "@/lib/navigation";
-import { ChevronDown, Megaphone, Menu } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, Menu } from "lucide-react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { CurrencySelector } from "@/components/currency-selector";
+import { ServicesMegaMenu } from "@/components/services-mega-menu";
+import { MobileServicesMenu } from "@/components/mobile-services-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
-  joinUsLinks,
-  marketingLinks,
-  moreLinks,
-  headerNavLinks as navLinks,
-  showAuthButtons,
-} from "@/data/site";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { showAuthButtons } from "@/data/site";
+import { headerNavigation, headerLinkActive, type HeaderLink } from "@/data/header-navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,131 +25,178 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/use-session";
 
+const navClass =
+  "site-nav-trigger relative whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+const mobileClass =
+  "rounded-lg px-3 py-3 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+
+function HeaderDropdown({ label, items }: { label: string; items: readonly HeaderLink[] }) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  useEffect(() => setOpen(false), [pathname]);
+  return (
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger
+        data-active={items.some((link) => headerLinkActive(link, pathname))}
+        className={`${navClass} flex items-center gap-1`}
+      >
+        {label}
+        <ChevronDown aria-hidden="true" className="size-3.5" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        sideOffset={12}
+        className="site-nav-dropdown max-h-[calc(100dvh-7rem)] w-64 rounded-xl border-primary/15 bg-white p-2 text-foreground shadow-lg shadow-black/10"
+      >
+        {items.map((link) => (
+          <DropdownMenuItem
+            key={link.to}
+            asChild
+            className="cursor-pointer rounded-lg px-3 py-2.5 font-medium focus:bg-primary/8 focus:text-primary"
+          >
+            <Link
+              to={link.to}
+              params={link.params}
+              activeOptions={{ exact: true }}
+              activeProps={{ className: "bg-primary/8 text-primary" }}
+              onClick={() => setOpen(false)}
+            >
+              {link.label}
+            </Link>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { session, loading } = useSession();
+  const pathname = usePathname();
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    const scroll = () => setScrolled(window.scrollY > 8);
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const resize = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    scroll();
+    window.addEventListener("scroll", scroll, { passive: true });
+    desktop.addEventListener("change", resize);
+    return () => {
+      window.removeEventListener("scroll", scroll);
+      desktop.removeEventListener("change", resize);
+    };
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" aria-label="AA100XTech home" className="flex items-center">
+    <header
+      className={`sticky top-0 z-50 border-b border-border/60 bg-background/95 backdrop-blur-xl transition-shadow ${scrolled ? "shadow-md shadow-black/5" : ""}`}
+    >
+      <div className="relative mx-auto flex h-20 max-w-7xl items-center justify-between gap-2 px-4 sm:gap-3 sm:px-6 lg:px-5">
+        <Link to="/" aria-label="AA100XTech home" className="flex shrink-0 items-center">
           <span className="brand-logo-wrap">
             <span aria-hidden className="brand-logo-wrap-glow" />
-
             <img
               src="/logo.png"
               alt="Absolute Advancement 100X Tech logo"
-              className="brand-logo h-8 w-auto md:h-10"
+              className="brand-logo h-8 w-auto lg:h-6 xl:h-9"
               width={1024}
               height={286}
             />
           </span>
         </Link>
-
-        <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
-          {navLinks.map((l) =>
-            "href" in l && l.href ? (
-              <a
-                key={l.to}
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {l.label}
-              </a>
+        <nav aria-label="Main navigation" className="hidden min-w-0 items-center gap-0.5 xl:flex">
+          {headerNavigation.map((item) =>
+            item.kind === "services" ? (
+              <ServicesMegaMenu key={item.label} />
+            ) : item.kind === "dropdown" ? (
+              <HeaderDropdown key={item.label} label={item.label} items={item.items} />
             ) : (
               <Link
-                key={l.to}
-                to={l.to}
-                activeOptions={{ exact: l.to === "/" }}
+                key={item.to}
+                to={item.to}
+                target={item.to.startsWith("https://") ? "_blank" : undefined}
+                rel={item.to.startsWith("https://") ? "noopener noreferrer" : undefined}
+                activeOptions={{ exact: item.to === "/" }}
                 activeProps={{ className: "text-foreground bg-secondary" }}
-                className="rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className={navClass}
               >
-                {l.label}
+                {item.label}
               </Link>
             ),
           )}
-
-          <HeaderDropdown label="Join Us" links={joinUsLinks} />
-          <HeaderDropdown label="Marketing" links={marketingLinks} />
         </nav>
-
-        <div className="flex items-center gap-2">
-          <CurrencySelector className="hidden xl:inline-flex" />
-          {showAuthButtons &&
-            !loading &&
-            (session ? (
-              <Button asChild className="hidden sm:inline-flex">
-                <Link to="/dashboard">My account</Link>
-              </Button>
-            ) : (
-              <Button asChild className="hidden sm:inline-flex">
-                <Link to="/auth">Sign in / Sign up</Link>
-              </Button>
-            ))}
-
+        <div className="flex shrink-0 items-center gap-2">
+          <CurrencySelector className="hidden px-2 xl:inline-flex" />
+          {showAuthButtons && !loading && (
+            <Button asChild className="hidden whitespace-nowrap sm:inline-flex">
+              <Link to={session ? "/dashboard" : "/auth"}>
+                {session ? "My account" : "Sign in / Sign up"}
+              </Link>
+            </Button>
+          )}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="lg:hidden" aria-label="Open menu">
+              <Button variant="outline" size="icon" className="xl:hidden" aria-label="Open menu">
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72 overflow-y-auto">
+            <SheetContent
+              side="right"
+              className="w-[min(92vw,24rem)] overflow-y-auto overscroll-contain px-4"
+            >
               <SheetTitle className="font-display">Menu</SheetTitle>
               <nav aria-label="Mobile navigation" className="mt-6 flex flex-col gap-1">
-                {navLinks.map((l) =>
-                  "href" in l && l.href ? (
-                    <a
-                      key={l.to}
-                      href={l.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => setOpen(false)}
-                      className="rounded-lg px-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {l.label}
-                    </a>
+                {headerNavigation.map((item) =>
+                  item.kind === "services" ? (
+                    <MobileServicesMenu key={item.label} onNavigate={() => setOpen(false)} />
+                  ) : item.kind === "dropdown" ? (
+                    <Accordion key={item.label} type="single" collapsible>
+                      <AccordionItem value={item.label} className="border-0">
+                        <AccordionTrigger
+                          data-active={item.items.some((link) => headerLinkActive(link, pathname))}
+                          className={`${mobileClass} site-nav-trigger relative hover:no-underline`}
+                        >
+                          {item.label}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-0">
+                          <div className="mx-3 space-y-1 rounded-xl border border-border/70 p-2">
+                            {item.items.map((link) => (
+                              <Link
+                                key={link.to}
+                                to={link.to}
+                                params={link.params}
+                                activeOptions={{ exact: true }}
+                                activeProps={{ className: "bg-primary/8 text-primary" }}
+                                onClick={() => setOpen(false)}
+                                className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                              >
+                                {link.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   ) : (
                     <Link
-                      key={l.to}
-                      to={l.to}
+                      key={item.to}
+                      to={item.to}
+                      target={item.to.startsWith("https://") ? "_blank" : undefined}
+                      rel={item.to.startsWith("https://") ? "noopener noreferrer" : undefined}
                       onClick={() => setOpen(false)}
-                      activeOptions={{ exact: l.to === "/" }}
+                      activeOptions={{ exact: item.to === "/" }}
                       activeProps={{ className: "bg-secondary text-foreground" }}
-                      className="rounded-lg px-3 py-3 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+                      className={mobileClass}
                     >
-                      {l.label}
+                      {item.label}
                     </Link>
                   ),
                 )}
-                <HeaderDropdown
-                  label="Join Us"
-                  links={joinUsLinks}
-                  mobile
-                  onNavigate={() => setOpen(false)}
-                />
-                <HeaderDropdown
-                  label="Marketing"
-                  links={marketingLinks}
-                  mobile
-                  onNavigate={() => setOpen(false)}
-                />
-                <p className="mt-4 px-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                  More
-                </p>
-                {moreLinks.map((l) => (
-                  <Link
-                    key={l.to}
-                    to={l.to}
-                    onClick={() => setOpen(false)}
-                    activeProps={{ className: "bg-secondary text-foreground" }}
-                    className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {l.label}
-                  </Link>
-                ))}
-                <CurrencySelector className="mt-4 w-full justify-start" />
+                <CurrencySelector className="mt-3 w-full justify-start" />
                 {showAuthButtons && !loading && (
                   <Button asChild className="mt-2">
                     <Link to={session ? "/dashboard" : "/auth"} onClick={() => setOpen(false)}>
@@ -159,47 +210,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  );
-}
-
-type HeaderDropdownProps = {
-  label: string;
-  links: readonly ((typeof joinUsLinks)[number] | (typeof marketingLinks)[number])[];
-  mobile?: boolean;
-  onNavigate?: () => void;
-};
-
-function HeaderDropdown({ label, links, mobile, onNavigate }: HeaderDropdownProps) {
-  return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={`flex items-center gap-1 rounded-lg py-3 font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:text-foreground [&[data-state=open]>svg]:rotate-180 ${mobile ? "w-full justify-between px-3 text-base" : "px-2.5 py-2 text-sm"}`}
-        >
-          {label}
-          <ChevronDown aria-hidden className="size-3.5 transition-transform" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align={mobile ? "start" : "end"}
-        className="w-64 rounded-xl border-border/60 bg-background/95 p-1 shadow-xl backdrop-blur-xl"
-      >
-        {links.map(({ label: itemLabel, ...target }) => (
-          <DropdownMenuItem
-            key={itemLabel}
-            asChild
-            className="rounded-lg px-3 py-3 font-medium text-muted-foreground focus:bg-secondary focus:text-foreground"
-          >
-            <Link {...target} onClick={onNavigate}>
-              {label === "Marketing" && (
-                <Megaphone aria-hidden className="size-4 shrink-0 text-primary" />
-              )}
-              {itemLabel}
-            </Link>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

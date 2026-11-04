@@ -5,9 +5,11 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { paymentAdmin } from "./payment-database.server";
 import { consultationBookingSchema } from "./consultations.schemas";
+import { consultationScheduleError } from "./consultation-schedule";
 import { consultationServices, getConsultationPlan, meetingPlatforms } from "@/data/consultations";
 import { createConsultationBooking } from "./backend/handlers/consultations";
 import { assertIciciCheckoutAccess } from "./icici-uat-access.server";
+import { assertIciciOrigin, type IciciOriginDiagnostics } from "./icici-origin.server";
 import {
   IciciPaymentError,
   iciciUatConfig,
@@ -91,17 +93,21 @@ export type IciciAvailability = {
   missing?: string[];
   invalid?: string[];
   blocked?: string[];
+  origins?: IciciOriginDiagnostics;
 };
 
+// Probe the fields actually used by preparation and reconciliation, without
+// reading customer records. A table containing only id is not checkout-ready.
+export const iciciCheckoutColumns =
+  "id,token_hash,booking_data,amount_paise,currency,merchant_reference,booking_id,gateway,state,gateway_order_id,gateway_transaction_id,redirect_url,created_at,expires_at,updated_at";
+export const iciciBookingColumns =
+  "booking_id,customer_name,company_name,email,phone,country,service,plan_id,consultation_plan,consultation_type,duration,amount,currency,preferred_date,preferred_time,timezone,meeting_platform,project_description,payment_gateway,gateway_order_id,gateway_transaction_id,paid_at,payment_status,booking_status";
+
 export async function iciciAvailability(request: Request): Promise<IciciAvailability> {
+  let origins: IciciOriginDiagnostics | undefined;
   try {
     const config = iciciUatConfig();
-    if (new URL(request.url).origin !== config.origin)
-      return {
-        available: false,
-        code: "ICICI_WRONG_ORIGIN",
-        reason: "Request origin must match the HTTPS origin of ICICI_RETURN_URL.",
-      };
+    origins = assertIciciOrigin(request, config.origin);
     const missing = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"].filter(
       (name) => !process.env[name]?.trim(),
     );
@@ -111,17 +117,18 @@ export async function iciciAvailability(request: Request): Promise<IciciAvailabi
         code: "CHECKOUT_STORAGE_UNAVAILABLE",
         reason: "Missing server database configuration",
         missing,
+        origins,
       };
     await assertIciciCheckoutAccess(request, config);
     const [sessions, bookings] = await Promise.all([
       checkoutAdmin
         .from("icici_uat_checkouts")
-        .select("id")
+        .select(iciciCheckoutColumns)
         .limit(0)
         .abortSignal(AbortSignal.timeout(5_000)),
       paymentAdmin
         .from("consultation_bookings")
-        .select("payment_gateway,gateway_order_id,gateway_transaction_id,paid_at")
+        .select(iciciBookingColumns)
         .limit(0)
         .abortSignal(AbortSignal.timeout(5_000)),
     ]);
@@ -129,6 +136,7 @@ export async function iciciAvailability(request: Request): Promise<IciciAvailabi
       return {
         available: false,
         code: "CHECKOUT_STORAGE_UNAVAILABLE",
+        origins,
         reason:
           sessions.error.code === "PGRST205" || sessions.error.code === "42P01"
             ? "ICICI checkout table is missing; apply 20261027150000_icici_uat_checkouts.sql."
@@ -138,24 +146,27 @@ export async function iciciAvailability(request: Request): Promise<IciciAvailabi
       return {
         available: false,
         code: "PAYMENT_STORAGE_UNAVAILABLE",
+        origins,
         reason:
           bookings.error.code === "42703" || bookings.error.code === "PGRST204"
             ? "Payment tracking columns are missing; apply 20261026120000_dual_gateway_tracking.sql."
             : "Payment tracking storage could not be read; verify Supabase server access and migrations.",
       };
-    return { available: true };
+    return { available: true, origins };
   } catch (error) {
     if (error instanceof IciciPaymentError)
       return {
         available: false,
         code: error.code,
         reason: error.message,
+        ...(origins ? { origins } : {}),
         ...error.diagnostics,
       };
     // Never return raw database/network exceptions or environment values.
     return {
       available: false,
       code: "ICICI_AVAILABILITY_CHECK_FAILED",
+      ...(origins ? { origins } : {}),
       reason:
         "ICICI availability could not be checked; verify server configuration and database access.",
     };
@@ -185,6 +196,8 @@ async function saveCheckout(id: string, update: Partial<Checkout>) {
 
 export async function prepareCheckout(input: z.infer<typeof checkoutPreparationSchema>) {
   iciciUatConfig();
+  const scheduleError = consultationScheduleError(input.booking);
+  if (scheduleError) throw new IciciPaymentError("INVALID_BOOKING", scheduleError, 400);
   const plan = getConsultationPlan(input.booking.planId);
   if (
     !plan ||
@@ -254,7 +267,11 @@ export async function startCheckout(input: z.infer<typeof checkoutInitiationSche
         duration: plan.duration,
       };
     }
-    return { gateway: input.gateway, pending: true as const, bookingId: checkout.booking_id };
+    return {
+      gateway: input.gateway,
+      pending: true as const,
+      bookingId: checkout.booking_id,
+    };
   }
   if (new Date(checkout.expires_at).getTime() <= Date.now())
     throw new IciciPaymentError(
@@ -336,12 +353,20 @@ export async function startCheckout(input: z.infer<typeof checkoutInitiationSche
       amountPaise: checkout.amount_paise,
       email: b.email,
       name: b.fullName,
+      phone: b.phone,
     },
     config,
   );
   // The response does not settle anything: it only supplies a verified UAT redirect.
-  await saveCheckout(checkout.id, { redirect_url: result.redirectUrl, state: "pending" });
-  return { gateway: "icici" as const, redirectUrl: result.redirectUrl, bookingId };
+  await saveCheckout(checkout.id, {
+    redirect_url: result.redirectUrl,
+    state: "pending",
+  });
+  return {
+    gateway: "icici" as const,
+    redirectUrl: result.redirectUrl,
+    bookingId,
+  };
 }
 
 export async function reconcileIciciCheckout(checkout: Checkout, callbackTransaction?: string) {
@@ -351,7 +376,9 @@ export async function reconcileIciciCheckout(checkout: Checkout, callbackTransac
     reference: checkout.merchant_reference,
     amountPaise: checkout.amount_paise,
     ...(callbackTransaction || checkout.gateway_transaction_id
-      ? { transactionId: callbackTransaction || checkout.gateway_transaction_id! }
+      ? {
+          transactionId: callbackTransaction || checkout.gateway_transaction_id!,
+        }
       : {}),
   });
   const { error } = await checkoutAdmin.rpc("settle_icici_uat_checkout", {

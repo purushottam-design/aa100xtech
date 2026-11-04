@@ -6,7 +6,7 @@ export const legalDates = {
   updated: "17 August 2026",
 };
 
-const contactLine = `Email ${site.email}, call ${site.phone}, or write to ${site.legalName}, ${site.address}. Support hours: ${site.hours}.`;
+const contactLine = `Email ${site.email} or write to ${site.legalName}, ${site.address}. Support hours: ${site.hours}.`;
 
 export const privacySections: LegalSection[] = [
   {

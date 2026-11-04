@@ -1,22 +1,29 @@
 import { fromLegacyHead } from "@/lib/page-metadata";
 
-// Original page metadata, preserved during the App Router migration.
 export const metadata = fromLegacyHead({
-  "meta": [
+  meta: [
     {
-      "title": "Contact AA100XTech — Patna IT & Digital Agency"
+      title: "Contact Our IT & Marketing Team | AA100XTech",
     },
     {
-      "name": "description",
-      "content": "Talk to AA100XTech about your website, app, AI or marketing project. Email customer.care@aa100xtech.com, call +91 90318 38342, or visit our Kidwaipuri, Patna office."
+      name: "description",
+      content:
+        "Discuss your website, app, IT or marketing requirements with AA100XTech. Business hours: 11:00 AM to 5:00 PM.",
     },
     {
-      "property": "og:title",
-      "content": "Contact AA100XTech — Patna IT & Digital Agency"
+      property: "og:title",
+      content: "Contact Our IT & Marketing Team | AA100XTech",
     },
     {
-      "property": "og:description",
-      "content": "Talk to AA100XTech about your website, app, AI or marketing project. Email customer.care@aa100xtech.com, call +91 90318 38342, or visit our Kidwaipuri, Patna office."
-    }
-  ]
+      property: "og:description",
+      content:
+        "Discuss your website, app, IT or marketing requirements with AA100XTech. Business hours: 11:00 AM to 5:00 PM.",
+    },
+  ],
+  links: [
+    {
+      rel: "canonical",
+      href: "https://aa100xtech.com/contact",
+    },
+  ],
 });

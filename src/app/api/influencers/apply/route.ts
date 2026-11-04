@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     if (rateError) throw rateError;
     if (!allowed)
       throw new InfluencerRequestError("Too many applications. Please try again in an hour.", 429);
-    const id = randomUUID();
+    const id = data.submission_id ?? randomUUID();
     const upload = async (value: FormDataEntryValue | null) => {
       if (typeof value === "string" || !value?.size) return null;
       const path = await storeInfluencerImage(value, id);
@@ -99,7 +99,14 @@ export async function POST(request: Request) {
         consent_version: "2026-10-26",
       },
     });
-    if (error) throw error;
+    if (error) {
+      if (error.code === "23505" && data.submission_id)
+        throw new InfluencerRequestError(
+          "This application has already been received. Contact our team if you need to update it.",
+          409,
+        );
+      throw error;
+    }
     return Response.json(
       { ok: true, message: "Application saved for review. Your profile is not published." },
       { status: 201, headers: { "cache-control": "no-store" } },

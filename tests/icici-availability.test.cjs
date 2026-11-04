@@ -26,12 +26,32 @@ function harness(patch = {}, failures = {}) {
       reads.push(table);
       const query = {
         select(columns) {
-          assert.equal(
-            columns,
+          const required =
             table === "icici_uat_checkouts"
-              ? "id"
-              : "payment_gateway,gateway_order_id,gateway_transaction_id,paid_at",
-          );
+              ? [
+                  "id",
+                  "token_hash",
+                  "booking_data",
+                  "amount_paise",
+                  "merchant_reference",
+                  "state",
+                  "expires_at",
+                  "redirect_url",
+                ]
+              : [
+                  "booking_id",
+                  "customer_name",
+                  "email",
+                  "plan_id",
+                  "preferred_date",
+                  "payment_gateway",
+                  "gateway_order_id",
+                  "gateway_transaction_id",
+                  "paid_at",
+                  "payment_status",
+                  "booking_status",
+                ];
+          for (const name of required) assert.ok(columns.split(",").includes(name), name);
           return query;
         },
         limit(count) {
@@ -70,7 +90,8 @@ function harness(patch = {}, failures = {}) {
     reads,
     logs,
     checkout,
-    request: (host = origin) => route.GET(new Request(`${host}/api/payments/icici/availability`)),
+    request: (host = origin, init) =>
+      route.GET(new Request(`${host}/api/payments/icici/availability`, init)),
   };
 }
 
@@ -127,6 +148,7 @@ test("valid confirmed UAT becomes available at runtime without optional base URL
       icici: true,
       environment: "uat",
       available: true,
+      origins: { configured: origin, request: origin, transport: origin, source: "request-url" },
     });
     assert.deepEqual(h.reads, ["icici_uat_checkouts", "consultation_bookings"]);
   }
@@ -168,7 +190,150 @@ test("localhost and other origins cannot enable an HTTPS UAT callback configurat
   assert.equal(body.available, false);
   assert.equal(body.code, "ICICI_WRONG_ORIGIN");
   assert.match(body.reason, /origin.*ICICI_RETURN_URL/);
+  assert.deepEqual(body.origins, {
+    configured: origin,
+    request: "http://localhost:3000",
+    transport: "http://localhost:3000",
+    source: "request-url",
+  });
   assert.deepEqual(h.reads, []);
+});
+
+test("explicitly trusted HTTPS forwarding supports a pinned UAT tunnel and deployed staging domain", async () => {
+  for (const publicOrigin of [
+    "https://uat-tunnel.example.test",
+    "https://staging.example.test",
+    "https://staging.example.test:8443",
+    "https://production.example.test",
+  ]) {
+    const h = harness({
+      ICICI_RETURN_URL: `${publicOrigin}/api/payments/icici/callback`,
+      ICICI_TRUST_PROXY: "true",
+    });
+    const transport = "http://localhost:3000";
+    const response = await h.request(transport, {
+      headers: {
+        "x-forwarded-host": new URL(publicOrigin).host,
+        "x-forwarded-proto": "https",
+      },
+    });
+    const body = await response.json();
+    assert.equal(body.available, true);
+    assert.deepEqual(body.origins, {
+      configured: publicOrigin,
+      request: publicOrigin,
+      transport,
+      source: "trusted-proxy",
+    });
+    assert.equal(JSON.stringify([body, h.logs]).includes(configuredEnv.ICICI_SECRET_KEY), false);
+    assert.equal(
+      JSON.stringify([body, h.logs]).includes(configuredEnv.SUPABASE_SERVICE_ROLE_KEY),
+      false,
+    );
+  }
+});
+
+test("Next.js internal request URL and nextUrl do not override the pinned HTTPS proxy origin", () => {
+  const { NextRequest } = require("next/server");
+  const { iciciRequestOrigin } = load(
+    "src/lib/icici-origin.server.ts",
+    {},
+    {
+      process: { env: { ...configuredEnv, ICICI_TRUST_PROXY: "true" } },
+    },
+  );
+  for (const protocol of ["http", "https"]) {
+    const request = new NextRequest(
+      `${protocol}://localhost:3000/api/payments/icici/availability`,
+      {
+        headers: {
+          host: new URL(origin).host,
+          "x-forwarded-host": new URL(origin).host,
+          "x-forwarded-proto": "https",
+        },
+      },
+    );
+    assert.equal(new URL(request.url).origin, `${protocol}://localhost:3000`);
+    assert.equal(request.nextUrl.origin, `${protocol}://localhost:3000`);
+    assert.equal(iciciRequestOrigin(request), origin);
+  }
+  for (const host of [
+    "attacker.example.test",
+    "uat.example.test.attacker.test",
+    "uat.example.test.",
+  ]) {
+    const request = new NextRequest("http://localhost:3000/api/payments/icici/availability", {
+      headers: {
+        host,
+        origin: `https://${host}`,
+        "x-forwarded-host": host,
+        "x-forwarded-proto": "https",
+      },
+    });
+    assert.equal(iciciRequestOrigin(request), null);
+  }
+});
+
+test("forwarding headers and browser Origin cannot opt a request into proxy trust", async () => {
+  for (const setting of [undefined, "false", "1"]) {
+    const h = harness({ ICICI_TRUST_PROXY: setting });
+    const body = await (
+      await h.request("http://localhost:3000", {
+        headers: {
+          origin,
+          "x-forwarded-host": new URL(origin).host,
+          "x-forwarded-proto": "https",
+          forwarded: `host=${new URL(origin).host};proto=https`,
+        },
+      })
+    ).json();
+    assert.equal(body.code, "ICICI_WRONG_ORIGIN");
+    assert.equal(body.origins.request, "http://localhost:3000");
+    assert.deepEqual(h.reads, []);
+  }
+});
+
+test("proxy mode fails closed for absent, ambiguous, malformed, HTTP or mismatched forwarding", async () => {
+  for (const [host, protocol] of [
+    [undefined, undefined],
+    ["uat.example.test", undefined],
+    [undefined, "https"],
+    ["uat.example.test", "http"],
+    ["uat.example.test", "https,http"],
+    ["uat.example.test,attacker.example.test", "https"],
+    ["attacker.example.test", "https"],
+    ["uat.example.test:444", "https"],
+    ["uat.example.test@attacker.example.test", "https"],
+    ["uat.example.test/path?secret=must-not-leak", "https"],
+    ["uat.example.test#fragment", "https"],
+    ["%75at.example.test", "https"],
+    ["uat.example.test\\attacker", "https"],
+  ]) {
+    const h = harness({ ICICI_TRUST_PROXY: "true" });
+    const body = await (
+      await h.request(origin, {
+        headers: {
+          ...(host ? { "x-forwarded-host": host } : {}),
+          ...(protocol ? { "x-forwarded-proto": protocol } : {}),
+        },
+      })
+    ).json();
+    assert.equal(body.available, false);
+    assert.equal(body.code, "ICICI_WRONG_ORIGIN");
+    assert.deepEqual(h.reads, []);
+    assert.equal(JSON.stringify([body, h.logs]).includes("must-not-leak"), false);
+  }
+  const h = harness({ ICICI_TRUST_PROXY: "true" });
+  assert.equal(
+    (
+      await (
+        await h.request("http://localhost:3000", {
+          headers: { "x-forwarded-host": "UAT.EXAMPLE.TEST:443", "x-forwarded-proto": "https" },
+        })
+      ).json()
+    ).available,
+    true,
+  );
 });
 
 test("missing database settings, schema and database failures remain unavailable with safe reasons", async () => {
@@ -212,4 +377,15 @@ test("production responses hide configuration diagnostics while retaining actual
     environment: "uat",
     available: true,
   });
+  h.env.ICICI_TRUST_PROXY = "true";
+  for (const host of [new URL(origin).host, "attacker.example.test"]) {
+    const response = await h.request("http://localhost:3000", {
+      headers: { "x-forwarded-host": host, "x-forwarded-proto": "https" },
+    });
+    const body = await response.json();
+    assert.equal(body.available, host === new URL(origin).host);
+    assert.equal(body.origins, undefined);
+    assert.equal(response.headers.get("vary"), "Authorization");
+  }
+  assert.deepEqual(h.logs, []);
 });

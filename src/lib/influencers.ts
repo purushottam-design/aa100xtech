@@ -55,10 +55,19 @@ export const socialSchema = z.object({
 });
 const text = (max: number) => z.string().trim().max(max).default("");
 export const influencerApplicationSchema = z.object({
+  submission_id: z.string().uuid().optional(),
   full_name: z.string().trim().min(2).max(120),
   display_name: z.string().trim().min(2).max(100),
   email: z.string().trim().email().max(255),
-  phone: z.string().trim().min(6).max(30),
+  phone: z
+    .string()
+    .trim()
+    .min(6)
+    .max(30)
+    .refine(
+      (value) => /^[+\d\s().-]+$/.test(value) && value.replace(/\D/g, "").length >= 6,
+      "Enter a valid phone or WhatsApp number",
+    ),
   city: z.string().trim().min(2).max(80),
   state: z.string().trim().min(2).max(80),
   country: z.string().trim().min(2).max(80),

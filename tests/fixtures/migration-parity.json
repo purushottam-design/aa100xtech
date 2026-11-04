@@ -2,7 +2,7 @@
   "baseline": "1be2be529d782c19896503d2091f19d0acbb9c5a",
   "markup": {
     "src/components/access-request-form.tsx": "ea1e54eb2a8968e2fc66a05bd54d22c324f50cf6776da994aefd80fd2c9a490a",
-    "src/components/admin-cms.tsx": "1c68f52a254c122ccca07ac29039efa7e9430336e1c348bc4b441f4f17d59902",
+    "src/components/admin-cms.tsx": "5e4239d637b5497fe332fecdd43a1e16114254114d2ddd1742f7d8e49ee6bfec",
     "src/components/admin-dashboard-analytics.tsx": "daa2f167875b2aeb90a19db84409627c020dd983307f5d481a5841438c0c2e39",
     "src/components/admin-management.tsx": "f2726c98815c54f9027b820e71d7b62448223d176a1dbd705bdfaf641d82593a",
     "src/components/admin-nav.tsx": "cfe4f9dff63c11472bfa58e890076f6ae480ebe55b36051e167533627f961e49",
@@ -16,18 +16,18 @@
     "src/components/admin-support.tsx": "d718b4eb1c6bd1d74b528df95e9c7a39396d5639b8d33671fe0601a4d1dd1566",
     "src/components/admin-two-factor.tsx": "3385c446bd85941ad96b9083e478ad0781fa1882d2c6e559219d615666fbaea5",
     "src/components/app-shell.tsx": "8661815f705f3f9e407bb7f6139a3b76208855016f181ea169ce9bc1230edf13",
-    "src/components/careers-page.tsx": "0b92b03ac64107496781ec5ed84e76cfe8db660c9f818b735bd781c46b6283a8",
-    "src/components/consultation-booking.tsx": "c3b5f25964ca98ced414f7e1327431b196de2b0df873e871d8e7015ab1966c8c",
+    "src/components/careers-page.tsx": "da847c9eec342c58a3e632efb17b18b62e3a4a97bf6e7fa1e5e78b0923324e2a",
+    "src/components/consultation-booking.tsx": "e899b10d22020edd85b4ed9372aa21f365f04f02029e7905fa5e6df41867d928",
     "src/components/currency-provider.tsx": "cc704fffa0bffddfe9205571b27dee399ca6d999d0e26b012ebe6dfe24301060",
     "src/components/currency-selector.tsx": "1597619e6f746c5006de0f48e6457e54bcf089632148b4da95a3bbbddbb67d4e",
     "src/components/dashboard-login-dialog.tsx": "a81357ec1f993e19af0cd575e5deca13f6a16ac5c23b8ab7a69523e6a8a4f626",
-    "src/components/legal-page.tsx": "5564ad6b3871bcba91c355135e5c8e9e6741c3a78fa0191a859c92c355423716",
+    "src/components/legal-page.tsx": "8cc3676022ba3a3d0b493a2eaea9d640295f93c11eca3d8d6a437bed3def2f99",
     "src/components/logo-marquee.tsx": "fea889bfe60209a447ee1dbe891e13c6d240d7f3b0defdcd14497ab83783382e",
     "src/components/section-heading.tsx": "62f99c83949dc7b5b4e42ae9f2f64ca4af8e18ac4bdbc1dc8d047867c7b2f1c5",
     "src/components/service-demos.tsx": "89c819af605718b6d6d2b05dacddb68d9c7e6e306ba3318036a39f30e6c270cf",
     "src/components/settings-form.tsx": "628d2d6ba25ea2992b3caa76d2bc6581707bde31650382889f5a3c34aa053e58",
-    "src/components/site-footer.tsx": "23ff0daf37bc0da7525556f2aaffd894f27bc9365ee6d1e3bf9c92195961afef",
-    "src/components/site-header.tsx": "202f05838c3d0482f9f5bb9179f072357faa3701b999427a13e2e79998abd700",
+    "src/components/site-footer.tsx": "308bd9b02c3450453eb9dbf0ea6a0a4ad35bfa192c1836d2096d3fa27e712bcf",
+    "src/components/site-header.tsx": "7dba80a0bcd7ba08706a275e015af35d69de5fe70b1d90d98cf76293c809e86d",
     "src/components/stat-counter.tsx": "32a3282f96f81a4b69bdc4a629ba7bd172dfbd7906e514d7ab16eb1b991a0024",
     "src/components/super-admin-console.tsx": "45e79ef604a7ee72c6f9b72252a3452c01882eb08420fdce7695d1853b73d924",
     "src/components/super-admin-overview.tsx": "60026ffd3d163606a64b6adac4ebe40656165fd36dc617be77828aae68782225",
@@ -89,7 +89,7 @@
     "src/routes/_authenticated/admin.security.tsx": "e91dae9de01bf087790470195d53a863c975215f10948964b78f570dc3c8ef88",
     "src/routes/_authenticated/admin.settings.email.tsx": "17b48c464ea36b63ffd72ece77dc5b208b100616c0d79311b910d2aa5d21788e",
     "src/routes/_authenticated/admin.settings.general.tsx": "3e90606185682a7265718ea01d9e8cc6713ed2472b29e729329920fba524aed9",
-    "src/routes/_authenticated/admin.settings.website.tsx": "5455012514b020965c6d3251ba00b7b42f78949138b60071f90a261079b8ee6d",
+    "src/routes/_authenticated/admin.settings.website.tsx": "2eb70ee40a3cf03a23a2faf3491ad40844526cba5c2f2e08883bb1070638e9dd",
     "src/routes/_authenticated/admin.super.tsx": "765c693026dcd5616bff808ea407bfb0b638c3b5959fb1f0c0e8780783a34f53",
     "src/routes/_authenticated/affiliate-admin.tsx": "9583e80049d52fcd6a20831be32f3eade89c0e12ecdabbab27d088594444fca0",
     "src/routes/_authenticated/affiliate.tsx": "dce25ed1803c0abeed89b73519ab811baf82ba57b67693dd5d8ded3cbe0b0aca",
@@ -111,28 +111,28 @@
     "src/routes/app.settings.tsx": "6c034631dc3675277d44f507357978d34bafec7950e7d50d990a79146c4ebb5c",
     "src/routes/auth.tsx": "a182812d8a4c638752480d1ee12682b1dad8ad608350d2779b34c90c6774465f",
     "src/routes/be-the-one.tsx": "39d4bcf79f362f180fdd17f5d82d19cd615f964372ae84a03b96ce7a1279b644",
-    "src/routes/careers.apply.tsx": "827e9e3c87baade88b0634f0a735eea6308fc8c90ab4790778b751dcc893c88a",
+    "src/routes/careers.apply.tsx": "14eea7e9bd8cea03d24aab223d4c03e309ec1cbf01f9a861adea10902d6c3bc6",
     "src/routes/careers.index.tsx": "01829d76ff1a0512f2281e6d5b1610b57db3baa462503b755e18d46b145bd55e",
     "src/routes/careers.london.tsx": "074a0e687cde049f13531922ebbc77477f28b4f5096c8b966d3adc5a043e3c79",
     "src/routes/clients.tsx": "badd62ced4ba4fe86b63cf38370fce322b7805dd2309a22e599e8a985ed48d96",
-    "src/routes/consultation.tsx": "13e8df95e8ab2b3a06ee2f3ec17b83ddc65dce42d44e59c3650376d306f87af9",
-    "src/routes/contact.tsx": "a97adf2f8e8c09c9ffa9022375e02a61686306a99301947f9a7b3638638ea031",
+    "src/routes/consultation.tsx": "fa0bc14b2aaa4b5c7fba66626d1b69494421c2bc4a7f1bac7d31f3407b72a29b",
+    "src/routes/contact.tsx": "e449ec3d5045ab553462f05963fa2fafe7d28c5439fc4a34cdc999f91f436897",
     "src/routes/cookie-policy.tsx": "f3e72d395814e3af9cc3cdb89ff682dd17e98624401216cb867d0d36c0f6adfe",
-    "src/routes/creator-moves-365.tsx": "9f99a71f8bbb09918714bc8811711ffc0c63f63111ac204df6f3c08f83fb2f40",
+    "src/routes/creator-moves-365.tsx": "7ac1bf28f4751e99103ea66b596d5f0b3ffb087e7905a1bf0f062b9cd9a0241f",
     "src/routes/disclaimer.tsx": "2853b744dc76ad99e71b0ac7176a24082ea3f1cbf55c2ca3a4b8829ec6193871",
-    "src/routes/founders.tsx": "900082e4b06871692d4b78b34a77d607ab09afdfe1d13d30d327c1207b967f72",
-    "src/routes/index.tsx": "843604ee122c521854ce5073fb71124f38624947a0d9c6b2cef1f45d94dd4ee5",
-    "src/routes/influencer-marketing.tsx": "1a3e4ebe873b9140578c342d7617a1efa4b56f33b0ec64582688908886ae8f3b",
+    "src/routes/founders.tsx": "aafa007380020b5d7fbcb3cde3273c50401d74c94295fdef38d840aea89b99fb",
+    "src/routes/index.tsx": "7bc2c40eaa21cc0617ed48341676f0c6534aa918dea643744cefa5353d8f3441",
+    "src/routes/influencer-marketing.tsx": "3cad5dc88c069447eaf5a9f12d43f710d7d8c8248e9026024455739149fcdea2",
     "src/routes/influencer-success-program.tsx": "4b8e10a5086457c2306f3dfbfb5ccd97c1acd06d187974b9f5ca8e6a981fa1f6",
     "src/routes/partners.apply.tsx": "ee6c7fc872fab33f682932df95b94b31feaa2ace971c3ea793d6411bf1c5294a",
     "src/routes/partners.index.tsx": "bc6bf7287f339eec7fea72c58b4b32162a3234a56eb496d5afca80267c582974",
     "src/routes/partners.plans.tsx": "c9ffd44c6dc57ffb99d1a073a122939ea318c0dbc3c8a128949bf081f2631ea6",
-    "src/routes/portfolio.tsx": "44bdded4f46fb7ea84f5f8f7863cf45f05239f5dbe9f2340acbd8e0104999ce2",
+    "src/routes/portfolio.tsx": "9ee59292b23e95c5700a9ba757ff3d9a1c8511433cd0f5bb994857bcb4c49fda",
     "src/routes/privacy-policy.tsx": "ce4cde1aa0bd0a4bd914c2c996e1f7236a7ace10e813c3478147f53f336b46df",
     "src/routes/real-estate.tsx": "f16195a1a46f87e45ef3c6c3f837baa6664c689f464ae7f138cb8a8d5177e392",
     "src/routes/refund-policy.tsx": "37895a14bef7e31046010b3abef975d344da93cebbeec8b4bbd8208f85738dcb",
     "src/routes/request-access.tsx": "cc03ab79c841eecd5b3880da5c1fa6786f1b6c8fbca097e4cc54b020d22a9b74",
-    "src/routes/services.$slug.tsx": "8570f526d873d9ab3298cb85b079b23e7b4def1f183f68a6ce0adc4f593f1ddb",
+    "src/routes/services.$slug.tsx": "c3773d8b9dca5dadd68191c0403f4f582934336eed7e2b2f7b13728589e152f1",
     "src/routes/services.explore.$slug.tsx": "fbddabbbe972027cab10dd34ac32fcb5e13bd6c24ec43e4a32f71538b308b23a",
     "src/routes/services.explore.index.tsx": "1ac2f50432675eec269b8d3f776ed779efcebc9741ae2ef93d1c7f8d322dde0b",
     "src/routes/services.index.tsx": "563bfbca3444b1fb943405528203509c9dbd4444719456cf572e467cce623fb8",
@@ -181,15 +181,15 @@
       "text": true
     },
     "public/robots.txt": {
-      "hash": "0f3b8a69fafc0d7f8cd5519bd565a7cfd52d719fbfd7abfdf58692e73c4bcbe1",
+      "hash": "fc77b9a2be881071008ca8d37afdaac7f70e71e1a3ad7066d5f536d17dfc41c4",
       "text": true
     },
     "src/data/careers.ts": {
-      "hash": "3759a45725cc66710e6621d49a2d7d94a7d4d73a79ceaffa4fb4bfc885a08e76",
+      "hash": "8eed7708e2ca4331de193b9c15b1fec77e84b0952c3cb30ecefa3fe954e4c307",
       "text": true
     },
     "src/data/consultations.ts": {
-      "hash": "396b0a3d9c06330355e148c3bf18b217af01093f317d36cb6d94747ac22a4129",
+      "hash": "44206ac2381db7a3410b37b4cee46fa961a136656b3bac2b90d2f5792a10c6b6",
       "text": true
     },
     "src/data/currencies.ts": {
@@ -201,7 +201,7 @@
       "text": true
     },
     "src/data/legal.ts": {
-      "hash": "9d47e4f73269f0fe7409b58330b51f8e6eca8e0fb78e0d71f79c7f610a4511d8",
+      "hash": "8e78721342297d0d27fdcc50c4f93d6b223e323d13877b7b123c305e924369f9",
       "text": true
     },
     "src/data/partner-plans.ts": {
@@ -213,7 +213,7 @@
       "text": true
     },
     "src/data/portfolio.ts": {
-      "hash": "2ac7c29bc019e9fe8e4283604ca44550749a859371dc21e935b6c2bfcd92b4fa",
+      "hash": "bebe04ba5676e415c5d0daa7627d42e4f58debff55c59df711b8c14fb2f0f150",
       "text": true
     },
     "src/data/pricing.ts": {
@@ -225,23 +225,23 @@
       "text": true
     },
     "src/data/services-ai.ts": {
-      "hash": "aaf61acfbd56dad6a21428b3e4036e7d945a672f56c6a620d7bf096311314496",
+      "hash": "c31561a1ca89a5466a37488b6755a22e8da7ac68a9415ba7c5debc15ad9b05cb",
       "text": true
     },
     "src/data/services.ts": {
-      "hash": "50650bcdeb8a0d04893c02c0872dc0f97740d6d5c942b3eabf93001824e1f612",
+      "hash": "a0f34c4fb4fa21276d3cba0868f78e75f8ceea47bc570a5591c65b2b823c2e1f",
       "text": true
     },
     "src/data/site.ts": {
-      "hash": "f6d370b8f7f39e30c802392a8eedc6002512677308d72e51d261e2a3d7e1b855",
+      "hash": "e47c01f0f54133d425d74c9465bb44fbd094849be17545dcea1855f681d1cdcf",
       "text": true
     },
     "src/data/technologies.ts": {
-      "hash": "c46659a4594b075e5013af9336427b4c4e91eea285a25999e7e21fb55f3722a9",
+      "hash": "1e281c3cc42e0ae28319d2dca298970a32554955ffa78109b534297218194190",
       "text": true
     },
     "src/styles.css": {
-      "hash": "9332c80aa56567354222ad4e39608a740e5697633ccb98a29dedad7fde011efb",
+      "hash": "3ba7ac4ccd658bcc593212179a6065dc0dc2b7969a3bd1928c6c3dd0ae9195d2",
       "text": true
     }
   },
@@ -1389,19 +1389,19 @@
       "legacy": {
         "meta": [
           {
-            "title": "Book IT Consultation | Expert Technology Consulting"
+            "title": "Talk to Our IT & Marketing Experts | AA100XTech"
           },
           {
             "name": "description",
-            "content": "Book a 1-on-1 consultation with our IT experts for website development, software, mobile apps, AI, cloud, architecture and digital transformation."
+            "content": "Book a consultation for websites, apps, SEO, influencer marketing and business technology. Consultation hours are 11:00 AM to 5:00 PM."
           },
           {
             "property": "og:title",
-            "content": "Book IT Consultation | Expert Technology Consulting"
+            "content": "Talk to Our IT & Marketing Experts | AA100XTech"
           },
           {
             "property": "og:description",
-            "content": "Book a 1-on-1 consultation with our IT experts for website development, software, mobile apps, AI, cloud, architecture and digital transformation."
+            "content": "Book a consultation for websites, apps, SEO, influencer marketing and business technology. Consultation hours are 11:00 AM to 5:00 PM."
           },
           {
             "property": "og:type",
@@ -1411,6 +1411,12 @@
             "name": "twitter:card",
             "content": "summary_large_image"
           }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/consultation"
+          }
         ]
       }
     },
@@ -1419,19 +1425,25 @@
       "legacy": {
         "meta": [
           {
-            "title": "Contact AA100XTech — Patna IT & Digital Agency"
+            "title": "Contact Our IT & Marketing Team | AA100XTech"
           },
           {
             "name": "description",
-            "content": "Talk to AA100XTech about your website, app, AI or marketing project. Email customer.care@aa100xtech.com, call +91 90318 38342, or visit our Kidwaipuri, Patna office."
+            "content": "Discuss your website, app, IT or marketing requirements with AA100XTech. Business hours: 11:00 AM to 5:00 PM."
           },
           {
             "property": "og:title",
-            "content": "Contact AA100XTech — Patna IT & Digital Agency"
+            "content": "Contact Our IT & Marketing Team | AA100XTech"
           },
           {
             "property": "og:description",
-            "content": "Talk to AA100XTech about your website, app, AI or marketing project. Email customer.care@aa100xtech.com, call +91 90318 38342, or visit our Kidwaipuri, Patna office."
+            "content": "Discuss your website, app, IT or marketing requirements with AA100XTech. Business hours: 11:00 AM to 5:00 PM."
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/contact"
           }
         ]
       }
@@ -1561,23 +1573,29 @@
       "legacy": {
         "meta": [
           {
-            "title": "Founder of AA100XTech — Aman, Absolute Advancement 100X Tech"
+            "title": "Aman | Founder of AA100XTech"
           },
           {
             "name": "description",
-            "content": "Meet the founder and lead developer of Absolute Advancement 100X Tech — his work, projects delivered, company details and social profiles."
+            "content": "Meet Aman, founder of AA100XTech, and explore the team's technology, marketing and creative expertise."
           },
           {
             "property": "og:title",
-            "content": "Founder of AA100XTech — Aman, Absolute Advancement 100X Tech"
+            "content": "Aman | Founder of AA100XTech"
           },
           {
             "property": "og:description",
-            "content": "Meet the founder and lead developer of Absolute Advancement 100X Tech — his work, projects delivered, company details and social profiles."
+            "content": "Meet Aman, founder of AA100XTech, and explore the team's technology, marketing and creative expertise."
           },
           {
             "property": "og:type",
             "content": "profile"
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/founders"
           }
         ]
       }
@@ -1587,19 +1605,25 @@
       "legacy": {
         "meta": [
           {
-            "title": "AA100XTech — Web, App & Digital Marketing Studio in Patna"
+            "title": "IT & Digital Marketing Experts | AA100XTech"
           },
           {
             "name": "description",
-            "content": "Absolute Advancement 100X Tech builds high-performance websites, mobile apps, AI solutions and growth marketing for ambitious brands. Transparent INR pricing from ₹7,999."
+            "content": "Website development, apps, digital marketing and creative services from AA100XTech. Explore business plans and book a consultation with our IT and marketing team."
           },
           {
             "property": "og:title",
-            "content": "AA100XTech — Web, App & Digital Marketing Studio in Patna"
+            "content": "IT & Digital Marketing Experts | AA100XTech"
           },
           {
             "property": "og:description",
-            "content": "Absolute Advancement 100X Tech builds high-performance websites, mobile apps, AI solutions and growth marketing for ambitious brands. Transparent INR pricing from ₹7,999."
+            "content": "Website development, apps, digital marketing and creative services from AA100XTech. Explore business plans and book a consultation with our IT and marketing team."
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/"
           }
         ]
       }
@@ -1609,19 +1633,19 @@
       "legacy": {
         "meta": [
           {
-            "title": "Influencer Marketing Services for Brands | AA100XTech"
+            "title": "Influencer Marketing Services in India | AA100XTech"
           },
           {
             "name": "description",
-            "content": "AA100XTech runs end-to-end influencer marketing campaigns: creator discovery, vetting, campaign management, content rights and transparent performance reporting."
+            "content": "Grow your brand with influencer marketing services from AA100XTech. Discover creators, plan campaigns, manage collaborations and track performance."
           },
           {
             "property": "og:title",
-            "content": "Influencer Marketing Services for Brands | AA100XTech"
+            "content": "Influencer Marketing Services in India | AA100XTech"
           },
           {
             "property": "og:description",
-            "content": "AA100XTech runs end-to-end influencer marketing campaigns: creator discovery, vetting, campaign management, content rights and transparent performance reporting."
+            "content": "Grow your brand with influencer marketing services from AA100XTech. Discover creators, plan campaigns, manage collaborations and track performance."
           },
           {
             "property": "og:type",
@@ -1809,19 +1833,25 @@
       "legacy": {
         "meta": [
           {
-            "title": "Portfolio — Websites, Apps & Platforms by AA100XTech"
+            "title": "Portfolio: Websites & Digital Platforms | AA100XTech"
           },
           {
             "name": "description",
-            "content": "Selected work from AA100XTech: real-estate platforms, AI products, e-commerce storefronts and growth campaigns built with MERN, Next.js and TypeScript."
+            "content": "Explore existing AA100XTech website and digital platform work, filter projects and discuss your next project with our team."
           },
           {
             "property": "og:title",
-            "content": "Portfolio — Websites, Apps & Platforms by AA100XTech"
+            "content": "Portfolio: Websites & Digital Platforms | AA100XTech"
           },
           {
             "property": "og:description",
-            "content": "Selected work from AA100XTech: real-estate platforms, AI products, e-commerce storefronts and growth campaigns built with MERN, Next.js and TypeScript."
+            "content": "Explore existing AA100XTech website and digital platform work, filter projects and discuss your next project with our team."
+          }
+        ],
+        "links": [
+          {
+            "rel": "canonical",
+            "href": "https://aa100xtech.com/portfolio"
           }
         ]
       }

@@ -4,6 +4,7 @@ import type { Service } from "./services";
 export const aiServices: Service[] = [
   {
     slug: "real-estate-photo-to-video",
+    navigationGroup: "media",
     title: "Real Estate Photos to Cinematic Video",
     short: "Turn property photos into cinematic tours and scroll-stopping presentations.",
     description:
@@ -29,6 +30,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "ai-avatar-property-walkthrough",
+    navigationGroup: "automation",
     title: "AI Avatar Property Walkthrough",
     short: "A photoreal AI presenter walks buyers through the property, room by room.",
     description:
@@ -53,6 +55,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "agent-in-video-walkthrough",
+    navigationGroup: "media",
     title: "Agent-Inside Video Walkthrough",
     short: "Put the real estate agent, broker or salesperson inside the property video.",
     description:
@@ -77,6 +80,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "ai-voice-agent",
+    navigationGroup: "automation",
     title: "AI Voice Agent (Jarvis-Style)",
     short: "A always-on voice assistant that answers, qualifies and books — in your voice.",
     description:
@@ -101,6 +105,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "ai-avatar-agent",
+    navigationGroup: "automation",
     title: "AI Avatar Agent",
     short: "A talking, on-screen AI agent your customers can actually converse with.",
     description:
@@ -125,8 +130,10 @@ export const aiServices: Service[] = [
   },
   {
     slug: "one-identity-one-world",
+    navigationGroup: "infrastructure",
     title: "1 Identity · 1 World · 1 Person",
-    short: "Your name as a complete digital identity: domain, email, website, app, socials, avatar.",
+    short:
+      "Your name as a complete digital identity: domain, email, website, app, socials, avatar.",
     description:
       "A full personal-brand infrastructure built around your name — domain and professional email, personal website, mobile app, set-up and branded pages across every major social platform, and your own AI avatar to represent you.",
     startingFrom: "₹99,999",
@@ -149,6 +156,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "your-voice-your-song",
+    navigationGroup: "media",
     title: "Your Voice · Your Song",
     short: "Original songs produced and performed in your own voice.",
     description:
@@ -173,6 +181,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "avatar-story-music-videos",
+    navigationGroup: "media",
     title: "Your Avatar · Your Story · Your Music Videos",
     short: "Star in your own films and music videos alongside avatars of your choice.",
     description:
@@ -197,6 +206,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "branded-ecommerce-store",
+    navigationGroup: "development",
     title: "Branded E-Commerce Store + Apps",
     short: "Full brand build with a store, plus published Apple and Google Play apps.",
     description:
@@ -221,6 +231,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "android-apps",
+    navigationGroup: "development",
     title: "Android Apps",
     short: "Play Store-ready Android apps, built, published and maintained.",
     description:
@@ -245,6 +256,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "ios-apps",
+    navigationGroup: "development",
     title: "iOS Apps",
     short: "App Store-ready iPhone and iPad apps from concept to approval.",
     description:
@@ -269,6 +281,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "voice-cloning",
+    navigationGroup: "automation",
     title: "Voice Cloning",
     short: "A studio-quality clone of your voice, usable anywhere you need it.",
     description:
@@ -293,6 +306,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "ugc-ads",
+    navigationGroup: "marketing",
     title: "UGC Ads Production",
     short: "Creator-style ads for Amazon, Walmart, Flipkart, Blinkit and every platform.",
     description:
@@ -317,6 +331,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "social-content-strategy",
+    navigationGroup: "marketing",
     title: "Social Media Content Strategy & Planning",
     short: "A full content engine: strategy, calendar, production plan and reporting.",
     description:
@@ -341,8 +356,10 @@ export const aiServices: Service[] = [
   },
   {
     slug: "competitor-spy-content-engine",
+    navigationGroup: "marketing",
     title: "Competitor Spy & Autopilot Content Engine",
-    short: "Pick your category, spy on the top creators, and auto-publish AI avatar videos everywhere.",
+    short:
+      "Pick your category, spy on the top creators, and auto-publish AI avatar videos everywhere.",
     description:
       "A full system: choose your niche, and we track your top competitors' posts, hooks and formats, learn what is working, then produce real videos using your AI avatar and cloned voice — scheduled and published across every platform, with comments answered automatically.",
     startingFrom: "₹24,999",
@@ -366,6 +383,7 @@ export const aiServices: Service[] = [
   },
   {
     slug: "automated-hiring-engine",
+    navigationGroup: "automation",
     title: "Automated Hiring & Test Engine",
     short: "Hire for yourself or your agency with automatic test rounds, submissions and scoring.",
     description:

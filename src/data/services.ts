@@ -2,6 +2,7 @@ export type Offering = { name: string; price: string };
 
 export type Service = {
   slug: string;
+  navigationGroup?: "development" | "marketing" | "automation" | "media" | "infrastructure";
   title: string;
   short: string;
   description: string;
@@ -17,6 +18,7 @@ import { aiServices } from "./services-ai";
 const coreServices: Service[] = [
   {
     slug: "website-development",
+    navigationGroup: "development",
     title: "Website Development",
     short: "High-performance websites engineered for brand impact, SEO and conversions.",
     description:
@@ -52,6 +54,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "ecommerce-development",
+    navigationGroup: "development",
     title: "E-Commerce Development",
     short: "Scalable online stores and marketplaces with seamless payments and operations.",
     description:
@@ -80,6 +83,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "mobile-app-development",
+    navigationGroup: "development",
     title: "Mobile App Development",
     short: "Native and cross-platform apps that deliver speed, security and delightful UX.",
     description:
@@ -110,6 +114,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "seo",
+    navigationGroup: "marketing",
     title: "Search Engine Optimization",
     short: "Rank higher on Google, Bing and Yahoo with technical and content-led SEO.",
     description:
@@ -135,6 +140,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "advertising-management",
+    navigationGroup: "marketing",
     title: "Advertising Management",
     short: "Paid campaigns engineered for measurable return on ad spend.",
     description:
@@ -159,6 +165,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "social-media-marketing",
+    navigationGroup: "marketing",
     title: "Social Media Marketing",
     short: "Enhanced social tactics backed by research, content and analysis.",
     description:
@@ -183,6 +190,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "graphic-design",
+    navigationGroup: "marketing",
     title: "Graphic Design",
     short: "Eye-catching design that grabs your audience's attention.",
     description:
@@ -208,6 +216,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "ai-solutions",
+    navigationGroup: "automation",
     title: "AI & Automation",
     short: "Agentic AI, chatbots and automation wired into your real workflows.",
     description:
@@ -232,6 +241,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "cloud-devops",
+    navigationGroup: "infrastructure",
     title: "Cloud & DevOps",
     short: "Reliable infrastructure, CI/CD and observability for growing platforms.",
     description:
@@ -255,6 +265,7 @@ const coreServices: Service[] = [
   },
   {
     slug: "cybersecurity",
+    navigationGroup: "infrastructure",
     title: "Cybersecurity",
     short: "Audits, hardening and monitoring that keep your platform trustworthy.",
     description:

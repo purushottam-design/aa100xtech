@@ -1,151 +1,114 @@
-# ICICI UAT verification - 2026-10-30
+# ICICI UAT verification - 2026-11-03
 
-## Current outcome
+> Follow-up requested by the owner: local guest testing is now enabled through
+> `ICICI_UAT_GUEST_CHECKOUT=true` in `.env.development.local`. The configured
+> trusted HTTPS tunnel accepts anonymous availability/preparation/initiation in
+> development only. Live guest availability returns HTTP 200, `available:true`;
+> cross-site initiation remains HTTP 403 and forged callbacks HTTP 400. All 36
+> focused ICICI tests and TypeScript pass. The administrator-only results below
+> describe the earlier audit; production gates and incomplete bank UAT are
+> unchanged. See `docs/icici-uat.md` for the local guest opt-in conditions.
 
-Application checks pass; actual bank UAT has not been completed. The user
-explicitly confirmed that merchant activation and callback registration have not
-yet been confirmed by ICICI. `ICICI_UAT_MERCHANT_CONFIRMED=false` therefore remains
-the current blocking configuration gate. Neither bank confirmation nor completed
-UAT was fabricated.
+## Outcome
 
-## Database
+Application checks pass and a real, isolated UAT Initiate Sale response has been verified. End-to-end bank UAT is **not complete**: STATUS for that reference returns unsigned HTTP 403. No hosted payment was completed, no real callback/advice was received, and no consultation records were written by the protocol probes. Production settings, Razorpay implementations and UAT verification flags were not changed.
 
-The current configured Supabase project returns HTTP 200 for read-only,
-`LIMIT 0` requests selecting every required booking/payment tracking column and
-all 15 checkout columns. Its service-role OpenAPI schema contains both
-`icici_uat_checkouts` and `/rpc/settle_icici_uat_checkout`. Database API readiness
-now passes, unlike the preceding audit. No migration, table recreation, data
-update or reset was needed or executed in this follow-up.
+`ICICI_ENVIRONMENT=uat`, `ICICI_SIGNING_MODE=sorted-fields`, `ICICI_UAT_TEST_MODE=true` and `ICICI_UAT_TESTS_PASSED=false` remain in effect. The existing local `ICICI_UAT_MERCHANT_CONFIRMED=true` is configuration, not evidence that all bank onboarding and registration requirements have been satisfied.
 
-The migration ledger is not exposed by PostgREST (`406 PGRST106`). A service-role
-API key does not provide arbitrary SQL execution. Exact read-only SQL for the
-ledger, columns, indexes, constraints, triggers, RLS and function privileges is
-provided in [supabase/diagnostics/icici_uat_readiness.sql](../supabase/diagnostics/icici_uat_readiness.sql).
-Paste that complete file into Supabase SQL Editor for catalog verification. The
-existing migrations already use transactions; do not rerun their plain CREATE
-statements blindly. No new repair migration is indicated by current API probes.
+## Authentication root cause and actual checks
 
-## Prepared environment
+`src/lib/icici-uat-access.server.ts` contains `ICICI_UAT_TEST_ACCESS_REQUIRED`. It validates the bearer token through Supabase Auth `getUser`, then uses the existing server-side `authorizeSuper` helper. Browser role metadata is never sufficient.
 
-The ignored `.env.local` contains these nonsecret settings. Merchant credentials
-and Supabase server credentials remain in the existing `.env` unchanged:
+The app uses local-storage Supabase sessions and explicit bearer headers, not an auth cookie. A localhost login does not sign the user in on ngrok. Visiting the API in the address bar does not attach a local-storage bearer token even when the application is signed in. The application client attaches the current session and refreshes availability after sign-in/sign-out.
 
-```dotenv
-ICICI_SIGNING_MODE=sorted-fields
-ICICI_RETURN_URL=https://aa100xtech.com/api/payments/icici/callback
-ICICI_UAT_ENABLED=true
-ICICI_UAT_MERCHANT_CONFIRMED=false
-ICICI_UAT_TESTS_PASSED=false
-ICICI_UAT_TEST_MODE=true
-```
+A normal password sign-in using the existing configured administrator account succeeded. No user provisioning, role assignment, password reset or dashboard provisioning helper was invoked. Temporary test sessions were signed out with local scope, preserving the user's other sessions.
 
-Existing server configuration also supplies `ICICI_MERCHANT_ID`,
-`ICICI_AGGREGATOR_ID`, `ICICI_SECRET_KEY`, `ICICI_ENVIRONMENT=sandbox`, the correct
-optional `ICICI_BASE_URL`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. `uat`
-is also a supported environment. Values of credentials are deliberately omitted.
+Actual tunnel results:
 
-The public HTTPS domain is real and was selected by the user. Both the main
-domain and its Lovable preview redirect to the existing public application.
-Live GET probes on that deployment return HTTP 500 for ICICI availability and
-callback, and its HTML uses the older Vite-based application rather than the
-local Next.js build. The selected callback is a deployment target, not an already
-verified working endpoint. Deploy the Next.js server and its environment there
-before bank registration/testing. A successful Next callback GET probe should
-be HTTP 405 because the payment callback intentionally accepts POST only.
+| Request                                                             | Actual result                                                                                  |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Anonymous availability                                              | HTTP 200, `available:false`, `ICICI_UAT_TEST_ACCESS_REQUIRED`                                  |
+| Authenticated configured Super Administrator availability           | HTTP 200, `available:true` for controlled testing                                              |
+| Authenticated checkout preparation with intentionally invalid input | HTTP 400, `INVALID_REQUEST`: authorization passed and schema validation rejected before writes |
+| Anonymous preparation with the same input                           | HTTP 403, `ICICI_UAT_TEST_ACCESS_REQUIRED`                                                     |
+| Invalid form callback signature                                     | HTTP 400, `ICICI_INVALID_SIGNATURE`                                                            |
+| Invalid form advice signature                                       | HTTP 400, `ICICI_INVALID_SIGNATURE`                                                            |
 
-The running local Next.js server has loaded `.env.local` and returns the new
-merchant-confirmation diagnostic. Restart development after future environment
-changes if it does not reload; a hosted application needs its runtime settings
-and a restart/redeployment. Plain HTTP localhost cannot match the callback.
+Both availability responses report the configured and resolved origin as `https://tractor-nautical-snowbird.ngrok-free.dev`, transport `https://localhost:3000`, and source `trusted-proxy`. Tester eligibility is not bank certification or customer availability.
 
-## Protocol verification
+The new tests use the real RBAC helper to verify database-assigned and custom Super Administrator roles. Customer, employee, company-admin, manager, anonymous and invalid-session cases remain blocked. Forged `user_metadata.role=supreme_admin` cannot grant access. Existing configured-admin compatibility still requires a server-validated Supabase session.
 
-- **Signing:** `icici-signing.server.ts` matches the Node.js reference PDF p3 and
-  API guide p6. It excludes `secureHash`, sorts only top-level keys, skips
-  null/undefined, JSON-stringifies nested arrays/objects in their original order,
-  and uses UTF-8 HMAC-SHA256 with lowercase hexadecimal output. Zero and false
-  are retained. Unknown response fields participate in verification. The
-  existing implementation was kept; no signing-mode fallback was introduced.
-- **Initiate Sale:** fixed documented HTTPS UAT v2 URL, `payType=0`, server-owned
-  merchant reference, server-derived INR amount, currency code 356, customer
-  email/name, transaction date, callback and signature. Aggregator ID is included
-  when configured. `customerMobileNo` is optional in interface p9, so its omission
-  is not a missing mandatory field.
-- **Redirect:** a verified signed `R1000` response must provide an allowlisted
-  HTTPS `redirectURI` and `tranCtx`. Only the documented bank hosted page is used.
-- **Callback:** accepts `application/x-www-form-urlencoded` POST, rejects duplicate
-  fields and invalid hashes, ignores query claims, matches the stored merchant
-  reference/transaction, and calls independent STATUS verification. It returns a
-  303 to the consultation page; the owning browser retrieves the stored outcome
-  using its original checkout capability. A callback alone cannot mark payment paid.
-- **STATUS:** interface p40 requires form POST with field hashing. The code checks
-  the response signature, merchant/aggregator/reference, transaction ID, amount,
-  optional returned currency and final transaction codes. The current API guide
-  p4 includes amount in STATUS responses; the existing strict amount match is
-  retained. Only `SUC` with successful request and transaction codes can settle.
-  The database RPC stores settlement atomically and protects against replay or
-  replacement. Fixtures pass; a real bank STATUS round trip remains unverified.
+## Database limitations
 
-## Controlled initial UAT
+Read-only service-role `LIMIT 0` probes passed for all 15 checkout columns and every booking field used by ICICI preparation/settlement. PostgREST metadata exposes `settle_icici_uat_checkout`. Metadata does not prove deployed constraints, triggers or RPC privileges; the catalog checks in `supabase/diagnostics/icici_uat_readiness.sql` remain relevant. No database migrations or business-record mutations were performed against the configured project.
 
-The previous customer selector required completed UAT before it could be used for
-the first browser test. The new explicit `ICICI_UAT_TEST_MODE=true` permits that
-test only for a server-verified, signed-in super administrator. Preparation and
-initiation enforce the same restriction; hiding a radio is not the boundary.
-An invalid token, ordinary user or anonymous caller is rejected before either
-action executes. The ICICI client forwards the existing Supabase session and
-availability refreshes on sign-in/sign-out. No page elements or Razorpay payment
-implementation were changed.
+The configured project does not expose `user_roles` or `admin_roles` (`PGRST205`). `profiles.status` and `profiles.is_active` return `42703`. The existing shared helper therefore recognizes the configured administrator through its established, server-side environment-email compatibility path. This work neither introduced nor expanded that fallback. Database-assigned administrators and account-status enforcement require the database owner to resolve RBAC schema parity. No roles were automatically granted, and successful configured-admin testing must not be presented as proof of the missing RBAC tables.
 
-Required credentials, merchant activation, registered HTTPS origin and database
-readiness must still pass. This also works in a deployed production Next.js
-build pointed at the bank's UAT environment; it cannot enable a production bank
-environment. The live-bank environment and endpoints remain rejected regardless
-of flags or user role. `ICICI_UAT_TESTS_PASSED` stays false while testing, then may
-be set true only after the actual bank UAT suite passes. Callback/advice and
-capability-protected status retrieval do not require an active tester login.
+## Protocol validation and real bank results
 
-## Actual local response
+The supplied documents were read locally without printing or committing secret values:
 
-HTTP 200, no-store, with development diagnostics:
+- `Secure_Hash_Functions_Reference.pdf`, Node.js page 3.
+- `ICICI_PG_Initiate_Sale_API.pdf`, initiation/STATUS pages 3-4, hashing/redirect page 6, callback page 7, advice page 8 and response codes page 10.
+- `PG_Interface_Specifiation_V0.5.pdf`, form STATUS pages 40-43 and hash contracts pages 66-68.
 
-```json
-{
-  "icici": false,
-  "environment": "uat",
-  "available": false,
-  "code": "ICICI_INTEGRATION_NOT_VERIFIED",
-  "reason": "ICICI_UAT_MERCHANT_CONFIRMED must be true after the corresponding UAT approval.",
-  "blocked": ["ICICI_UAT_MERCHANT_CONFIRMED"]
-}
-```
+The configured field-hashing implementation matches the Node.js reference: sort top-level keys, omit `secureHash` and null/undefined, preserve nested JSON order, concatenate values, then apply UTF-8 HMAC-SHA256 and lowercase hexadecimal encoding. Hash comparison is constant-time. The separate JSON-v2 implementation remains independent; no signing-mode or content-type fallback was introduced.
 
-Initiation and callback probes return HTTP 503 at this same activation gate,
-before bank transport or database writes. Production availability returns a
-generic reason and omits field-level diagnostics. Diagnostic logs contain no
-credential values, bearer tokens, customer data or raw bank/database exceptions.
+Merchant ID, Aggregator ID and secret are present and pass static validation. A bank-verified Initiate Sale response also matched merchant, aggregator and reference, establishing the configured initiation signing contract beyond offline fixtures.
 
-## Verification and remaining steps
+| Bank check                                              | Actual result                                                                                                               |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Initial sandbox-constrained Initiate Sale               | No verifiable response, `ICICI_STATUS_UNKNOWN`; no automatic retry                                                          |
+| Initial sandbox-constrained STATUS                      | HTTP 403 HTML, rejected                                                                                                     |
+| Separate nonexistent-reference STATUS outside sandbox   | HTTP 200 JSON, `P0039` (request not found), but response signature did not verify; rejected                                 |
+| Independently tracked UAT Initiate Sale outside sandbox | HTTP 200 JSON, `R1000`, valid 64-character signature, signature verified                                                    |
+| Initiation identity checks                              | Merchant, aggregator and unique reference passed                                                                            |
+| Hosted redirect                                         | Allowlisted `https://pgpayuat.icici.bank.in/tsp/pg/api/v2/authRedirect` with nonempty `tranCtx`; token not logged or opened |
+| STATUS for that actual reference, twice                 | HTTP 403 HTML, `Server: awselb/2.0`, no signature; `ICICI_STATUS_UNKNOWN`                                                   |
+| Hosted bank payment                                     | Not performed                                                                                                               |
+| Real bank callback/advice                               | Not received                                                                                                                |
+| Signed successful STATUS and real database confirmation | Not achieved                                                                                                                |
 
-All 78 automated tests passed, including the ICICI protocol fixtures, real SQL
-settlement/RLS tests in isolated PostgreSQL, Razorpay regressions, and five new
-controlled-UAT/access/client tests. All nine payment browser tests passed,
-including desktop/mobile disabled state, selectable ICICI fixture, callbacks,
-pending/success/failure/cancellation and booking deduplication. TypeScript,
-targeted lint and the production Next.js build passed. Rendered-template parity
-tests confirm the existing layout is preserved.
-Scanning all 137 production client JS/JSON/map assets found no configured ICICI
-signing secret or Supabase service-role key. `.env.local` is ignored by Git.
+The independently tracked attempt used the supplied bank guide's synthetic customer details and INR 1 example with the existing configured UAT merchant/key. It created only a bank-hosted UAT session, with no instrument submitted and no application booking. Its reference and sanitized results are retained in the ignored `.migration/icici-uat-bank-probe.json` for bank support. An earlier ambiguous request was not automatically retried; the outside-sandbox attempt used a separate unique reference.
 
-The current API's single reported configuration blocker is merchant confirmation.
-To clear it, obtain actual ICICI activation and return-URL registration confirmation
-before changing that flag to true. The public deployment must also be updated to
-serve this Next.js callback. These are external prerequisites; a real UAT payment
-has not been claimed or attempted while activation is unconfirmed.
+The STATUS denial may involve endpoint permissions, IP allowlisting or bank policy; the exact cause needs ICICI confirmation. The separate not-found response signature also needs explanation. Neither failure is accepted as success or worked around by skipping verification.
 
-After deployment and bank confirmation, keep tests-passed false, sign in as a
-super administrator on the matching HTTPS origin, check availability, and start
-one synthetic UAT booking. Complete the bank's test cases; verify the hosted
-redirect, callback, independent STATUS and persisted settlement. Test decline,
-pending, tampering and repeat delivery. Only then record UAT completion and turn
-off controlled test mode. No real production payment is authorized by these flags.
+## Application changes
+
+Availability previously checked only checkout `id` and four booking tracking columns. It now probes all columns needed by preparation and reconciliation, still using `LIMIT 0` and reading no customer records. A partial schema can no longer be reported ready merely because the table exists.
+
+The consultation UI explains the same-origin Super Administrator sign-in requirement and uses a safe preparation-unavailable message for storage failures. Raw server diagnostics are not rendered. Existing markup, layout, classes, animation and responsive design are retained.
+
+New tests cover real RBAC behavior and both UI error states. The signing, initiation, callback, advice, status, settlement SQL and Razorpay implementations were audited and retained.
+
+Files changed in this audit:
+
+- `src/lib/icici-checkout.server.ts`
+- `src/components/consultation-booking.tsx`
+- `tests/icici-availability.test.cjs`
+- `tests/icici-authorization.test.cjs` (new)
+- `tests/e2e/payments.spec.ts`
+- `docs/icici-uat-verification.md`
+- `docs/icici-uat.md`
+
+## Verification results
+
+- `npm test`: **114 passed**, including protocol signing/verification, mocked Initiate Sale, callback tampering/duplicates, pending/failed/success status matching, ownership, concurrent reservation, provider locking, and real settlement SQL/RLS/replay tests in isolated PostgreSQL.
+- `npm run typecheck`: passed.
+- Targeted ESLint: passed.
+- `npm run build`: passed on Next.js 16.4.3; all six ICICI routes are present.
+- Payment browser suite against the completed local production build on port 3100: **16 passed**, covering desktop/mobile, ICICI readiness/errors, and unchanged Razorpay success/pending/failure/cancellation behavior. Payment providers are mocked in those UI tests.
+- Initial UI run against dev during concurrent build: 15 passed / 1 mobile dialog timeout. The complete built-server rerun passed without a product workaround.
+- Built frontend scan: 139 JS/JSON/map assets contained no configured ICICI signing key or Supabase service-role key.
+
+A separate existing credential hygiene issue was observed: the configured administrator password matches public site contact text. This is not environment-secret injection by the ICICI changes. The owner should rotate that password through the established account process and server environment; no password or production setting was changed by this audit. Its value is deliberately omitted.
+
+## Remaining manual steps
+
+1. Ask ICICI to resolve STATUS access for the tracked UAT reference, checking the exact endpoint, egress-IP allowlisting and form field mapping. Confirm the error-response signature contract. Share sanitized evidence, never merchant keys.
+2. Confirm registration of the exact HTTPS POST callback and form advice URLs under `https://tractor-nautical-snowbird.ngrok-free.dev/api/payments/icici/`. Both handlers exist. Advice requires the bank hash and independent STATUS, not a browser session.
+3. Have the database owner resolve RBAC schema parity in the intended UAT project and explicitly assign tester roles as needed. Verify payment constraints/RPC privileges with the supplied read-only SQL. Do not run automatic role-grant or provisioning shortcuts.
+4. Sign in on ngrok, use synthetic consultation details in a confirmed isolated test database, and start a new application-owned checkout. Complete the bank payment using only ICICI-issued UAT instruments and OTP instructions.
+5. Verify a signed callback, independent signed successful STATUS, and exactly one atomic booking confirmation with matching reference, transaction ID, amount and currency. Replay callback/advice/status to test idempotency.
+6. Complete bank-issued pending, rejection/cancellation, expiry and recovery cases. Recheck the same reference after ambiguity; never issue another SALE automatically. Without the owning browser capability, use support rather than exposing checkout data.
+7. Only after the actual bank suite passes may an authorized owner set `ICICI_UAT_TESTS_PASSED=true` on that UAT deployment. Live ICICI remains unsupported. Keep production `aa100xtech.com` and Razorpay settings separate and unchanged.

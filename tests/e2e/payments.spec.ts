@@ -1,6 +1,11 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 
-async function openPaymentSummary(page: Page, premium = false, doubleSubmit = false) {
+async function openPaymentSummary(
+  page: Page,
+  premium = false,
+  doubleSubmit = false,
+  beforeProceed?: (dialog: Locator) => Promise<void>,
+) {
   await page.route("**/api/rpc/consultations/createConsultationBooking", async (route) => {
     if (doubleSubmit) await new Promise((resolve) => setTimeout(resolve, 300));
     return route.fulfill({
@@ -20,7 +25,10 @@ async function openPaymentSummary(page: Page, premium = false, doubleSubmit = fa
   });
   await page.goto("/consultation", { waitUntil: "domcontentloaded" });
   await page
-    .getByRole("button", { name: premium ? "Book Premium" : "Book Now", exact: true })
+    .getByRole("button", {
+      name: premium ? "Book Premium" : "Book Now",
+      exact: true,
+    })
     .first()
     .click();
   const dialog = page.getByRole("dialog");
@@ -31,14 +39,18 @@ async function openPaymentSummary(page: Page, premium = false, doubleSubmit = fa
   await dialog
     .locator('input[type="date"]')
     .fill(new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10));
-  await dialog.locator('input[type="time"]').fill("10:00");
+  await dialog.locator('input[type="time"]').fill("11:00");
   await dialog
     .getByPlaceholder(
       "Share goals, challenges, timeline, and what you want from this consultation...",
       { exact: true },
     )
     .fill("A test consultation project with clearly defined scope.");
-  const proceed = dialog.getByRole("button", { name: "Proceed to Payment", exact: true });
+  const proceed = dialog.getByRole("button", {
+    name: "Proceed to Payment",
+    exact: true,
+  });
+  await beforeProceed?.(dialog);
   if (doubleSubmit)
     await proceed.evaluate((button) => {
       button.click();
@@ -65,7 +77,9 @@ for (const width of [1440, 390]) {
     await dialog.getByRole("radio", { name: /Pay with Razorpay/ }).press("ArrowRight");
     await expect(dialog.getByRole("radio", { name: /Pay with Razorpay/ })).toBeChecked();
     expect(await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
-    await page.screenshot({ path: testInfo.outputPath(`payment-options-${width}.png`) });
+    await page.screenshot({
+      path: testInfo.outputPath(`payment-options-${width}.png`),
+    });
     let requestBody: unknown;
     await page.route("**/api/rpc/consultations/verifyConsultationPayment", async (route) => {
       requestBody = route.request().postDataJSON();
@@ -92,9 +106,16 @@ for (const width of [1440, 390]) {
       };
       w.Razorpay = class {
         constructor(
-          private options: { order_id: string; key: string; handler: (value: unknown) => void },
+          private options: {
+            order_id: string;
+            key: string;
+            handler: (value: unknown) => void;
+          },
         ) {
-          w.testRazorpayOptions = { order_id: options.order_id, key: options.key };
+          w.testRazorpayOptions = {
+            order_id: options.order_id,
+            key: options.key,
+          };
         }
         on() {}
         open() {
@@ -130,12 +151,19 @@ test("pending Razorpay verification rechecks the same transaction without reopen
   await page.route("**/api/rpc/consultations/verifyConsultationPayment", (route) =>
     route.fulfill({
       json: {
-        data: { ok: true, status: ++checks === 1 ? "pending" : "paid", paymentId: "pay_test" },
+        data: {
+          ok: true,
+          status: ++checks === 1 ? "pending" : "paid",
+          paymentId: "pay_test",
+        },
       },
     }),
   );
   await page.evaluate(() => {
-    const w = window as unknown as { Razorpay: unknown; testCheckoutOpens: number };
+    const w = window as unknown as {
+      Razorpay: unknown;
+      testCheckoutOpens: number;
+    };
     w.testCheckoutOpens = 0;
     w.Razorpay = class {
       constructor(private options: { handler: (value: unknown) => void }) {}
@@ -193,17 +221,35 @@ for (const outcome of ["failed", "cancelled"]) {
   });
 }
 
-test("ICICI endpoints reject unverified transactions and payment administration remains protected", async ({
+test("ICICI endpoints reject cross-site requests and forged callbacks, and payment administration remains protected", async ({
   request,
 }) => {
-  for (const endpoint of ["initiate", "status", "callback"]) {
+  const availability = await request.get("/api/payments/icici/availability");
+  expect(availability.status()).toBe(200);
+  expect(availability.headers()["cache-control"]).toBe("no-store");
+  const readiness = await availability.json();
+  expect(typeof readiness.available).toBe("boolean");
+  expect(readiness.icici).toBe(readiness.available);
+  for (const endpoint of ["checkout", "initiate", "status"]) {
     const response = await request.post(`/api/payments/icici/${endpoint}`, {
-      headers: { "x-aa-rpc": "1" },
+      headers: { "x-aa-rpc": "1", origin: "https://attacker.example.test" },
       data: { paymentStatus: "SUCCESS", secureHash: "0".repeat(64) },
     });
-    expect(response.status()).toBe(503);
-    expect((await response.json()).code).toBe("ICICI_INTEGRATION_NOT_VERIFIED");
+    expect(response.status()).toBe(403);
+    expect((await response.json()).error).toBe("Cross-site request rejected.");
   }
+  const callback = await request.post("/api/payments/icici/callback", {
+    form: { paymentStatus: "SUCCESS", secureHash: "forged" },
+  });
+  const failure = await callback.json();
+  // A disabled/misconfigured adapter rejects before signature validation. With
+  // valid UAT config, this malformed hash always fails before storage/bank work.
+  if (failure.code === "ICICI_INVALID_SIGNATURE") expect(callback.status()).toBe(400);
+  else {
+    expect(callback.status()).toBe(503);
+    expect(["ICICI_INTEGRATION_NOT_VERIFIED", "ICICI_CONFIGURATION"]).toContain(failure.code);
+  }
+  expect(failure.ok).toBe(false);
   expect((await request.post("/api/payments/icici/initiate", { data: {} })).status()).toBe(403);
   expect(
     (
@@ -235,14 +281,24 @@ test("mocked confirmed UAT checkout selects ICICI at the unchanged premium price
     expect(input.token).toMatch(/^[a-f0-9]{64}$/);
     expect(booking.planId).toBe("premium");
     return route.fulfill({
-      json: { ok: true, amount: 2000000, currency: "INR", reference: "ICUATFIXTURE123456789" },
+      json: {
+        ok: true,
+        amount: 2000000,
+        currency: "INR",
+        reference: "ICUATFIXTURE123456789",
+      },
     });
   });
   await page.route("**/api/payments/icici/initiate", (route) => {
     initiations++;
     expect(route.request().postDataJSON().gateway).toBe("icici");
     return route.fulfill({
-      json: { ok: true, gateway: "icici", pending: true, bookingId: "CONS-UATFIXTURE" },
+      json: {
+        ok: true,
+        gateway: "icici",
+        pending: true,
+        bookingId: "CONS-UATFIXTURE",
+      },
     });
   });
   await page.route("**/api/payments/icici/status", (route) =>
@@ -275,6 +331,125 @@ test("mocked confirmed UAT checkout selects ICICI at the unchanged premium price
   expect(errors).toEqual([]);
 });
 
+test("booking waits for availability before deciding which checkout to prepare", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let preparations = 0;
+  await page.route("**/api/payments/icici/availability", async (route) => {
+    await gate;
+    await route.fulfill({ json: { available: true } });
+  });
+  await page.route("**/api/payments/icici/checkout", (route) => {
+    preparations++;
+    return route.fulfill({
+      json: { ok: true, amount: 250000, currency: "INR", reference: "ICWAIT" },
+    });
+  });
+  const dialog = await openPaymentSummary(page, false, false, async (details) => {
+    await expect(
+      details.getByRole("button", {
+        name: "Proceed to Payment",
+        exact: true,
+      }),
+    ).toBeDisabled();
+    expect(preparations).toBe(0);
+    release();
+  });
+  await expect(dialog.getByRole("radio", { name: /Pay with ICICI Bank/ })).toBeEnabled();
+  expect(preparations).toBe(1);
+});
+
+for (const failure of ["wrong-origin", "http-error", "canonical-false", "uat-access", "storage"]) {
+  test(`ICICI ${failure} keeps its radio disabled and Razorpay available`, async ({ page }) => {
+    await page.route("**/api/payments/icici/availability", (route) =>
+      route.fulfill({
+        status: failure === "http-error" ? 503 : 200,
+        json:
+          failure === "wrong-origin"
+            ? {
+                available: false,
+                code: "ICICI_WRONG_ORIGIN",
+                reason: "must-not-render-raw-server-data",
+              }
+            : failure === "uat-access" || failure === "storage"
+              ? {
+                  available: false,
+                  code:
+                    failure === "uat-access"
+                      ? "ICICI_UAT_TEST_ACCESS_REQUIRED"
+                      : "CHECKOUT_STORAGE_UNAVAILABLE",
+                  reason: "must-not-render-raw-server-data",
+                }
+              : { available: failure === "http-error", icici: true },
+      }),
+    );
+    const dialog = await openPaymentSummary(page);
+    await expect(dialog.getByRole("radio", { name: /Pay with ICICI Bank/ })).toBeDisabled();
+    await expect(dialog.getByRole("radio", { name: /Pay with Razorpay/ })).toBeChecked();
+    await expect(dialog.getByRole("button", { name: /Pay with Razorpay/ })).toBeEnabled();
+    await expect(dialog.getByText("must-not-render-raw-server-data")).toHaveCount(0);
+    if (failure === "wrong-origin")
+      await expect(
+        dialog.getByText("Open the configured HTTPS website to use ICICI Bank."),
+      ).toBeVisible();
+    if (failure === "uat-access")
+      await expect(
+        dialog.getByText(
+          "Sign in as a Super Administrator on this website to test ICICI Bank UAT.",
+        ),
+      ).toBeVisible();
+    if (failure === "storage")
+      await expect(
+        dialog.getByText("ICICI Bank booking preparation is temporarily unavailable."),
+      ).toBeVisible();
+  });
+}
+
+test("a selected ICICI method cannot pay after refreshed availability is lost", async ({
+  page,
+}) => {
+  let available = true;
+  let initiations = 0;
+  await page.route("**/api/payments/icici/availability", (route) =>
+    route.fulfill({
+      json: { available, code: available ? undefined : "ICICI_WRONG_ORIGIN" },
+    }),
+  );
+  await page.route("**/api/payments/icici/checkout", (route) =>
+    route.fulfill({
+      json: {
+        ok: true,
+        amount: 250000,
+        currency: "INR",
+        reference: "ICREFRESH",
+      },
+    }),
+  );
+  await page.route("**/api/payments/icici/initiate", (route) => {
+    initiations++;
+    return route.fulfill({ status: 503, json: { ok: false } });
+  });
+  const dialog = await openPaymentSummary(page);
+  const icici = dialog.getByRole("radio", { name: /Pay with ICICI Bank/ });
+  await icici.check();
+  await expect(dialog.getByRole("button", { name: /Pay with ICICI Bank/ })).toBeEnabled();
+  available = false;
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(icici).toBeDisabled();
+  await expect(icici).toBeChecked();
+  await expect(dialog.getByRole("button", { name: /Pay with ICICI Bank/ })).toBeDisabled();
+  await expect(
+    dialog.getByText("Open the configured HTTPS website to use ICICI Bank."),
+  ).toBeVisible();
+  expect(initiations).toBe(0);
+  await dialog.getByRole("radio", { name: /Pay with Razorpay/ }).check();
+  await expect(dialog.getByRole("button", { name: /Pay with Razorpay/ })).toBeEnabled();
+});
+
 test("booking storage failure keeps the form and never opens payment checkout", async ({
   page,
 }) => {
@@ -305,7 +480,7 @@ test("booking storage failure keeps the form and never opens payment checkout", 
   await dialog
     .locator('input[type="date"]')
     .fill(new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10));
-  await dialog.locator('input[type="time"]').fill("10:00");
+  await dialog.locator('input[type="time"]').fill("11:00");
   await dialog
     .getByPlaceholder(
       "Share goals, challenges, timeline, and what you want from this consultation...",

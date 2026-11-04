@@ -39,7 +39,7 @@ module.exports = function loadServer(entry, mocks = {}, globals = {}) {
           let resolved = name.startsWith("@/")
             ? path.join(root, name.slice(2))
             : path.resolve(path.dirname(file), name);
-          if (!fs.existsSync(resolved))
+          if (!fs.existsSync(resolved) || fs.statSync(resolved).isDirectory())
             resolved += fs.existsSync(resolved + ".ts") ? ".ts" : ".tsx";
           const alias =
             "@/" +

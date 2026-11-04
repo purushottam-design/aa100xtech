@@ -1,26 +1,33 @@
 import { fromLegacyHead } from "@/lib/page-metadata";
 
-// Original page metadata, preserved during the App Router migration.
 export const metadata = fromLegacyHead({
-  "meta": [
+  meta: [
     {
-      "title": "Founder of AA100XTech — Aman, Absolute Advancement 100X Tech"
+      title: "Aman | Founder of AA100XTech",
     },
     {
-      "name": "description",
-      "content": "Meet the founder and lead developer of Absolute Advancement 100X Tech — his work, projects delivered, company details and social profiles."
+      name: "description",
+      content:
+        "Meet Aman, founder of AA100XTech, and explore the team's technology, marketing and creative expertise.",
     },
     {
-      "property": "og:title",
-      "content": "Founder of AA100XTech — Aman, Absolute Advancement 100X Tech"
+      property: "og:title",
+      content: "Aman | Founder of AA100XTech",
     },
     {
-      "property": "og:description",
-      "content": "Meet the founder and lead developer of Absolute Advancement 100X Tech — his work, projects delivered, company details and social profiles."
+      property: "og:description",
+      content:
+        "Meet Aman, founder of AA100XTech, and explore the team's technology, marketing and creative expertise.",
     },
     {
-      "property": "og:type",
-      "content": "profile"
-    }
-  ]
+      property: "og:type",
+      content: "profile",
+    },
+  ],
+  links: [
+    {
+      rel: "canonical",
+      href: "https://aa100xtech.com/founders",
+    },
+  ],
 });

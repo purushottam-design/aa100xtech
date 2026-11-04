@@ -18,7 +18,7 @@ const form = {
   country: "India",
   service: plans.consultationServices[0],
   preferredDate: "2027-01-01",
-  preferredTime: "10:00",
+  preferredTime: "11:00",
   timezone: "Asia/Kolkata",
   meetingPlatform: "Google Meet",
   projectDescription: "Synthetic persisted consultation test.",
@@ -154,7 +154,9 @@ function handler(
     "src/lib/backend/handlers/consultations.ts",
     {
       "@/integrations/supabase/client.server": { supabaseAdmin: client },
-      "@/lib/payment-database.server": { associatePaymentCustomer: async () => {} },
+      "@/lib/payment-database.server": {
+        associatePaymentCustomer: async () => {},
+      },
       "@/lib/consultations.server": {
         getRazorpayCheckoutKeyId: () => "rzp_test_fixture",
         generateBookingId: () => `CONS-PERSIST${++sequence}`,
@@ -173,7 +175,11 @@ function handler(
           assert.equal(rows[0].razorpay_order_id, null);
           assert.equal(rows[0].amount * 100, input.amountInPaise);
           return gatewayFailure
-            ? { ok: false, code: "GATEWAY_UNAVAILABLE", message: "Gateway unavailable" }
+            ? {
+                ok: false,
+                code: "GATEWAY_UNAVAILABLE",
+                message: "Gateway unavailable",
+              }
             : {
                 ok: true,
                 id: `order_persist${gatewayCalls}`,
@@ -306,7 +312,10 @@ test("backend persists and retrieves the exact pending booking and order before 
         [result.bookingId],
       )
     ).rows[0];
-    assert.deepEqual(paid, { payment_status: "PAID", booking_status: "CONFIRMED" });
+    assert.deepEqual(paid, {
+      payment_status: "PAID",
+      booking_status: "CONFIRMED",
+    });
   } finally {
     await db.close();
   }
@@ -317,7 +326,11 @@ test("missing tables, RLS/constraint errors and missing returning rows cannot st
   try {
     for (const code of ["PGRST205", "42501", "23514"]) {
       const h = handler(db, {
-        insertError: { code, message: "sensitive-value", details: "sensitive-value" },
+        insertError: {
+          code,
+          message: "sensitive-value",
+          details: "sensitive-value",
+        },
       });
       const result = await h.create();
       assert.equal(result.ok, false);
@@ -359,7 +372,9 @@ test("gateway and order-link failures preserve pending records and never expose 
 test("database read failures cannot return successful booking/payment confirmation", async () => {
   const db = await database();
   try {
-    const h = handler(db, { readError: { code: "PGRST205", message: "sensitive-value" } });
+    const h = handler(db, {
+      readError: { code: "PGRST205", message: "sensitive-value" },
+    });
     await assert.rejects(
       h.api.verifyConsultationPayment({
         data: {
@@ -425,7 +440,9 @@ test("the same request key cannot overwrite details or create another paid booki
     assert.equal(paidReplay.code, "BOOKING_ALREADY_PAID");
     assert.equal(paidReplay.bookingId, created.bookingId);
     assert.equal(h.gatewayCalls(), 1);
-    const intentional = await h.create({ idempotencyKey: "10000000-0000-4000-8000-000000000002" });
+    const intentional = await h.create({
+      idempotencyKey: "10000000-0000-4000-8000-000000000002",
+    });
     assert.equal(intentional.ok, true);
     assert.notEqual(intentional.bookingId, created.bookingId);
   } finally {
@@ -467,7 +484,10 @@ test("browser retry keys survive reloads without storing customer form data", as
     },
   };
   const client = load("src/lib/consultation-submission.ts", {}, globals);
-  const details = JSON.stringify({ name: "private-customer-name", email: "private@example.test" });
+  const details = JSON.stringify({
+    name: "private-customer-name",
+    email: "private@example.test",
+  });
   const first = await client.consultationAttempt(details, null);
   assert.equal((await client.consultationAttempt(details, first)).key, first.key);
   const reloaded = load("src/lib/consultation-submission.ts", {}, globals);

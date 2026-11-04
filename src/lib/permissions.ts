@@ -318,7 +318,12 @@ export const PERMISSION_ROUTES: Record<string, string> = {
   "settings.email": "/admin/settings/email",
 };
 
-export type AdminModule = { label: string; route: string; permission: string; superOnly?: boolean };
+export type AdminModule = {
+  label: string;
+  route: string;
+  permission: string;
+  superOnly?: boolean;
+};
 
 /**
  * Modules keyed by the permission that unlocks them. Custom roles built in the
@@ -327,31 +332,104 @@ export type AdminModule = { label: string; route: string; permission: string; su
  */
 export const MODULE_CATALOGUE: AdminModule[] = [
   { label: "Dashboard", route: "/admin/select", permission: "dashboard.view" },
-  { label: "Users & members", route: "/admin/company", permission: "users.view" },
+  {
+    label: "Users & members",
+    route: "/admin/company",
+    permission: "users.view",
+  },
   { label: "Customers", route: "/admin/company", permission: "customers.view" },
-  { label: "Access requests", route: "/admin/company", permission: "requests.view" },
-  { label: "Candidates", route: "/admin/interview", permission: "candidates.view" },
-  { label: "Partner applications", route: "/admin/marketing", permission: "partners.view" },
-  { label: "Affiliates", route: "/admin/marketing", permission: "affiliates.view" },
-  { label: "Products & courses", route: "/admin/super", permission: "products.view" },
+  {
+    label: "Access requests",
+    route: "/admin/company",
+    permission: "requests.view",
+  },
+  {
+    label: "Candidates",
+    route: "/admin/interview",
+    permission: "candidates.view",
+  },
+  {
+    label: "Partner applications",
+    route: "/admin/marketing",
+    permission: "partners.view",
+  },
+  {
+    label: "Affiliates",
+    route: "/admin/marketing",
+    permission: "affiliates.view",
+  },
+  {
+    label: "Products & courses",
+    route: "/admin/super",
+    permission: "products.view",
+  },
   { label: "Categories", route: "/admin/super", permission: "categories.view" },
   { label: "Orders", route: "/admin/super", permission: "orders.view" },
-  { label: "Consultation bookings", route: "/admin/business", permission: "bookings.view" },
-  { label: "Payments & refunds", route: "/admin/super", permission: "payments.view" },
+  {
+    label: "Consultation bookings",
+    route: "/admin/business",
+    permission: "bookings.view",
+  },
+  {
+    label: "Payments & refunds",
+    route: "/admin/super",
+    permission: "payments.view",
+  },
   { label: "Leads", route: "/admin/super", permission: "leads.view" },
-  { label: "Support tickets", route: "/admin/super", permission: "support.view" },
-  { label: "Notifications", route: "/admin/super", permission: "notifications.view" },
-  { label: "Content & banners", route: "/admin/super", permission: "content.view" },
+  {
+    label: "Support tickets",
+    route: "/admin/super",
+    permission: "support.view",
+  },
+  {
+    label: "Notifications",
+    route: "/admin/super",
+    permission: "notifications.view",
+  },
+  {
+    label: "Website requests",
+    route: "/admin/requests",
+    permission: "leads.view",
+  },
+  {
+    label: "Content & banners",
+    route: "/admin/super",
+    permission: "content.view",
+  },
   { label: "FAQs", route: "/admin/super", permission: "faqs.view" },
   { label: "Reviews", route: "/admin/super", permission: "reviews.view" },
   { label: "Reports", route: "/admin/select", permission: "reports.view" },
-  { label: "Admins & permissions", route: "/admin/admins", permission: "admins.view" },
+  {
+    label: "Admins & permissions",
+    route: "/admin/admins",
+    permission: "admins.view",
+  },
   { label: "Roles", route: "/admin/roles", permission: "roles.view" },
-  { label: "Security", route: "/admin/security", permission: "security.activity" },
-  { label: "Active sessions", route: "/admin/security", permission: "security.sessions" },
-  { label: "Website settings", route: "/admin/settings/website", permission: "settings.website" },
-  { label: "General settings", route: "/admin/settings/general", permission: "settings.general" },
-  { label: "Email settings", route: "/admin/settings/email", permission: "settings.email" },
+  {
+    label: "Security",
+    route: "/admin/security",
+    permission: "security.activity",
+  },
+  {
+    label: "Active sessions",
+    route: "/admin/security",
+    permission: "security.sessions",
+  },
+  {
+    label: "Website settings",
+    route: "/admin/settings/website",
+    permission: "settings.website",
+  },
+  {
+    label: "General settings",
+    route: "/admin/settings/general",
+    permission: "settings.general",
+  },
+  {
+    label: "Email settings",
+    route: "/admin/settings/email",
+    permission: "settings.email",
+  },
 ];
 
 /**
@@ -360,44 +438,129 @@ export const MODULE_CATALOGUE: AdminModule[] = [
  */
 export const ADMIN_ROLE_MODULES: Record<string, AdminModule[]> = {
   company_admin: [
-    { label: "Company dashboard", route: "/admin/company", permission: "dashboard.view" },
-    { label: "Users & members", route: "/admin/company", permission: "users.view" },
-    { label: "Customers", route: "/admin/company", permission: "customers.view" },
-    { label: "Access requests", route: "/admin/company", permission: "requests.view" },
+    {
+      label: "Company dashboard",
+      route: "/admin/company",
+      permission: "dashboard.view",
+    },
+    {
+      label: "Users & members",
+      route: "/admin/company",
+      permission: "users.view",
+    },
+    {
+      label: "Customers",
+      route: "/admin/company",
+      permission: "customers.view",
+    },
+    {
+      label: "Access requests",
+      route: "/admin/company",
+      permission: "requests.view",
+    },
     { label: "Reports", route: "/admin/select", permission: "reports.view" },
   ],
   interview_admin: [
-    { label: "Interview dashboard", route: "/admin/interview", permission: "dashboard.view" },
-    { label: "Candidates", route: "/admin/interview", permission: "candidates.view" },
+    {
+      label: "Interview dashboard",
+      route: "/admin/interview",
+      permission: "dashboard.view",
+    },
+    {
+      label: "Candidates",
+      route: "/admin/interview",
+      permission: "candidates.view",
+    },
     { label: "Reports", route: "/admin/select", permission: "reports.view" },
   ],
   marketing_admin: [
-    { label: "Marketing dashboard", route: "/admin/marketing", permission: "dashboard.view" },
-    { label: "Partner applications", route: "/admin/marketing", permission: "partners.view" },
-    { label: "Affiliates", route: "/admin/marketing", permission: "affiliates.view" },
+    {
+      label: "Marketing dashboard",
+      route: "/admin/marketing",
+      permission: "dashboard.view",
+    },
+    {
+      label: "Partner applications",
+      route: "/admin/marketing",
+      permission: "partners.view",
+    },
+    {
+      label: "Affiliates",
+      route: "/admin/marketing",
+      permission: "affiliates.view",
+    },
     { label: "Leads", route: "/admin/super", permission: "leads.view" },
     { label: "Reports", route: "/admin/select", permission: "reports.view" },
   ],
   business_admin: [
-    { label: "Business dashboard", route: "/admin/business", permission: "dashboard.view" },
-    { label: "Consultation bookings", route: "/admin/business", permission: "bookings.view" },
+    {
+      label: "Business dashboard",
+      route: "/admin/business",
+      permission: "dashboard.view",
+    },
+    {
+      label: "Consultation bookings",
+      route: "/admin/business",
+      permission: "bookings.view",
+    },
     { label: "Orders", route: "/admin/super", permission: "orders.view" },
-    { label: "Payments & refunds", route: "/admin/super", permission: "payments.view" },
+    {
+      label: "Payments & refunds",
+      route: "/admin/super",
+      permission: "payments.view",
+    },
     { label: "Reports", route: "/admin/select", permission: "reports.view" },
   ],
   manager: [
-    { label: "Support tickets", route: "/admin/super", permission: "support.view" },
-    { label: "Notifications", route: "/admin/super", permission: "notifications.view" },
-    { label: "Content & banners", route: "/admin/super", permission: "content.view" },
+    {
+      label: "Support tickets",
+      route: "/admin/super",
+      permission: "support.view",
+    },
+    {
+      label: "Notifications",
+      route: "/admin/super",
+      permission: "notifications.view",
+    },
+    {
+      label: "Content & banners",
+      route: "/admin/super",
+      permission: "content.view",
+    },
   ],
   supreme_admin: [
-    { label: "Super console", route: "/admin/super", permission: "dashboard.view", superOnly: true },
-    { label: "Admins & permissions", route: "/admin/admins", permission: "admins.view" },
+    {
+      label: "Super console",
+      route: "/admin/super",
+      permission: "dashboard.view",
+      superOnly: true,
+    },
+    {
+      label: "Admins & permissions",
+      route: "/admin/admins",
+      permission: "admins.view",
+    },
     { label: "Roles", route: "/admin/roles", permission: "roles.view" },
-    { label: "Security", route: "/admin/security", permission: "security.activity" },
-    { label: "Website settings", route: "/admin/settings/website", permission: "settings.website" },
-    { label: "General settings", route: "/admin/settings/general", permission: "settings.general" },
-    { label: "Email settings", route: "/admin/settings/email", permission: "settings.email" },
+    {
+      label: "Security",
+      route: "/admin/security",
+      permission: "security.activity",
+    },
+    {
+      label: "Website settings",
+      route: "/admin/settings/website",
+      permission: "settings.website",
+    },
+    {
+      label: "General settings",
+      route: "/admin/settings/general",
+      permission: "settings.general",
+    },
+    {
+      label: "Email settings",
+      route: "/admin/settings/email",
+      permission: "settings.email",
+    },
   ],
 };
 

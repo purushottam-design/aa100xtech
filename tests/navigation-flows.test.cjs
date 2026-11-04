@@ -9,7 +9,10 @@ const ts = require("typescript");
 function load(relativePath, mocks = {}, globals = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", relativePath), "utf8");
   const { outputText } = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      jsx: ts.JsxEmit.ReactJSX,
+    },
   });
   const exports = {};
   const components = new Proxy({}, { get: (_, name) => String(name) });
@@ -33,7 +36,9 @@ function findAll(node, predicate) {
   return [...(predicate(node) ? [node] : []), ...findAll(node.props?.children, predicate)];
 }
 
-const cohorts = load("src/data/careers.ts");
+const cohorts = load("src/data/careers.ts", {
+  "./site": load("src/data/site.ts"),
+});
 
 for (const kind of ["global", "london", "partnership"]) {
   test(`${kind}: success requires a completed insert; errors retain the application`, async () => {
@@ -47,7 +52,11 @@ for (const kind of ["global", "london", "partnership"]) {
       states = [];
     let resets = 0;
     const mocks = {
-      react: { useState: (initial) => [initial, (value) => states.push(value)] },
+      react: {
+        useState: (initial) => [initial, (value) => states.push(value)],
+        useRef: (initial) => ({ current: initial }),
+        useEffect() {},
+      },
       sonner: {
         toast: {
           success: (...args) => successes.push(args),
@@ -55,8 +64,10 @@ for (const kind of ["global", "london", "partnership"]) {
         },
       },
       "@/lib/navigation": { Link: "Link" },
+      "@/hooks/use-public-site": { usePublicSite: () => load("src/data/site.ts").site },
       "next/navigation": {
-        useSearchParams: () => new URLSearchParams(kind === "influencer" ? "opportunity=paid-promotion" : ""),
+        useSearchParams: () =>
+          new URLSearchParams(kind === "influencer" ? "opportunity=paid-promotion" : ""),
       },
       "@/integrations/supabase/client": {
         supabase: {
@@ -70,8 +81,27 @@ for (const kind of ["global", "london", "partnership"]) {
       },
       "@/data/partner-plans": { partnerPlans: [] },
       "@/data/partnership": { partnerTiers: [] },
+      "@/data/careers": cohorts,
+      "@/data/site": load("src/data/site.ts"),
+    };
+    mocks["@/lib/website-requests"] = {
+      submitWebsiteRequest: async (data) => {
+        inserts.push({
+          table: "candidate_submissions",
+          data: {
+            role_applied: data.role,
+            task_title: data.requirements,
+            availability: data.availability,
+          },
+        });
+        const result = await insertResult;
+        if (result.error) throw new Error("Save failed");
+        return { saved: true, notification: "sent" };
+      },
     };
     const globals = {
+      File,
+      crypto: { randomUUID: () => "00000000-0000-4000-8000-000000000001" },
       FormData: class {
         constructor(form) {
           this.form = form;
@@ -83,15 +113,22 @@ for (const kind of ["global", "london", "partnership"]) {
     };
     const jobs = kind === "global" || kind === "london";
     const module = load(
-      jobs ? "src/components/careers-page.tsx" : "src/routes/partners.apply.tsx",
+      kind === "global"
+        ? "src/components/candidate-application-form.tsx"
+        : jobs
+          ? "src/components/careers-page.tsx"
+          : "src/routes/partners.apply.tsx",
       mocks,
       globals,
     );
-    const tree = jobs
-      ? module.CareersPage({
-          cohort: kind === "global" ? cohorts.globalCohort : cohorts.londonCohort,
-        })
-      : module.default();
+    const tree =
+      kind === "global"
+        ? module.CandidateApplicationForm({ initialRole: "Engineer" })
+        : jobs
+          ? module.CareersPage({
+              cohort: kind === "global" ? cohorts.globalCohort : cohorts.londonCohort,
+            })
+          : module.default();
     const form = findAll(tree, (node) => node.type === "form")[0];
     assert.ok(form);
     if (!jobs) {
@@ -105,6 +142,7 @@ for (const kind of ["global", "london", "partnership"]) {
       full_name: "Test Applicant",
       email: "test@example.com",
       role: "Engineer",
+      task_title: "A global task application",
       hours: "4",
       start: "2026-11-01",
       portfolio: "https://example.com/work",
@@ -158,11 +196,8 @@ test("header destinations and reversible authentication visibility", () => {
   assert.ok(
     !site.headerNavLinks.some((item) => ["/careers", "/creator-moves-365"].includes(item.to)),
   );
-  assert.ok(
-    site.headerNavLinks.some(
-      (item) => item.label === "Founder" && item.href === "https://theamanlife.com/",
-    ),
-  );
+  assert.ok(site.headerNavLinks.some((item) => item.to === "/business-plans"));
+  assert.ok(site.headerNavLinks.some((item) => item.to === "/consultation"));
   assert.deepEqual(
     Array.from(site.joinUsLinks, (item) => item.label),
     ["Jobs", "Influencer Partners"],

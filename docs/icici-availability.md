@@ -1,4 +1,145 @@
-# Consultation ICICI availability diagnosis (initial audit)
+# Consultation ICICI availability
+
+## Origin fix and current diagnosis (2026-11-02)
+
+The active local configuration loads `.env.local` before `.env`. Both currently
+set `ICICI_RETURN_URL` to `https://aa100xtech.com/api/payments/icici/callback`.
+The configured return origin is **`https://aa100xtech.com`**. A live GET through
+**`http://localhost:3000`** returns `ICICI_WRONG_ORIGIN`; its actual request
+origin is **`http://localhost:3000`**. Plain `http://127.0.0.1:3000` is also
+rejected. HTTPS and the origin (scheme, hostname, port) must match exactly.
+These are read-only observations; no credentials or local environment files
+were changed. Historical reports below predate the current environment settings.
+
+`iciciAvailability` validates `iciciUatConfig`, then the shared
+`assertIciciOrigin`, then UAT tester/customer access and database readiness.
+Checkout preparation/initiation/status and controlled tester access use the
+same origin resolver. Configuration still requires the actual callback route
+**`/api/payments/icici/callback`**, HTTPS, at most 128 characters, and no URL
+credentials, query or fragment. Bank callback/advice signature verification
+and independent STATUS reconciliation are unchanged; a bank callback is
+intentionally not subject to the browser same-origin/CSRF check.
+
+### Local UAT using an explicitly configured HTTPS tunnel
+
+1. Create an HTTPS tunnel to the local Next.js server. Use its actual assigned
+   hostname; the application does not start a tunnel or accept arbitrary tunnel
+   domains. Have ICICI register that callback before bank testing.
+2. Set these **server-only** values in ignored `.env.local`, replacing the
+   example hostname with the real tunnel hostname:
+
+   ```dotenv
+   ICICI_RETURN_URL=https://your-assigned-tunnel.example/api/payments/icici/callback
+   ICICI_TRUST_PROXY=true
+   ```
+
+3. Configure the trusted tunnel/proxy to strip incoming `X-Forwarded-Host` and
+   `X-Forwarded-Proto` and overwrite them with **one** external hostname (with
+   port if nondefault) and `https`. Bind Next.js to loopback locally, for example
+   `npm run dev -- --hostname 127.0.0.1 --port 3000`. Do not expose that backend
+   to untrusted direct traffic. If the tunnel cannot guarantee header
+   overwriting, put a trusted reverse proxy in between or use an HTTPS staging
+   deployment instead.
+4. Restart Next.js, then browse `https://your-assigned-tunnel.example/consultation`.
+   Opening localhost while setting a different HTTPS callback still fails.
+   Changing/rotating the tunnel requires updating the full return URL and the
+   bank registration, then restarting.
+
+`ICICI_TRUST_PROXY` defaults to false. Only the exact value `true` opts in.
+Without that opt-in, the resolver uses only the URL supplied by Next.js and
+does not substitute forwarding headers or the browser `Origin` header. Next.js
+may already normalize that URL using server/proxy metadata, so protected ingress
+is necessary to keep the supplied URL authoritative as well.
+In proxy mode, both forwarding headers are
+mandatory; HTTP, missing/partial headers, comma-separated chains, URL
+credentials, paths, query/fragment and mismatched domains/ports are rejected.
+`Forwarded` and `X-Forwarded-Port` are not used; include any nondefault HTTPS
+port in `X-Forwarded-Host`. Browser `Origin` must independently match the resolved
+origin on JSON POSTs, and `x-aa-rpc`/Fetch Metadata checks remain enforced.
+
+The Route Handler `Request` has no authenticated socket peer. The explicit
+proxy flag is an infrastructure trust contract, **not** authentication of a
+header sender: use private ingress/firewall rules so only the trusted proxy
+can reach Next.js, and overwrite forwarding headers at the final trusted hop.
+Do not enable the flag on an unprotected public backend. See the official
+[Next.js self-hosting guide](https://nextjs.org/docs/app/guides/self-hosting)
+and [nginx header override documentation](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header).
+
+### Production/staging application domains
+
+Set `ICICI_RETURN_URL=https://<that-environment-domain>/api/payments/icici/callback`
+in each deployment's server environment and browse that same HTTPS domain.
+For the current public domain the full value is
+`https://aa100xtech.com/api/payments/icici/callback`. A staging or preview domain
+needs its own registered matching return URL; an arbitrary preview hostname is
+not implicitly allowed. Enable `ICICI_TRUST_PROXY` only under the protected
+ingress/header-overwriting contract above when `request.url` describes the
+internal upstream. Otherwise leave it false. Restart/redeploy after changes.
+Do not globally enable Next.js host-header trust to fix this integration.
+
+This supports production **Next.js builds/hosting** of this existing UAT
+adapter. It does not add ICICI live-bank support: `ICICI_ENVIRONMENT` remains
+`uat` or `sandbox`. Merchant confirmation, completed UAT, and authenticated
+super-admin test-mode gates remain enforced. Currently tests-passed is false
+and controlled test mode is true; a matching origin alone does not open customer
+payments. Razorpay credentials, SDK, handlers and pricing are unchanged.
+
+### Verify `GET /api/payments/icici/availability`
+
+Use a real GET (the route has no HEAD handler):
+
+```powershell
+# Current local mismatch: expect available:false and ICICI_WRONG_ORIGIN.
+curl.exe -sS -D - http://localhost:3000/api/payments/icici/availability
+# After configuring the real tunnel or matching hosted domain:
+curl.exe -sS -D - https://your-assigned-tunnel.example/api/payments/icici/availability
+```
+
+Every response is HTTP 200 with `Cache-Control: no-store`, `Vary: Authorization`,
+canonical `available` and legacy `icici` booleans. HTTP 200 means the check ran;
+only `available:true` means ICICI is ready for that caller. In development an
+origin failure includes safe origins, for example:
+
+```json
+{
+  "icici": false,
+  "environment": "uat",
+  "available": false,
+  "code": "ICICI_WRONG_ORIGIN",
+  "reason": "Request origin must match the HTTPS origin of ICICI_RETURN_URL. Browse the configured HTTPS website or UAT tunnel.",
+  "origins": {
+    "configured": "https://aa100xtech.com",
+    "request": "http://localhost:3000",
+    "transport": "http://localhost:3000",
+    "source": "request-url"
+  }
+}
+```
+
+With trusted proxy forwarding, `origins.request` is the validated external
+HTTPS origin, `transport` shows the URL supplied by Next.js, and `source` is
+`trusted-proxy`. Only normalized origins are exposed, never raw header values,
+full return URLs, tokens, merchant IDs, secrets or database errors. Production
+responses retain generic failure reasons without diagnostic origins or logs.
+
+For initial UAT, an unauthenticated curl may report
+`ICICI_UAT_TEST_ACCESS_REQUIRED` after the origin is corrected. Sign in as a
+super administrator on the matching HTTPS site and inspect the availability
+GET in browser Network; it sends the existing Bearer session automatically.
+Do not paste session tokens into documentation or shell commands. An available
+response still requires working checkout/payment database schema. Failed flags,
+auth, storage or schema checks remain failures.
+
+On the consultation form, availability refreshes on opening/closing the dialog,
+session changes, window focus and network reconnection. Requests time out after
+10 seconds and stale responses are discarded. The form waits for the initial
+check before preparing a checkout. ICICI is selectable only after availability
+and checkout preparation both succeed. Loading/failure text is shown; if a
+selected ICICI option becomes unavailable, its Pay button is disabled until it
+is available again or the customer chooses an enabled method. Focus/reopen the
+dialog to retry after fixing configuration. No payment is started by the GET.
+
+## Historical initial audit (2026-10-30)
 
 This records the initial audit before the subsequent database repair and local
 configuration. The current database API readiness checks pass; `.env.local` now
@@ -38,10 +179,10 @@ and returned HTTP 200 with `{"icici":false,"environment":"uat"}`.
 A read-only `LIMIT 0` query against the configured Supabase project additionally
 confirmed:
 
-| Requirement | Result | Required migration |
-| --- | --- | --- |
-| `public.icici_uat_checkouts` | Missing, HTTP 404 / `PGRST205` | `20261027150000_icici_uat_checkouts.sql` |
-| Consultation payment tracking columns | Missing, HTTP 400 / `42703` | `20261026120000_dual_gateway_tracking.sql` |
+| Requirement                           | Result                         | Required migration                         |
+| ------------------------------------- | ------------------------------ | ------------------------------------------ |
+| `public.icici_uat_checkouts`          | Missing, HTTP 404 / `PGRST205` | `20261027150000_icici_uat_checkouts.sql`   |
+| Consultation payment tracking columns | Missing, HTTP 400 / `42703`    | `20261026120000_dual_gateway_tracking.sql` |
 
 The first direct Node probes encountered certificate trust errors/timeouts;
 using Node's `--use-system-ca` completed both read-only checks. This observation

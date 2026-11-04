@@ -1,22 +1,8 @@
 "use client";
 
 import { Link } from "@/lib/navigation";
-import { ArrowLeft, Loader2, Upload } from "lucide-react";
-import { useState, type FormEvent } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { globalCohort } from "@/data/careers";
-import { supabase } from "@/integrations/supabase/client";
+import { ArrowLeft } from "lucide-react";
+import { CandidateApplicationForm } from "@/components/candidate-application-form";
 
 const title = "Candidate Task Submission — Careers | AA100XTech";
 const description =
@@ -25,62 +11,6 @@ const description =
 export default CandidateApplyPage;
 
 function CandidateApplyPage() {
-  const [submitting, setSubmitting] = useState(false);
-  const [role, setRole] = useState("");
-  const [fileName, setFileName] = useState("");
-
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const fd = new FormData(form);
-    const file = fd.get("file");
-    setSubmitting(true);
-
-    let filePath: string | null = null;
-    if (file instanceof File && file.size > 0) {
-      if (file.size > 50 * 1024 * 1024) {
-        setSubmitting(false);
-        toast.error("File is larger than 50 MB — please share a download link instead.");
-        return;
-      }
-      const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `${crypto.randomUUID()}/${safe}`;
-      const { error: uploadError } = await supabase.storage
-        .from("candidate-uploads")
-        .upload(path, file);
-      if (uploadError) {
-        setSubmitting(false);
-        toast.error("Upload failed. Please try a smaller file or a link.");
-        return;
-      }
-      filePath = path;
-    }
-
-    const { error } = await supabase.from("candidate_submissions").insert({
-      full_name: String(fd.get("full_name") ?? ""),
-      email: String(fd.get("email") ?? ""),
-      phone: String(fd.get("phone") ?? ""),
-      role_applied: role,
-      task_title: String(fd.get("task_title") ?? ""),
-      hours_needed: String(fd.get("hours_needed") ?? ""),
-      availability: String(fd.get("availability") ?? ""),
-      expected_cost: String(fd.get("expected_cost") ?? ""),
-      deliverables: String(fd.get("deliverables") ?? ""),
-      portfolio_url: String(fd.get("portfolio_url") ?? ""),
-      file_path: filePath,
-    });
-
-    setSubmitting(false);
-    if (error) {
-      toast.error("Could not send your submission. Please try again.");
-      return;
-    }
-    toast.success("Submission received — we review every brief plan within 48 hours.");
-    form.reset();
-    setRole("");
-    setFileName("");
-  }
-
   return (
     <div>
       <section className="relative overflow-hidden border-b border-border/60 py-16 md:py-20">
@@ -104,105 +34,7 @@ function CandidateApplyPage() {
 
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <form onSubmit={onSubmit} className="surface-card grid gap-5 p-6 sm:p-8">
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div className="grid gap-2">
-                <Label htmlFor="full_name">Full name *</Label>
-                <Input id="full_name" name="full_name" required placeholder="Your name" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input id="email" name="email" type="email" required placeholder="you@email.com" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="phone">Phone / WhatsApp</Label>
-                <Input id="phone" name="phone" placeholder="+91 ..." />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="role_applied">Role you are applying for</Label>
-                <Select value={role} onValueChange={setRole}>
-                  <SelectTrigger id="role_applied">
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {globalCohort.roles.map((r) => (
-                      <SelectItem key={r.title} value={r.title}>
-                        {r.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="task_title">Task / brief you are taking on *</Label>
-              <Input
-                id="task_title"
-                name="task_title"
-                required
-                placeholder="e.g. Cinematic tour from 18 listing photos"
-              />
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-3">
-              <div className="grid gap-2">
-                <Label htmlFor="hours_needed">Time needed</Label>
-                <Input id="hours_needed" name="hours_needed" placeholder="e.g. 14 hours / 3 days" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="availability">Working hours / timezone</Label>
-                <Input id="availability" name="availability" placeholder="10am–7pm IST, Mon–Sat" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="expected_cost">Your cost / rate</Label>
-                <Input id="expected_cost" name="expected_cost" placeholder="₹ per task or per month" />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="deliverables">What exactly will you deliver? *</Label>
-              <Textarea
-                id="deliverables"
-                name="deliverables"
-                required
-                rows={5}
-                placeholder="List the files, formats, revisions and the day-by-day plan you will follow."
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="portfolio_url">Portfolio / previous work link</Label>
-              <Input id="portfolio_url" name="portfolio_url" placeholder="https://" />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="file">Upload your work (max 50 MB)</Label>
-              <label
-                htmlFor="file"
-                className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-border/70 bg-surface-2/50 px-4 py-5 text-sm text-muted-foreground transition-colors hover:border-primary/50"
-              >
-                <Upload className="size-5 shrink-0 text-primary" />
-                <span>{fileName || "Choose a file — video, PDF, zip, deck or image"}</span>
-              </label>
-              <input
-                id="file"
-                name="file"
-                type="file"
-                className="sr-only"
-                onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")}
-              />
-              <p className="text-xs text-muted-foreground">
-                Larger files? Upload to Drive or WeTransfer and paste the link in the portfolio
-                field.
-              </p>
-            </div>
-
-            <Button type="submit" size="lg" disabled={submitting}>
-              {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-              {submitting ? "Sending..." : "Submit task plan"}
-            </Button>
-          </form>
+          <CandidateApplicationForm />
         </div>
       </section>
     </div>
