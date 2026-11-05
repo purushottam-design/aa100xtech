@@ -22,6 +22,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/use-session";
 
@@ -48,23 +51,45 @@ function HeaderDropdown({ label, items }: { label: string; items: readonly Heade
         sideOffset={12}
         className="site-nav-dropdown max-h-[calc(100dvh-7rem)] w-64 rounded-xl border-primary/15 bg-white p-2 text-foreground shadow-lg shadow-black/10"
       >
-        {items.map((link) => (
-          <DropdownMenuItem
-            key={link.to}
-            asChild
-            className="cursor-pointer rounded-lg px-3 py-2.5 font-medium focus:bg-primary/8 focus:text-primary"
-          >
-            <Link
-              to={link.to}
-              params={link.params}
-              activeOptions={{ exact: true }}
-              activeProps={{ className: "bg-primary/8 text-primary" }}
-              onClick={() => setOpen(false)}
+        {items.map((link) =>
+          link.children ? (
+            <DropdownMenuSub key={link.to}>
+              <DropdownMenuSubTrigger className="cursor-pointer rounded-lg px-3 py-2.5 font-medium">
+                {link.label}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="rounded-xl bg-background p-2">
+                <DropdownMenuItem asChild>
+                  <Link to={link.to} onClick={() => setOpen(false)}>
+                    Influencer Marketing Overview
+                  </Link>
+                </DropdownMenuItem>
+                {link.children.map((child) => (
+                  <DropdownMenuItem key={child.to} asChild>
+                    <Link to={child.to} onClick={() => setOpen(false)}>
+                      {child.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          ) : (
+            <DropdownMenuItem
+              key={link.to}
+              asChild
+              className="cursor-pointer rounded-lg px-3 py-2.5 font-medium focus:bg-primary/8 focus:text-primary"
             >
-              {link.label}
-            </Link>
-          </DropdownMenuItem>
-        ))}
+              <Link
+                to={link.to}
+                params={link.params}
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-primary/8 text-primary" }}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </Link>
+            </DropdownMenuItem>
+          ),
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -164,19 +189,48 @@ export function SiteHeader() {
                         </AccordionTrigger>
                         <AccordionContent className="pb-0">
                           <div className="mx-3 space-y-1 rounded-xl border border-border/70 p-2">
-                            {item.items.map((link) => (
-                              <Link
-                                key={link.to}
-                                to={link.to}
-                                params={link.params}
-                                activeOptions={{ exact: true }}
-                                activeProps={{ className: "bg-primary/8 text-primary" }}
-                                onClick={() => setOpen(false)}
-                                className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                              >
-                                {link.label}
-                              </Link>
-                            ))}
+                            {item.items.map((link) =>
+                              link.children ? (
+                                <Accordion key={link.to} type="single" collapsible>
+                                  <AccordionItem value={link.to} className="border-0">
+                                    <AccordionTrigger className="px-3 text-sm">
+                                      {link.label}
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <Link
+                                        to={link.to}
+                                        onClick={() => setOpen(false)}
+                                        className="block rounded-lg px-3 py-2.5 text-sm"
+                                      >
+                                        Influencer Marketing Overview
+                                      </Link>
+                                      {link.children.map((child) => (
+                                        <Link
+                                          key={child.to}
+                                          to={child.to}
+                                          onClick={() => setOpen(false)}
+                                          className="block rounded-lg px-3 py-2.5 text-sm focus-visible:ring-2 focus-visible:ring-primary"
+                                        >
+                                          {child.label}
+                                        </Link>
+                                      ))}
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                </Accordion>
+                              ) : (
+                                <Link
+                                  key={link.to}
+                                  to={link.to}
+                                  params={link.params}
+                                  activeOptions={{ exact: true }}
+                                  activeProps={{ className: "bg-primary/8 text-primary" }}
+                                  onClick={() => setOpen(false)}
+                                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                                >
+                                  {link.label}
+                                </Link>
+                              ),
+                            )}
                           </div>
                         </AccordionContent>
                       </AccordionItem>

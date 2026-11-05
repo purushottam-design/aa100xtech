@@ -1,5 +1,6 @@
 import "server-only";
 import { createServerFn } from "@/lib/backend/server";
+import { setResponseStatus } from "@/lib/backend/request-context.server";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
@@ -36,109 +37,17 @@ const approveSchema = z.object({
   reviewNote: z.string().trim().max(500).optional(),
 });
 
-export const getBootstrapStatus = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { count, error } = await supabaseAdmin
-    .from("user_roles")
-    .select("id", { count: "exact", head: true })
-    .eq("role", "supreme_admin");
-  if (error) throw new Error(error.message);
-  return { needsBootstrap: (count ?? 0) === 0 };
-});
-
+// Administrator provisioning is an operator-only command, never a public API.
+export const getBootstrapStatus = createServerFn({ method: "GET" }).handler(async () => ({
+  needsBootstrap: false,
+}));
 export const bootstrapSupremeAdmin = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => bootstrapSchema.parse(data))
-  .handler(async ({ data }) => {
-    const { matchesEnvAdmin } = await import("@/lib/admin-env.server");
-    if (!matchesEnvAdmin(data.email, data.password)) {
-      throw new Error(
-        "The supreme user must use the administrator credentials configured in the environment.",
-      );
-    }
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { count } = await supabaseAdmin
-      .from("user_roles")
-      .select("id", { count: "exact", head: true })
-      .eq("role", "supreme_admin");
-    if ((count ?? 0) > 0) {
-      throw new Error("A supreme user already exists for this company.");
-    }
-
-    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-
-      email_confirm: true,
-      user_metadata: { full_name: data.fullName, username: data.username },
-    });
-
-    let userId = created?.user?.id ?? null;
-
-    if (!userId) {
-      const alreadyExists = /already been registered|already exists/i.test(error?.message ?? "");
-      if (!alreadyExists) throw new Error(error?.message ?? "Could not create account");
-
-      // The auth user exists (e.g. created from ADMIN_EMAIL) but has no
-      // supreme_admin role yet — adopt it and reset the password.
-      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-      const existing = list?.users?.find(
-        (u) => (u.email ?? "").toLowerCase() === data.email.toLowerCase(),
-      );
-      if (!existing) throw new Error("Could not create account");
-      userId = existing.id;
-      await supabaseAdmin.auth.admin.updateUserById(userId, {
-        password: data.password,
-        email_confirm: true,
-        user_metadata: { full_name: data.fullName, username: data.username },
-      });
-    }
-
-    const profilePayload = {
-      id: userId,
-      username: data.username,
-      full_name: data.fullName,
-      email: data.email,
-      phone: data.phone,
-      must_change_password: false,
-    };
-    let { error: profileError } = await supabaseAdmin
-      .from("profiles")
-      .upsert(profilePayload, { onConflict: "id" });
-
-    // Some connected projects still use the original profile shape
-    // (id, name, email, phone, avatar_url). Keep bootstrap compatible until
-    // the full account-system migration is applied there.
-    if (profileError && /schema cache|column/i.test(profileError.message)) {
-      const legacyProfile = {
-        id: userId,
-        name: data.fullName,
-        email: data.email,
-        phone: data.phone,
-      };
-      const legacyResult = await (supabaseAdmin.from("profiles") as any).upsert(legacyProfile, {
-        onConflict: "id",
-      });
-      profileError = legacyResult.error;
-    }
-    if (profileError) throw new Error(profileError.message);
-
-    const { error: roleError } = await supabaseAdmin
-      .from("user_roles")
-      .upsert({ user_id: userId, role: "supreme_admin" }, { onConflict: "user_id,role" });
-    if (roleError) {
-      if (
-        /user_roles/.test(roleError.message) &&
-        /schema cache|does not exist/i.test(roleError.message)
-      ) {
-        throw new Error(
-          "The connected Supabase project is missing the account tables (user_roles, access_requests, ...). Run the aa100x-full-schema.sql migration in that project's SQL editor, then retry the bootstrap.",
-        );
-      }
-      throw new Error(roleError.message);
-    }
-
-    return { ok: true as const, code: "created" as const };
+  .handler(async () => {
+    setResponseStatus(403);
+    throw new Error(
+      "Administrator provisioning must be run by an operator with npm run admin:provision.",
+    );
   });
 
 function isRoleTableMissing(error: { code?: string; message: string }): boolean {
@@ -159,69 +68,58 @@ function isMissingDatabaseObject(error: { code?: string; message: string }): boo
 }
 
 async function callerRoles(context: { supabase: any; userId: string }): Promise<string[]> {
-  // Authorization must not depend on a user-facing SELECT policy. Read the
-  // verified caller's role with the server-only client, then authorize from
-  // that exact user id. This avoids false denials when an otherwise valid
-  // supreme user cannot see user_roles because of a stale/changed RLS policy.
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", context.userId);
-  if (error) {
-    if (isRoleTableMissing(error)) {
-      const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-      return (await isEnvAdminUser(context.userId)) ? ["supreme_admin"] : [];
-    }
-    throw new Error(error.message);
-  }
-  return (data ?? []).map((r: { role: string }) => r.role);
+  const { resolveAccess } = await import("@/lib/rbac.server");
+  const access = await resolveAccess(context.userId);
+  return access.status === "active" ? access.roles : [];
 }
 
 async function assertSupremeAdmin(context: { supabase: any; userId: string }) {
-  const roles = await callerRoles(context);
-  if (roles.includes("supreme_admin")) return;
-
-  // Keep the environment-configured administrator usable when the role table
-  // exists but its supreme_admin row has not been provisioned yet. The userId
-  // comes from verified auth middleware and the email comparison happens only
-  // on the server, so regular users cannot use this compatibility path.
-  const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-  if (await isEnvAdminUser(context.userId)) return;
-
-  throw new Error("Forbidden: supreme user access only");
+  const { authorizeSuper, AccessError } = await import("@/lib/rbac.server");
+  try {
+    await authorizeSuper(context.userId);
+  } catch (error) {
+    if (error instanceof AccessError) setResponseStatus(error.status);
+    throw error;
+  }
 }
 
 export const getSupremeAdminAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const roles = await callerRoles(context);
-    if (roles.includes("supreme_admin")) return { allowed: true as const };
-
-    const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-    return { allowed: (await isEnvAdminUser(context.userId)) as boolean };
-  });
+  .handler(async ({ context }) => ({
+    allowed: (await callerRoles(context)).includes("supreme_admin"),
+  }));
 
 export const getMyAccount = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: profile } = await context.supabase
+    const { data: row, error } = await context.supabase
       .from("profiles")
-      .select(
-        "id, username, full_name, email, phone, is_active, must_change_password, created_at, job_title, department, joined_at, target_label, target_percent, employee_of_month_for, bio",
-      )
+      .select("*")
       .eq("id", context.userId)
       .maybeSingle();
-
-    const { data: roles } = await context.supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", context.userId);
-
-    return {
-      profile: profile ?? null,
-      roles: (roles ?? []).map((r: { role: string }) => r.role),
-    };
+    if (error) throw new Error("Your account profile could not be loaded. Please try again.");
+    // Whitelist the account response while supporting both legacy name and
+    // modern profile columns. No missing-column query or elevated read needed.
+    const profile = row
+      ? {
+          id: row.id,
+          username: row.username ?? row.email?.split("@")[0] ?? "member",
+          full_name: row.full_name ?? (row as unknown as { name?: string }).name ?? "",
+          email: row.email,
+          phone: row.phone,
+          is_active: row.is_active !== false,
+          must_change_password: row.must_change_password ?? false,
+          created_at: row.created_at,
+          job_title: row.job_title ?? null,
+          department: row.department ?? null,
+          joined_at: row.joined_at ?? null,
+          target_label: row.target_label ?? null,
+          target_percent: row.target_percent ?? null,
+          employee_of_month_for: row.employee_of_month_for ?? null,
+          bio: row.bio ?? null,
+        }
+      : null;
+    return { profile, roles: await callerRoles(context) };
   });
 
 export const listAccessRequests = createServerFn({ method: "GET" })
@@ -426,31 +324,11 @@ export const updateTeamMember = createServerFn({ method: "POST" })
     return { ok: true as const, code: "created" as const };
   });
 
-/**
- * Validates a submitted email/password against ADMIN_EMAIL / ADMIN_PASSWORD.
- * Returns only a boolean — credentials never leave the server.
- */
+// Compatibility endpoint retained for older clients. Password verification now
+// happens exclusively in Supabase Auth; this endpoint never mutates an account.
 export const verifyEnvAdminLogin = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => {
-    // Never throw on malformed input — an empty or invalid form must simply
-    // report "not the env admin" instead of surfacing a validation error.
-    const parsed = z
-      .object({
-        email: z.string().trim().max(255).optional(),
-        password: z.string().max(128).optional(),
-      })
-      .safeParse(data);
-    return { email: parsed.data?.email ?? "", password: parsed.data?.password ?? "" };
-  })
-  .handler(async ({ data }) => {
-    if (!data.email || !data.password) return { isAdmin: false as const };
-    const { matchesEnvAdmin, syncEnvAdminAccount } = await import("@/lib/admin-env.server");
-    if (!matchesEnvAdmin(data.email, data.password)) {
-      return { isAdmin: false as const };
-    }
-    await syncEnvAdminAccount();
-    return { isAdmin: true as const };
-  });
+  .inputValidator((_data: unknown) => undefined)
+  .handler(async () => ({ isAdmin: false as const }));
 
 /**
  * Public self-service sign-up. Creates a real account immediately so the
@@ -469,6 +347,9 @@ const signUpSchema = z.object({
 export const signUpAccount = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => signUpSchema.parse(data))
   .handler(async ({ data }) => {
+    const { isReservedAdminEmail } = await import("@/lib/admin-env.server");
+    if (isReservedAdminEmail(data.email))
+      throw new Error("This email address cannot be registered here.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({

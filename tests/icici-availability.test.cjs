@@ -300,6 +300,8 @@ test("proxy mode fails closed for absent, ambiguous, malformed, HTTP or mismatch
     [undefined, "https"],
     ["uat.example.test", "http"],
     ["uat.example.test", "https,http"],
+    ["uat.example.test", "https, https"],
+    ["uat.example.test, uat.example.test", "https"],
     ["uat.example.test,attacker.example.test", "https"],
     ["attacker.example.test", "https"],
     ["uat.example.test:444", "https"],
@@ -334,6 +336,36 @@ test("proxy mode fails closed for absent, ambiguous, malformed, HTTP or mismatch
     ).available,
     true,
   );
+});
+
+test("development header diagnostics identify HTTP localhost without weakening proxy origin checks", async () => {
+  const h = harness({ ICICI_TRUST_PROXY: "true", ICICI_ORIGIN_DEBUG: "true" });
+  const body = await (
+    await h.request("http://localhost:3000", {
+      headers: {
+        host: "127.0.0.1:3000",
+        "x-forwarded-host": "127.0.0.1:3000",
+        "x-forwarded-proto": "http",
+        authorization: "Bearer never-expose-this",
+        cookie: "session=never-expose-this",
+      },
+    })
+  ).json();
+  assert.equal(body.available, false);
+  assert.equal(body.code, "ICICI_WRONG_ORIGIN");
+  assert.match(body.reason, /direct HTTP localhost/);
+  assert.deepEqual(body.proxyHeaders, {
+    host: "127.0.0.1:3000",
+    "x-forwarded-host": "127.0.0.1:3000",
+    "x-forwarded-proto": "http",
+  });
+  assert.equal(JSON.stringify([body, h.logs]).includes("never-expose-this"), false);
+  assert.deepEqual(h.reads, []);
+
+  const production = harness({ NODE_ENV: "production", ICICI_ORIGIN_DEBUG: "true" });
+  const result = await (await production.request()).json();
+  assert.equal(result.available, true);
+  assert.equal(result.proxyHeaders, undefined);
 });
 
 test("missing database settings, schema and database failures remain unavailable with safe reasons", async () => {

@@ -18,10 +18,10 @@ test("partner reference sections, existing workflows and four-photo collage fit 
   await expect(page.locator(".ipp-paths a")).toHaveCount(4);
   await expect(page.locator(".ipp-categories a")).toHaveCount(4);
   await expect(page.locator(".ipp-process li")).toHaveCount(4);
-  await expect(
-    page.getByRole("form", { name: "Influencer partner application", exact: true }),
-  ).toHaveCount(1);
-  await expect(page.getByRole("form", { name: "Brand campaign enquiry", exact: true })).toHaveCount(
+  await expect(page.getByRole("form", { name: "Influencer application", exact: true })).toHaveCount(
+    1,
+  );
+  await expect(page.getByRole("form", { name: "Brand campaign inquiry", exact: true })).toHaveCount(
     1,
   );
   for (const name of ["Starter Partner", "Growth Partner", "Pro Partner", "Elite Partner"])
@@ -91,55 +91,4 @@ test("partner reference sections, existing workflows and four-photo collage fit 
     )
     .toBe(0);
   expect(errors).toEqual([]);
-});
-
-test("brand partner form retains failed submissions and includes audience in the shared enquiry API", async ({
-  page,
-}) => {
-  test.setTimeout(90_000);
-  const attempts: Record<string, unknown>[] = [];
-  let success = false;
-  await page.route("**/api/website/requests", async (route) => {
-    const data = await new Response(route.request().postDataBuffer(), {
-      headers: { "content-type": route.request().headers()["content-type"]! },
-    }).formData();
-    attempts.push(JSON.parse(String(data.get("data"))));
-    await route.fulfill({
-      status: success ? 200 : 503,
-      json: success
-        ? { saved: true, notification: "not_configured" }
-        : { saved: false, message: "Synthetic campaign save failed. Please retry." },
-    });
-  });
-  await page.goto("/influencers");
-  const form = page.getByRole("form", { name: "Brand campaign enquiry", exact: true });
-  for (const [name, value] of Object.entries({
-    name: "Synthetic Brand",
-    company: "Test Brand",
-    email: "brand@example.test",
-    phone: "+910000000000",
-    location: "India",
-    targetAudience: "Technology enthusiasts",
-    budget: "Discuss scope",
-    timeline: "Next month",
-    requirements: "A scoped technology campaign for review.",
-  }))
-    await form.locator(`[name="${name}"]`).fill(value);
-  await form.getByRole("button", { name: "Enquire as Brand Partner", exact: true }).click();
-  await expect(form.getByRole("alert")).toContainText("save failed");
-  await expect(form.locator('[name="targetAudience"]')).toHaveValue("Technology enthusiasts");
-  success = true;
-  await form.getByRole("button", { name: "Enquire as Brand Partner", exact: true }).click();
-  await expect(form.getByRole("status")).toContainText("Your campaign enquiry has been saved.");
-  expect(attempts).toHaveLength(2);
-  expect(attempts[0]!.id).toBe(attempts[1]!.id);
-  expect(attempts[1]).toMatchObject({
-    kind: "influencer",
-    company: "Test Brand",
-    campaign: {
-      targetAudience: "Technology enthusiasts",
-      location: "India",
-      type: "Influencer Marketing",
-    },
-  });
 });

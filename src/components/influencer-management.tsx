@@ -70,7 +70,12 @@ export function InfluencerManagement() {
   const current = rows.find((r) => r.id === selected);
   const filtered = rows.filter(
     (r) =>
-      `${r.full_name} ${r.email} ${r.influencer_data?.display_name ?? ""}`
+      `${r.full_name} ${r.email} ${r.influencer_data?.display_name ?? ""} ${r.influencer_data?.city ?? ""} ${r.influencer_data?.category ?? ""} ${r.influencer_data?.profiles?.map((p) => p.platform).join(" ") ?? ""} ${Object.entries(
+        r.influencer_data?.socials ?? {},
+      )
+        .filter(([key, value]) => value && !key.endsWith("followers"))
+        .map(([key]) => key)
+        .join(" ")}`
         .toLowerCase()
         .includes(search.toLowerCase()) &&
       (!status || r.influencer_review_status === status),
@@ -111,7 +116,7 @@ export function InfluencerManagement() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Input
           aria-label="Search applications"
-          placeholder="Search creator name or private email"
+          placeholder="Search name, city, category, platform or email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-md"
@@ -316,6 +321,61 @@ function ApplicationEditor({
           <strong>Previous collaborations:</strong> {d?.previous_collaborations || "Not supplied"}
         </p>
       </div>
+      {d?.profiles && (
+        <section className="space-y-3 text-sm">
+          <h3 className="font-semibold">Platform details & collaboration preferences</h3>
+          {d.profiles.map((p) => (
+            <p key={p.platform}>
+              <a
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="break-all text-primary underline"
+              >
+                {p.platform}: {p.url}
+              </a>{" "}
+              ·{" "}
+              {p.followers === null
+                ? "Followers not supplied"
+                : `${p.followers.toLocaleString()} followers / subscribers`}
+            </p>
+          ))}
+          <p>Language: {d.language || "Not supplied"}</p>
+          <p>
+            Average views: {d.average_views ?? "Not supplied"} · Engagement:{" "}
+            {d.engagement === null || d.engagement === undefined
+              ? "Not supplied"
+              : `${d.engagement}%`}
+          </p>
+          <p>Collaboration: {d.collaboration || "Not supplied"}</p>
+        </section>
+      )}
+      {d?.media_kit && (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={async () => {
+            try {
+              const headers = await attachSupabaseAuth();
+              const response = await fetch(`/api/marketing/media-kit/${a.id}`, {
+                headers,
+                cache: "no-store",
+              });
+              if (!response.ok) throw new Error("Unable to download media kit");
+              const url = URL.createObjectURL(await response.blob());
+              const link = document.createElement("a");
+              link.href = url;
+              link.download = `media-kit.${d.media_kit?.endsWith(".pdf") ? "pdf" : "webp"}`;
+              link.click();
+              setTimeout(() => URL.revokeObjectURL(url), 1000);
+            } catch (e) {
+              toast.error(e instanceof Error ? e.message : "Download failed");
+            }
+          }}
+        >
+          Download private media kit
+        </Button>
+      )}
       {d?.biography && (
         <section className="space-y-3 text-sm">
           <h3 className="font-semibold">Submitted biography & content</h3>

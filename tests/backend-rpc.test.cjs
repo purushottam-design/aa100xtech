@@ -237,6 +237,7 @@ test("request context isolates concurrent users and forwards status/cookies", as
 test("protected handlers validate bearer claims before business logic", async () => {
   let sdkCalls = 0;
   let handlerCalls = 0;
+  let revoked = false;
   const auth = load(
     "src/integrations/supabase/auth-middleware.ts",
     {
@@ -244,6 +245,10 @@ test("protected handlers validate bearer claims before business logic", async ()
       "@supabase/supabase-js": {
         createClient: () => ({
           auth: {
+            getUser: async () =>
+              revoked
+                ? { data: { user: null }, error: { status: 401, message: "Session revoked" } }
+                : { data: { user: { id: "real-user" } }, error: null },
             getClaims: async (token) => {
               sdkCalls++;
               return token === "valid.signed.jwt"
@@ -270,13 +275,19 @@ test("protected handlers validate bearer claims before business logic", async ()
       return user.userId;
     });
   const registry = { "test/run": handler };
-  for (const authorization of ["", "Basic value", "Bearer invalid", "Bearer forged.signed.jwt"]) {
+  for (const authorization of [
+    "",
+    "Basic value",
+    "Bearer invalid",
+    "Bearer forged.signed.jwt",
+    "Bearer expired.signed.jwt",
+  ]) {
     const response = await handleRpc(request("POST", {}, { authorization }), "test/run", registry);
     assert.equal(response.status, 401);
     assert.match((await response.json()).error.message, /^Unauthorized:/);
   }
   assert.equal(handlerCalls, 0);
-  assert.equal(sdkCalls, 1);
+  assert.equal(sdkCalls, 2);
   const response = await handleRpc(
     request("POST", {}, { authorization: "Bearer valid.signed.jwt" }),
     "test/run",
@@ -285,6 +296,14 @@ test("protected handlers validate bearer claims before business logic", async ()
   assert.equal(response.status, 200);
   assert.equal((await response.json()).data, "real-user");
   assert.equal(handlerCalls, 1);
+  revoked = true;
+  const afterLogout = await handleRpc(
+    request("POST", {}, { authorization: "Bearer valid.signed.jwt" }),
+    "test/run",
+    registry,
+  );
+  assert.equal(afterLogout.status, 401);
+  assert.equal(handlerCalls, 1, "even a signed unexpired JWT must not run a handler after logout");
 });
 
 test("all 109 typed entrypoints are explicitly registered", () => {

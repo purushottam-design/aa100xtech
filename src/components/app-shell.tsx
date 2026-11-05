@@ -3,6 +3,8 @@
 import { Link, useNavigate, useRouterState } from "@/lib/navigation";
 import { Bell, CalendarClock, Home, LayoutGrid, LogOut, Settings, User } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import logoAsset from "@/assets/aa100x-logo-full-alpha.png.asset.json";
 import { Button } from "@/components/ui/button";
@@ -100,15 +102,19 @@ export function AppShell({
 
 export function SignOutButton({ className }: { className?: string }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+    if (error) {
+      toast.error("Logout could not be completed. Please try again.");
+      return;
+    }
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    navigate({ to: "/app/login", replace: true });
+  }
   return (
-    <Button
-      variant="outline"
-      className={className}
-      onClick={async () => {
-        await supabase.auth.signOut();
-        navigate({ to: "/app/login", replace: true });
-      }}
-    >
+    <Button variant="outline" className={className} onClick={handleSignOut}>
       <LogOut className="mr-2 h-4 w-4" /> Log out
     </Button>
   );

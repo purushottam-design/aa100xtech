@@ -17,6 +17,7 @@ type NavItem = {
 };
 
 const SYSTEM_ITEMS: NavItem[] = [
+  { label: "Brand campaign inquiries", to: "/admin/brand-inquiries", permission: "leads.view" },
   {
     label: "Website requests",
     to: "/admin/requests",

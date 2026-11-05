@@ -8,7 +8,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@/lib/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ export function DashboardLoginDialog({
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inFlight = useRef(false);
 
   useEffect(() => {
     if (panel) {
@@ -52,13 +53,14 @@ export function DashboardLoginDialog({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!panel) return;
+    if (!panel || inFlight.current) return;
     const trimmed = email.trim();
     if (!trimmed || !password) {
       setError("Enter your email and password.");
       return;
     }
     setBusy(true);
+    inFlight.current = true;
     setError(null);
     try {
       const result = await dashboardLogin({
@@ -69,10 +71,12 @@ export function DashboardLoginDialog({
         setBusy(false);
         return;
       }
-      await supabase.auth.setSession({
+      const saved = await supabase.auth.setSession({
         access_token: result.session.access_token,
         refresh_token: result.session.refresh_token,
       });
+      if (saved.error || !saved.data.session)
+        throw new Error("Your sign-in session could not be saved. Please try again.");
       // Drop any access data cached for the previous (or signed-out) visitor so
       // the destination dashboard reads the freshly signed-in roles.
       queryClient.clear();
@@ -80,10 +84,15 @@ export function DashboardLoginDialog({
       toast.success(`Signed in to ${PANEL_LABEL[panel]}`);
       onOpenChange(false);
       navigate({ to: PANEL_PATH[panel] as never, replace: true });
-    } catch {
-      setError("Invalid email or password.");
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "The sign-in service is temporarily unavailable. Please try again.",
+      );
     } finally {
       setBusy(false);
+      inFlight.current = false;
     }
   }
 

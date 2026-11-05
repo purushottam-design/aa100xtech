@@ -27,11 +27,9 @@ import {
   Youtube,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InfluencerProgramApplication } from "@/components/influencer-program-application";
-import { CampaignEnquiryForm } from "@/components/campaign-enquiry-form";
+import { MarketingIntakeForm } from "@/components/marketing-intake-form";
 import { InfluencerDirectory } from "@/components/influencer-directory";
 import { creatorCategories } from "@/data/influencer-marketing";
-import { applicationPath } from "@/lib/influencers";
 import type { CreatorListing } from "@/lib/creator-discovery";
 
 const highlights = [
@@ -90,7 +88,6 @@ export function InfluencerPartnerLanding({
   unavailable: boolean;
 }) {
   const [category, setCategory] = useState("");
-  const [campaignPackage, setCampaignPackage] = useState("");
   const [creator, setCreator] = useState<CreatorListing | null>(null);
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -116,7 +113,7 @@ export function InfluencerPartnerLanding({
     );
     document
       .querySelectorAll(
-        ".influencer-program .ipp-path, .influencer-program .ipp-process li, .influencer-program .ipp-category",
+        ".influencer-program .ipp-path, .influencer-program .ipp-process li, .influencer-program .ipp-category, .influencer-program .ipp-marketing-panel",
       )
       .forEach((node) => observer.observe(node));
     const stop = () => {
@@ -333,52 +330,29 @@ export function InfluencerPartnerLanding({
           </div>
         </section>
 
-        <section className="ipp-section ipp-forms" aria-label="Join our creator and brand network">
-          <div id="join" className="ipp-form-panel" aria-labelledby="join-title">
-            <div className="ipp-panel-heading">
-              <span className="ipp-icon">
-                <UserRound />
-              </span>
-              <div>
-                <h2 id="join-title">For Influencers</h2>
-                <p>
-                  Apply to join our creator network and explore brand collaboration opportunities.
-                </p>
-              </div>
-            </div>
-            <InfluencerProgramApplication
-              heading="Your creator profile"
-              submitLabel="Apply as Influencer"
-            />
-            <Link
-              href={applicationPath}
-              className="ipp-detailed-link"
-              aria-label="Become an Influencer Partner"
-            >
-              Prefer to include images or work samples? Use the detailed application{" "}
-              <ArrowRight size={14} />
-            </Link>
+        <section
+          className="ipp-section ipp-marketing-forms"
+          aria-label="Creator applications and brand campaigns"
+        >
+          <div id="join" className="ipp-marketing-panel" aria-labelledby="join-title">
+            <h2 id="join-title" className="ipp-marketing-title">
+              Become an Influencer Partner
+            </h2>
+            <MarketingIntakeForm kind="creator" embedded />
           </div>
-          <div id="brand-enquiry" className="ipp-form-panel" aria-labelledby="brand-enquiry-title">
-            <div className="ipp-panel-heading">
-              <span className="ipp-icon">
-                <BriefcaseBusiness />
-              </span>
-              <div>
-                <h2 id="brand-enquiry-title">For Brands</h2>
-                <p>
-                  Tell us about your campaign and we’ll help you connect with relevant creators.
-                </p>
-              </div>
-            </div>
-            <CampaignEnquiryForm
-              creator={creator}
-              categoryChoice={category}
-              packageChoice={campaignPackage}
-              onPackageChange={setCampaignPackage}
+          <div
+            id="brand-enquiry"
+            className="ipp-marketing-panel"
+            aria-labelledby="brand-enquiry-title"
+          >
+            <h2 id="brand-enquiry-title" className="ipp-marketing-title">
+              Grow Your Brand With the Right Influencers
+            </h2>
+            <MarketingIntakeForm
+              kind="brand"
+              embedded
+              selectedCreator={creator}
               onClearCreator={() => setCreator(null)}
-              submitLabel="Enquire as Brand Partner"
-              includeAudience
             />
           </div>
         </section>

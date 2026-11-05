@@ -98,16 +98,18 @@ test("brand campaign form preserves a failed brief and saves all structured fiel
   test.setTimeout(90_000);
   const attempts: Record<string, unknown>[] = [];
   let success = false;
-  await page.route("**/api/website/requests", async (route) => {
+  await page.route("**/api/marketing/brand", async (route) => {
     const form = await new Response(route.request().postDataBuffer(), {
       headers: { "content-type": route.request().headers()["content-type"]! },
     }).formData();
     attempts.push(JSON.parse(String(form.get("data"))));
+    expect(form.get("format")).toBe("campaign-enquiry");
+    expect(form.get("privacy")).toBe("true");
     await route.fulfill({
       status: success ? 200 : 503,
       json: success
-        ? { saved: true, notification: "not_configured" }
-        : { saved: false, message: "Your request could not be saved. Please try again." },
+        ? { ok: true, reference: "verified-campaign-reference" }
+        : { error: "Your request could not be saved. Please try again." },
     });
   });
   await page.goto("/influencer-marketing");
@@ -129,12 +131,19 @@ test("brand campaign form preserves a failed brief and saves all structured fiel
     .getByLabel("Campaign description *", { exact: true })
     .fill("A scoped product launch with relevant food creators.");
   const send = form.getByRole("button", { name: "Get Customised Proposal", exact: true });
+  await form.getByRole("checkbox", { name: /I agree to the Privacy Policy/ }).check();
   await send.click();
   await expect(form.getByRole("alert")).toContainText("could not be saved");
+  await expect(page.getByText("Form submitted successfully!", { exact: true })).toHaveCount(0);
   await expect(form.getByLabel("Full name *", { exact: true })).toHaveValue("Test Brand Manager");
   success = true;
   await send.click();
   await expect(form.getByRole("status")).toContainText("Your campaign enquiry has been saved.");
+  await expect(form.getByRole("status")).toContainText("verified-campaign-reference");
+  const popup = page.locator('[data-sonner-toast][data-type="success"]');
+  await expect(popup).toContainText("Form submitted successfully!");
+  await expect(popup).toHaveCSS("background-color", "rgb(240, 253, 244)");
+  await expect(form.getByRole("status")).toHaveCSS("color", "rgb(22, 101, 52)");
   expect(attempts).toHaveLength(2);
   expect(attempts[0]!.id).toBe(attempts[1]!.id);
   expect(attempts[1]).toMatchObject({
@@ -177,15 +186,15 @@ test("campaign API rejects malformed structured details and cross-site requests 
       package: "",
     },
   };
-  const response = await request.post("/api/website/requests", {
+  const response = await request.post("/api/marketing/brand", {
     headers: { origin: new URL(baseURL!).origin, "x-aa-rpc": "1" },
-    multipart: { data: JSON.stringify(input) },
+    multipart: { data: JSON.stringify(input), format: "campaign-enquiry", privacy: "true" },
   });
   expect(response.status()).toBe(400);
-  expect((await response.json()).saved).toBe(false);
-  const csrf = await request.post("/api/website/requests", {
+  expect((await response.json()).error).toBeTruthy();
+  const csrf = await request.post("/api/marketing/brand", {
     headers: { origin: "https://example.test", "x-aa-rpc": "1" },
-    multipart: { data: JSON.stringify(input) },
+    multipart: { data: JSON.stringify(input), format: "campaign-enquiry", privacy: "true" },
   });
   expect(csrf.status()).toBe(403);
 });

@@ -31,15 +31,9 @@ function deny(message: string): never {
 }
 
 async function isSuper(userId: string) {
-  const client = await admin();
-  const { data } = await client
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId)
-    .eq("role", "supreme_admin");
-  if ((data ?? []).length > 0) return true;
-  const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-  return isEnvAdminUser(userId);
+  const { resolveAccess } = await import("@/lib/rbac.server");
+  const access = await resolveAccess(userId);
+  return access.isSuper && access.status === "active";
 }
 
 /** The security boundary: every function in this file goes through it. */

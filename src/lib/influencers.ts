@@ -13,6 +13,10 @@ export const influencerCategories = [
   "Fashion",
   "Travel",
   "Other",
+  "Fashion & Beauty",
+  "Food",
+  "News & Media",
+  "Comedy",
 ] as const;
 export const applicationPath = "/partners/apply?opportunity=paid-promotion";
 export const mediaBucket = "influencer-media";
@@ -51,7 +55,7 @@ export const socialSchema = z.object({
   youtube_followers: z.number().int().min(0).max(10_000_000_000).nullable().default(null),
   facebook: socialUrl(["facebook.com", "fb.com"]),
   facebook_followers: z.number().int().min(0).max(10_000_000_000).nullable().default(null),
-  other: z.array(publicUrl).max(5).default([]),
+  other: z.array(publicUrl).max(10).default([]),
 });
 const text = (max: number) => z.string().trim().max(max).default("");
 export const influencerApplicationSchema = z.object({
@@ -144,6 +148,12 @@ export type InfluencerApplication = {
   information_request: string | null;
   influencer_data: InfluencerApplicationInput & {
     consent_version?: string;
+    media_kit?: string | null;
+    profiles?: { platform: string; url: string; followers: number | null }[];
+    language?: string;
+    average_views?: number | null;
+    engagement?: number | null;
+    collaboration?: string;
     profile_image: string | null;
     cover_image: string | null;
     gallery: string[];

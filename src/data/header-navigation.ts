@@ -4,6 +4,7 @@ export type HeaderLink = {
   to: string;
   label: string;
   params?: Readonly<Record<string, string>>;
+  children?: readonly HeaderLink[];
 };
 
 export function headerHref(link: HeaderLink) {

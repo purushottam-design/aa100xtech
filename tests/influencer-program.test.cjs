@@ -194,6 +194,7 @@ test("removed public spotlight and leaderboard stay absent without fake stories 
       React.createElement("a", { href, ...props }, children),
     "./influencers.css": {},
     "./partner-landing.css": {},
+    "./marketing-intake.css": {},
     "@/lib/influencer-program.server": {
       getInfluencerProgram: async () => ({
         profiles,

@@ -33,6 +33,18 @@ function forwardedOrigin(request: Request): string | null {
   }
 }
 
+function forwardingFailure(request: Request): string {
+  const host = request.headers.get("x-forwarded-host");
+  const protocol = request.headers.get("x-forwarded-proto");
+  if (!host || !protocol)
+    return "Trusted proxy forwarding headers are missing. A single HTTPS x-forwarded-host and x-forwarded-proto pair must match ICICI_RETURN_URL.";
+  if (host.includes(",") || protocol.includes(","))
+    return "Duplicate or chained proxy forwarding headers are rejected. The trusted proxy must supply one host and one HTTPS protocol matching ICICI_RETURN_URL.";
+  if (protocol !== "https")
+    return "Request forwarding protocol is not HTTPS. Open the configured HTTPS ICICI_RETURN_URL origin through the trusted proxy; direct HTTP localhost access cannot enable this HTTPS configuration.";
+  return "Trusted proxy forwarded host is invalid or does not match the HTTPS origin of ICICI_RETURN_URL.";
+}
+
 export function iciciRequestOrigin(request: Request): string | null {
   // This opt-in is an infrastructure trust boundary: the app must be reachable
   // only through a proxy that strips/overwrites incoming forwarding headers.
@@ -60,7 +72,7 @@ export function assertIciciOrigin(request: Request, configured: string) {
     throw new IciciPaymentError(
       "ICICI_WRONG_ORIGIN",
       !origin
-        ? "Trusted proxy must supply a single HTTPS x-forwarded-host and x-forwarded-proto pair matching ICICI_RETURN_URL."
+        ? forwardingFailure(request)
         : "Request origin must match the HTTPS origin of ICICI_RETURN_URL. Browse the configured HTTPS website or UAT tunnel.",
       403,
       { origins },

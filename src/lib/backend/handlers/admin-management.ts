@@ -52,7 +52,7 @@ async function requirePermission(context: Ctx, permission: string) {
 
 async function requireSuper(context: Ctx) {
   const access = await accessFor(context.userId);
-  if (!access.isSuper) deny("Super admin access only.");
+  if (!access.isSuper || access.status !== "active") deny("Super admin access only.");
   return access;
 }
 
@@ -104,8 +104,8 @@ export const recordAdminLogin = createServerFn({ method: "POST" })
       .eq("id", userId)
       .maybeSingle();
 
-    const status = (profile?.status as string) ?? "active";
-    const blocked = !access.isSuper && status !== "active";
+    const status = access.status;
+    const blocked = status !== "active";
     const ua = getRequestHeader("user-agent") ?? null;
     const { browser, device } = describeAgent(ua);
     const ip = clientIp();

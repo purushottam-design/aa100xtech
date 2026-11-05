@@ -63,11 +63,20 @@ for (const width of [1280, 1440, 1920]) {
       await expect(menu).toBeVisible();
       const group = headerNavigation.find((item) => item.label === name)!;
       if (group.kind !== "dropdown") throw new Error("Expected dropdown");
-      for (const link of group.items)
-        await expect(menu.getByRole("menuitem", { name: link.label, exact: true })).toHaveAttribute(
-          "href",
-          headerHref(link),
-        );
+      for (const link of group.items) {
+        const item = menu.getByRole("menuitem", { name: link.label, exact: true });
+        if ("children" in link) {
+          await expect(item).toHaveAttribute("aria-haspopup", "menu");
+          await item.hover();
+          for (const child of link.children)
+            await expect(
+              page.getByRole("menuitem", { name: child.label, exact: true }),
+            ).toHaveAttribute("href", headerHref(child));
+          await page.keyboard.press("Escape");
+        } else {
+          await expect(item).toHaveAttribute("href", headerHref(link));
+        }
+      }
       await settle(page);
       if (name === "More")
         await page.screenshot({ path: testInfo.outputPath(`navbar-more-${width}.png`) });
