@@ -3,6 +3,7 @@
 import { Link, useNavigate } from "@/lib/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,9 +45,13 @@ export function AdminPanelShell({
   const panels = access.data?.panels ?? [];
 
   async function handleSignOut() {
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+    if (error) {
+      toast.error("Logout could not be completed. Please try again.");
+      return;
+    }
     await queryClient.cancelQueries();
     queryClient.clear();
-    await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
 

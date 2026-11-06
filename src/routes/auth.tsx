@@ -11,14 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { PANEL_PATH, panelsForRoles } from "@/lib/admin-panels";
-import {
-  getMyAccount,
-  verifyEnvAdminLogin,
-} from "@/lib/accounts.functions";
+import { getMyAccount } from "@/lib/accounts.functions";
 import { recordAdminLogin } from "@/lib/admin-management.functions";
 
 export default AuthPage;
-
 
 const signInModes = [
   {
@@ -51,7 +47,6 @@ const signInModes = [
   },
 ] as const;
 
-
 function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<(typeof signInModes)[number]["id"]>("company");
@@ -76,15 +71,6 @@ function AuthPage() {
       return;
     }
     setBusy(true);
-
-    // Env-configured admin: the server checks the credentials against
-    // ADMIN_EMAIL / ADMIN_PASSWORD and prepares the existing admin account.
-    try {
-      await verifyEnvAdminLogin({ data: { email: trimmedEmail, password } });
-    } catch {
-      // ignore — fall through to the normal sign-in below
-    }
-
 
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
@@ -151,7 +137,6 @@ function AuthPage() {
     navigate({ to: "/dashboard", replace: true });
   }
 
-
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl text-center">
@@ -169,8 +154,6 @@ function AuthPage() {
           </Link>
         </p>
       </div>
-
-
 
       <div className="mt-10 flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-start">
         {/* Sign in — first on mobile, right column on desktop */}
@@ -257,7 +240,6 @@ function AuthPage() {
                     You can now sign in with the same email and password on Company, Interviews,
                     Marketing or Business login.
                   </p>
-
                 </div>
                 <Button
                   type="button"
@@ -286,8 +268,6 @@ function AuthPage() {
           </CardContent>
         </Card>
       </div>
-
     </div>
-
   );
 }

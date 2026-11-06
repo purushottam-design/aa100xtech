@@ -18,6 +18,7 @@ export type AdminAccess = {
   isSuper: boolean;
   permissions: string[];
   status: string;
+  roleLookupUnavailable?: boolean;
 };
 
 export const BUILTIN_ADMIN_ROLES = [
@@ -38,13 +39,22 @@ async function admin() {
 export async function resolveAccess(userId: string): Promise<AdminAccess> {
   const client = await admin();
 
-  const [{ data: enumRoles }, { data: customRoleRows }, { data: directPerms }, { data: profile }] =
-    await Promise.all([
-      client.from("user_roles").select("role").eq("user_id", userId),
-      client.from("admin_roles").select("role_id, roles(key)").eq("user_id", userId),
-      client.from("admin_permissions").select("permission").eq("user_id", userId),
-      client.from("profiles").select("status, is_active").eq("id", userId).maybeSingle(),
-    ]);
+  const [
+    { data: enumRoles, error: roleError },
+    { data: customRoleRows },
+    { data: directPerms },
+    { data: profile, error: profileError },
+  ] = await Promise.all([
+    client.from("user_roles").select("role").eq("user_id", userId),
+    client.from("admin_roles").select("role_id, roles(key)").eq("user_id", userId),
+    client.from("admin_permissions").select("permission").eq("user_id", userId),
+    // Older projects use a legacy profile without status/is_active columns.
+    // Selecting the row supports both schemas and still honors either flag.
+    client.from("profiles").select("*").eq("id", userId).maybeSingle(),
+  ]);
+  if (profileError && !["PGRST205", "42P01"].includes(profileError.code)) {
+    throw new AccessError("Account status could not be verified. Please try again.", 503);
+  }
 
   const roles = new Set<string>((enumRoles ?? []).map((r: any) => r.role as string));
   const roleIds: string[] = [];
@@ -54,12 +64,11 @@ export async function resolveAccess(userId: string): Promise<AdminAccess> {
     if (key) roles.add(key);
   }
 
-  let isSuper = roles.has("supreme_admin");
-  if (!isSuper) {
-    const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-    isSuper = await isEnvAdminUser(userId);
-    if (isSuper) roles.add("supreme_admin");
-  }
+  const { configuredDashboardRoles } = await import("@/lib/admin-env.server");
+  for (const role of await configuredDashboardRoles(userId)) roles.add(role);
+  const isSuper = roles.has("supreme_admin");
+  const status =
+    profile?.is_active === false ? "inactive" : ((profile?.status as string) ?? "active");
 
   if (isSuper) {
     return {
@@ -68,7 +77,8 @@ export async function resolveAccess(userId: string): Promise<AdminAccess> {
       roleIds,
       isSuper: true,
       permissions: [...ALL_PERMISSIONS],
-      status: "active",
+      status,
+      ...(roleError ? { roleLookupUnavailable: true } : {}),
     };
   }
 
@@ -81,9 +91,6 @@ export async function resolveAccess(userId: string): Promise<AdminAccess> {
     for (const p of rolePerms ?? []) permissions.add(p.permission as string);
   }
 
-  const status =
-    (profile?.status as string) ?? (profile?.is_active === false ? "inactive" : "active");
-
   return {
     userId,
     roles: [...roles],
@@ -91,6 +98,7 @@ export async function resolveAccess(userId: string): Promise<AdminAccess> {
     isSuper: false,
     permissions: [...permissions].filter((p) => ALL_PERMISSIONS.includes(p)),
     status,
+    ...(roleError ? { roleLookupUnavailable: true } : {}),
   };
 }
 
@@ -109,10 +117,10 @@ export class AccessError extends Error {
  */
 export async function authorize(userId: string, permission?: string): Promise<AdminAccess> {
   const access = await resolveAccess(userId);
-  if (access.isSuper) return access;
   if (access.status !== "active") {
     throw new AccessError("Your admin account is not active.");
   }
+  if (access.isSuper) return access;
   const isAdmin =
     access.roles.some((r) => BUILTIN_ADMIN_ROLES.includes(r)) || access.roleIds.length > 0;
   if (!isAdmin) throw new AccessError("Admin access only.");
@@ -124,6 +132,7 @@ export async function authorize(userId: string, permission?: string): Promise<Ad
 
 export async function authorizeSuper(userId: string): Promise<AdminAccess> {
   const access = await resolveAccess(userId);
-  if (!access.isSuper) throw new AccessError("Super admin access only.");
+  if (!access.isSuper || access.status !== "active")
+    throw new AccessError("Super admin access only.");
   return access;
 }

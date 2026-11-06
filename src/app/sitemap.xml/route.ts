@@ -20,6 +20,8 @@ const staticPaths = [
   "/creator-moves-365",
   "/influencer-success-program",
   "/influencer-marketing",
+  "/influencer-marketing/for-brands",
+  "/influencer-marketing/for-influencers",
   "/influencers",
   "/founders",
   "/careers",

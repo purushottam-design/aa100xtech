@@ -85,9 +85,13 @@ function DashboardPage() {
   });
 
   async function handleSignOut() {
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+    if (error) {
+      toast.error("Logout could not be completed. Please try again.");
+      return;
+    }
     await queryClient.cancelQueries();
     queryClient.clear();
-    await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
 
@@ -100,7 +104,10 @@ function DashboardPage() {
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (!error && data?.profile) {
-      await supabase.from("profiles").update({ must_change_password: false }).eq("id", data.profile.id);
+      await supabase
+        .from("profiles")
+        .update({ must_change_password: false })
+        .eq("id", data.profile.id);
     }
     setBusy(false);
     if (error) {
@@ -113,7 +120,11 @@ function DashboardPage() {
   }
 
   if (isLoading) {
-    return <div className="mx-auto max-w-5xl px-4 py-16 text-muted-foreground">Loading your account…</div>;
+    return (
+      <div className="mx-auto max-w-5xl px-4 py-16 text-muted-foreground">
+        Loading your account…
+      </div>
+    );
   }
 
   const profile = data?.profile;
@@ -215,7 +226,6 @@ function DashboardPage() {
         <SupportWidget />
       </div>
     </div>
-
   );
 }
 

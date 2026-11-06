@@ -15,21 +15,9 @@ async function admin() {
 
 /** Reads the caller's roles with the server-only client (never client input). */
 async function rolesFor(context: Ctx): Promise<string[]> {
-  const client = await admin();
-  const { data, error } = await client
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", context.userId);
-  if (error) {
-    const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-    return (await isEnvAdminUser(context.userId)) ? ["supreme_admin"] : [];
-  }
-  const roles = (data ?? []).map((r: { role: string }) => r.role as string);
-  if (!roles.includes("supreme_admin")) {
-    const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-    if (await isEnvAdminUser(context.userId)) roles.push("supreme_admin");
-  }
-  return roles;
+  const { resolveAccess } = await import("@/lib/rbac.server");
+  const access = await resolveAccess(context.userId);
+  return access.status === "active" ? access.roles : [];
 }
 
 function forbidden(message: string): never {

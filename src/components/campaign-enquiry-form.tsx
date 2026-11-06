@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { ArrowUpRight, Loader2, ShieldCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { campaignServices, campaignPackages, creatorCategories } from "@/data/influencer-marketing";
 import { campaignPlatforms, type CampaignDetails } from "@/lib/campaign-enquiry";
 import type { CreatorListing } from "@/lib/creator-discovery";
-import { submitWebsiteRequest } from "@/lib/website-requests";
+import { websiteRequestSchema } from "@/lib/website-requests";
+import { submitMarketingForm } from "@/lib/marketing-submission";
+import { marketingSuccessStyle, showMarketingSuccess } from "@/lib/marketing-feedback";
 
 export function CampaignEnquiryForm({
   creator,
@@ -50,9 +53,9 @@ export function CampaignEnquiryForm({
     setBusy(true);
     setStatus(null);
     try {
-      await submitWebsiteRequest({
+      const request = {
         ...attempt.current,
-        kind: "influencer",
+        kind: "influencer" as const,
         name: value("name"),
         email: value("email"),
         phone: value("phone"),
@@ -76,11 +79,20 @@ export function CampaignEnquiryForm({
             ? { creator: { id: creator.id, slug: creator.slug, name: creator.display_name } }
             : {}),
         },
-      });
+      };
+      const parsed = websiteRequestSchema.safeParse(request);
+      if (!parsed.success)
+        throw new Error(parsed.error.issues[0]?.message ?? "Please check your campaign details.");
+      if (fields.get("privacy") !== "on") throw new Error("Please agree to the Privacy Policy.");
+      const body = new FormData();
+      body.set("format", "campaign-enquiry");
+      body.set("data", JSON.stringify(parsed.data));
+      body.set("privacy", "true");
+      const result = await submitMarketingForm("brand", body);
+      showMarketingSuccess();
       setStatus({
         error: false,
-        message:
-          "Your campaign enquiry has been saved. Our team will review your brief and discuss the next steps.",
+        message: `Your campaign enquiry has been saved. Our team will review your brief and discuss the next steps. Reference: ${result.reference}`,
       });
       form.reset();
       setCategory("Any category");
@@ -280,6 +292,21 @@ export function CampaignEnquiryForm({
         <Label htmlFor="campaign-website">Leave blank</Label>
         <Input id="campaign-website" name="website" autoComplete="off" tabIndex={-1} />
       </div>
+      <label className="flex items-start gap-3 text-sm sm:col-span-2">
+        <input type="checkbox" name="privacy" required className="mt-1 accent-primary" />
+        <span>
+          I agree to the{" "}
+          <Link
+            href="/privacy-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            Privacy Policy
+          </Link>{" "}
+          and processing of my campaign inquiry. *
+        </span>
+      </label>
       <Button type="submit" size="lg" disabled={busy} className="w-full sm:col-span-2">
         {busy ? (
           <>
@@ -298,7 +325,8 @@ export function CampaignEnquiryForm({
       {status && (
         <p
           role={status.error ? "alert" : "status"}
-          className={`rounded-xl border p-4 text-sm sm:col-span-2 ${status.error ? "border-destructive/25 bg-destructive/5 text-destructive" : "border-primary/20 bg-primary/5 text-foreground"}`}
+          className={`rounded-xl border p-4 text-sm sm:col-span-2 ${status.error ? "border-destructive/25 bg-destructive/5 text-destructive" : "border-green-200 bg-green-50 text-green-800"}`}
+          style={status.error ? undefined : marketingSuccessStyle}
         >
           {status.message}
         </p>

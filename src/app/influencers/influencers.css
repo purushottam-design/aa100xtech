@@ -675,72 +675,6 @@
   color: var(--text-muted);
   font-weight: 400;
 }
-.influencer-program .ip-application-form,
-.influencer-program .ip-application-success {
-  display: grid;
-  gap: 1.5rem;
-  min-width: 0;
-  padding: clamp(1.25rem, 3vw, 2.25rem);
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 15px 50px rgb(15 23 42 / 5%);
-}
-.influencer-program .ip-form-heading {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
-}
-.influencer-program .ip-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
-}
-.influencer-program .ip-form-field {
-  display: grid;
-  min-width: 0;
-  gap: 0.55rem;
-}
-.influencer-program .ip-form-field label {
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-.influencer-program .ip-form-field :is(input, select) {
-  width: 100%;
-  min-width: 0;
-  height: 42px;
-  font-size: 0.8rem;
-}
-.influencer-program .ip-form-field select {
-  border: 1px solid var(--input);
-  padding: 0.5rem 0.75rem;
-}
-.influencer-program .ip-form-consents {
-  display: grid;
-  gap: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--brand-cream);
-}
-.influencer-program .ip-form-consents label {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.65rem;
-  font-size: 0.7rem;
-  line-height: 1.85;
-  color: var(--text-secondary);
-}
-.influencer-program .ip-form-consents input {
-  flex-shrink: 0;
-  margin-top: 0.3rem;
-}
-.influencer-program .ip-form-consents a {
-  color: #b45309;
-  text-decoration: underline;
-}
 .influencer-program .ip-faq-layout {
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
@@ -932,8 +866,7 @@
   .influencer-program .ip-process,
   .influencer-program .ip-service-grid,
   .influencer-program .ip-podium,
-  .influencer-program .ip-partner-grid,
-  .influencer-program .ip-form-grid {
+  .influencer-program .ip-partner-grid {
     grid-template-columns: 1fr;
   }
   .influencer-program .ip-actions {
@@ -965,12 +898,6 @@
   }
   .influencer-program .ip-stories-empty > div {
     min-width: 0;
-  }
-  .influencer-program .ip-form-heading {
-    align-items: flex-start;
-  }
-  .influencer-program .ip-form-heading h3 {
-    font-size: 1.1rem;
   }
   .influencer-program .ip-program-final {
     padding: 2rem 1.25rem;

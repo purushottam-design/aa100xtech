@@ -1,0 +1,218 @@
+.intake-reference-page {
+  background: #fff;
+  color: #171717;
+}
+.intake-reference-card {
+  border: 1px solid #dedede;
+  border-radius: 18px;
+  padding: 24px 20px 18px;
+  background: #fcfcfc;
+}
+.intake-reference-card .intake-card-heading {
+  margin-bottom: 24px;
+}
+.intake-reference-card .intake-card-heading-centered {
+  text-align: center;
+}
+.intake-card-heading-centered svg {
+  margin: 0 auto 10px;
+}
+.intake-reference-card .intake-card-heading h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.intake-reference-card .intake-card-heading p {
+  display: block;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: #666;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.intake-reference-card label:not(:has(input[type="radio"], input[type="checkbox"])),
+.intake-reference-card legend {
+  display: block;
+  margin-bottom: 5px;
+  color: #606060;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.intake-reference-card input:not([type="radio"]):not([type="checkbox"]):not([type="file"]),
+.intake-reference-card select {
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 6px 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 999px !important;
+  background: transparent !important;
+  border-color: #d9d9d9;
+  color: #222 !important;
+  font-size: 13px;
+  box-shadow: none;
+}
+.intake-reference-card input::placeholder,
+.intake-reference-card textarea::placeholder {
+  color: #8b8b8b;
+}
+.intake-reference-card textarea {
+  min-height: 76px;
+  padding: 9px 11px;
+  border: 1px solid #d9d9d9;
+  border-radius: 7px !important;
+  background: transparent !important;
+  font-size: 13px;
+  box-shadow: none;
+  resize: vertical;
+}
+.intake-reference-card input:focus-visible,
+.intake-reference-card select:focus-visible,
+.intake-reference-card textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.intake-reference-card input[aria-invalid="true"],
+.intake-reference-card select[aria-invalid="true"],
+.intake-reference-card textarea[aria-invalid="true"] {
+  border-color: #c32626;
+}
+.intake-reference-card fieldset {
+  min-inline-size: 0;
+}
+.intake-reference-card fieldset > .grid:has(input[type="radio"]) {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.intake-reference-card fieldset > .grid:has(input[type="checkbox"]) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 16px;
+}
+.intake-reference-card fieldset label:has(input[type="radio"]),
+.intake-reference-card fieldset label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: #222;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.intake-reference-card input[type="radio"],
+.intake-reference-card input[type="checkbox"] {
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  flex: 0 0 17px;
+  border: 1px solid #cfcfcf;
+  border-radius: 50%;
+  background: transparent;
+}
+.intake-reference-card input[type="radio"]:checked,
+.intake-reference-card input[type="checkbox"]:checked {
+  border-color: #222;
+  background: #222;
+}
+.intake-reference-card input[type="radio"]:checked::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: white;
+}
+.intake-reference-card input[type="checkbox"]:checked::after {
+  content: "";
+  width: 8px;
+  height: 5px;
+  border-bottom: 1.7px solid white;
+  border-left: 1.7px solid white;
+  transform: translateY(-1px) rotate(-45deg);
+}
+.intake-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.intake-additional {
+  border-top: 1px solid #e6e6e6;
+  padding-top: 12px;
+  font-size: 12px;
+  color: #666;
+}
+.intake-additional summary {
+  cursor: pointer;
+  padding: 2px 0;
+}
+.intake-reference-card .intake-help {
+  display: block;
+  margin-bottom: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #737373;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.6;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.intake-reference-card .intake-consents label {
+  align-items: flex-start !important;
+  font-size: 11px !important;
+  color: #666 !important;
+}
+.intake-consents input {
+  margin-top: 1px !important;
+}
+.intake-consents a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.intake-reference-card .intake-submit {
+  min-height: 36px;
+  height: auto;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #222;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: none;
+  white-space: normal;
+}
+.intake-reference-card .intake-submit:hover {
+  background: #3a3a3a;
+  transform: none;
+}
+.intake-reference-card .intake-submit:disabled {
+  background: #ededed;
+  color: #898989;
+}
+@media (max-width: 480px) {
+  .intake-reference-card {
+    padding: 20px 14px 16px;
+    border-radius: 16px;
+  }
+}

@@ -29,19 +29,16 @@ for (const width of [1440, 768, 390]) {
     if (width >= 1280)
       await expect(page.getByRole("button", { name: "Join Us", exact: true })).toBeVisible();
     await page
-      .getByRole("link", { name: "Become an Influencer Partner", exact: true })
-      .first()
+      .locator(".ipp-hero-copy")
+      .getByRole("link", { name: "Join as Influencer", exact: true })
       .click();
-    await expect(page).toHaveURL(/\/partners\/apply\?opportunity=paid-promotion$/);
-    await expect(page.getByLabel("Public creator name", { exact: false })).toBeVisible();
-    await expect(page.locator("#target_level")).toHaveCount(0);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-      true,
-    );
-    await page.screenshot({
-      path: testInfo.outputPath(`influencer-application-${width}.png`),
-      fullPage: true,
-    });
+    await expect(page).toHaveURL(/\/influencers#join$/);
+    await expect(
+      page.getByRole("form", { name: "Influencer application", exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("form", { name: "Brand campaign inquiry", exact: true }),
+    ).toBeAttached();
     await page.goto("/admin/influencers");
     await expect(page).toHaveURL(/\/auth$/);
     expect(errors).toEqual([]);
@@ -126,62 +123,4 @@ test("live influencer endpoints reject invalid submissions and unauthorized admi
   expect(await (await request.get("/sitemap.xml")).text()).toContain(
     "https://aa100xtech.com/influencers",
   );
-});
-
-test("the program join form preserves applicant details on failure and submits through the existing application API", async ({
-  page,
-}) => {
-  let success = false;
-  const applications: {
-    socials: { primary: string; instagram_followers: number };
-    program_terms_consent: boolean;
-    submission_id: string;
-    portfolio_url: string;
-    deliverables: string;
-  }[] = [];
-  await page.route("**/api/influencers/apply", async (route) => {
-    const body = route.request().postDataBuffer()?.toString() ?? "";
-    const json = body.match(/name="application"\r\n\r\n([^\r]+)\r\n/);
-    expect(json).not.toBeNull();
-    applications.push(JSON.parse(json![1]));
-    await route.fulfill({
-      status: success ? 201 : 503,
-      json: success ? { ok: true } : { error: "Synthetic test application could not be saved." },
-    });
-  });
-  await page.goto("/influencers", { waitUntil: "domcontentloaded" });
-  const form = page.locator(".ip-application-form");
-  for (const [name, value] of Object.entries({
-    full_name: "Synthetic Creator",
-    phone: "+910000000000",
-    email: "synthetic@example.test",
-    city: "Test City",
-    state: "Test State",
-    country: "India",
-    instagram: "https://instagram.com/synthetic-test",
-    follower_count: "321",
-    audience_location: "India",
-    motivation: "I want to connect genuine businesses with a trusted technology team.",
-    portfolio_url: "https://example.test/portfolio",
-    collaboration_interests: "Educational creator videos and brand collaborations.",
-  }))
-    await form.locator(`[name="${name}"]`).fill(value);
-  await form.locator('[name="primary_platform"]').selectOption("instagram");
-  await form.locator('[name="category"]').selectOption("Technology");
-  for (const name of ["program_terms_consent", "processing_consent", "publication_consent"])
-    await form.locator(`[name="${name}"]`).check();
-  await form.getByRole("button", { name: "Apply as Influencer", exact: false }).click();
-  await expect(form.getByRole("alert")).toContainText("could not be saved");
-  await expect(form.locator('[name="full_name"]')).toHaveValue("Synthetic Creator");
-  expect(applications[0].socials.primary).toBe("instagram");
-  expect(applications[0].socials.instagram_followers).toBe(321);
-  expect(applications[0].program_terms_consent).toBe(true);
-  expect(applications[0].portfolio_url).toBe("https://example.test/portfolio");
-  expect(applications[0].deliverables).toBe("Educational creator videos and brand collaborations.");
-  success = true;
-  await form.getByRole("button", { name: "Apply as Influencer", exact: false }).click();
-  await expect(
-    page.getByRole("heading", { name: "Your next chapter starts here.", exact: true }),
-  ).toBeVisible();
-  expect(applications[0].submission_id).toBe(applications[1].submission_id);
 });

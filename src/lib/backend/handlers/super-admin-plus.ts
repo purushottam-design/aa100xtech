@@ -39,37 +39,24 @@ function deny(message: string): never {
 }
 
 async function accountAccess(userId: string) {
-  const client = await admin();
-  const [{ data: roleRows }, { data: permRows }] = await Promise.all([
-    client.from("user_roles").select("role").eq("user_id", userId),
-    client.from("admin_permissions").select("permission").eq("user_id", userId),
-  ]);
-  const roles: string[] = (roleRows ?? []).map((r: any) => r.role);
-  let isSuper = roles.includes("supreme_admin");
-  if (!isSuper) {
-    const { isEnvAdminUser } = await import("@/lib/admin-env.server");
-    isSuper = await isEnvAdminUser(userId);
-  }
-  return {
-    roles,
-    isSuper,
-    permissions: (permRows ?? []).map((p: any) => p.permission as string),
-  };
+  const { resolveAccess } = await import("@/lib/rbac.server");
+  return resolveAccess(userId);
 }
 
 /** Admin-level gate: super admin, or an admin/manager holding the permission. */
 async function requireAdmin(context: Ctx, permission?: string) {
   const access = await accountAccess(context.userId);
-  if (access.isSuper) return { userId: context.userId, ...access };
+  if (access.status !== "active") deny("Your admin account is not active.");
+  if (access.isSuper) return { ...access, userId: context.userId };
   if (!access.roles.some((r) => ADMIN_ROLES.includes(r))) deny("Admin access only.");
   if (permission && !access.permissions.includes(permission))
     deny("You do not have this permission.");
-  return { userId: context.userId, ...access };
+  return { ...access, userId: context.userId };
 }
 
 async function requireSuperOnly(context: Ctx) {
   const access = await accountAccess(context.userId);
-  if (!access.isSuper) deny("Super admin access only.");
+  if (!access.isSuper || access.status !== "active") deny("Super admin access only.");
   return access;
 }
 

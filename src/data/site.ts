@@ -45,7 +45,13 @@ export const marketingLinks = [
     params: { slug: "social-media-marketing" },
     label: "Social Media Marketing",
   },
-  { to: "/influencer-marketing", label: "Influencer Marketing" },
+  {
+    to: "/influencer-marketing",
+    label: "Influencer Marketing",
+    children: [
+      { to: "/influencer-marketing#creators", label: "Our Influencer Partners" },
+    ],
+  },
   { to: "/influencer-programs", label: "Influencer Programs" },
 ] as const;
 

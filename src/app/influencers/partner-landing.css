@@ -385,80 +385,35 @@
 .influencer-program .ipp-category:hover img {
   transform: scale(1.05);
 }
-.influencer-program .ipp-forms {
+.influencer-program .ipp-marketing-forms {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+  gap: 28px;
   align-items: start;
-  padding-top: 22px;
+  padding-top: 24px;
 }
-.influencer-program .ipp-form-panel {
+.influencer-program .ipp-marketing-panel {
   min-width: 0;
-  overflow: hidden;
-  border: 1px solid #fed7aa;
-  border-radius: 17px;
-  background: linear-gradient(145deg, #fff, #fffcf8);
   scroll-margin-top: 100px;
-  box-shadow: 0 7px 22px #e4751309;
 }
-.influencer-program .ipp-panel-heading {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 20px 22px 0;
-}
-.influencer-program .ipp-panel-heading h2 {
+.influencer-program .ipp-marketing-title {
+  margin: 0 0 16px;
   font-size: 21px;
-  font-weight: 750;
-  letter-spacing: -0.03em;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
 }
-.influencer-program .ipp-panel-heading p {
-  margin-top: 4px;
-  color: var(--text-secondary);
-  font-size: 12px;
-  line-height: 1.6;
-}
-.influencer-program .ipp-forms :is(.ip-application-form, .ip-application-success, .surface-card) {
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: transparent;
-  padding: 22px;
-}
-.influencer-program .ipp-forms .ip-form-heading {
-  display: none;
-}
-.influencer-program .ipp-forms .ip-form-grid {
-  gap: 18px 14px;
-}
-.influencer-program .ipp-forms input:not([type="checkbox"]),
-.influencer-program .ipp-forms select {
-  min-width: 0;
-  height: 40px;
-  border-radius: 11px;
-  background-color: #fff;
-}
-.influencer-program .ipp-forms textarea {
-  min-width: 0;
-  background: #fff;
-}
-.influencer-program .ipp-forms button[type="submit"] {
-  height: auto;
-  min-height: 42px;
-  padding: 11px 14px;
-  white-space: normal;
-}
-.influencer-program .ipp-detailed-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 22px 22px;
-  color: var(--brand-deep-orange);
-  font-size: 11px;
-  line-height: 1.7;
-}
-.influencer-program .ipp-detailed-link svg {
-  flex-shrink: 0;
+@media (max-width: 1023px) {
+  .influencer-program .ipp-marketing-forms {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .influencer-program .ipp-marketing-panel {
+    width: 100%;
+    max-width: 660px;
+    margin-inline: auto;
+    scroll-margin-top: 90px;
+  }
 }
 .influencer-program .ipp-network {
   display: grid;
@@ -670,12 +625,6 @@
   .influencer-program .ipp-category h3 {
     font-size: 13px;
   }
-  .influencer-program .ipp-forms {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .influencer-program .ipp-form-panel {
-    scroll-margin-top: 90px;
-  }
 }
 @media (max-width: 540px) {
   .influencer-program .ipp-collage {
@@ -751,16 +700,6 @@
   }
   .influencer-program .ipp-category > div > svg {
     display: block;
-  }
-  .influencer-program .ipp-forms :is(.ip-application-form, .ip-application-success, .surface-card) {
-    padding: 20px 16px;
-  }
-  .influencer-program .ipp-forms .surface-card {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .influencer-program .ipp-panel-heading {
-    padding: 20px 16px 0;
-    align-items: flex-start;
   }
   .influencer-program .ipp-network {
     padding: 20px;

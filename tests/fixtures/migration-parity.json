@@ -15,7 +15,7 @@
     "src/components/admin-sessions.tsx": "e39754a508373938bf6d6c597832478daa9ade6eb4d6d3cae5ccbbb1cc6613c0",
     "src/components/admin-support.tsx": "d718b4eb1c6bd1d74b528df95e9c7a39396d5639b8d33671fe0601a4d1dd1566",
     "src/components/admin-two-factor.tsx": "3385c446bd85941ad96b9083e478ad0781fa1882d2c6e559219d615666fbaea5",
-    "src/components/app-shell.tsx": "8661815f705f3f9e407bb7f6139a3b76208855016f181ea169ce9bc1230edf13",
+    "src/components/app-shell.tsx": "2ef4f74ce5eaa0b79d7ed981477e562f0da2fce36382b6ef284beaf378952183",
     "src/components/careers-page.tsx": "da847c9eec342c58a3e632efb17b18b62e3a4a97bf6e7fa1e5e78b0923324e2a",
     "src/components/consultation-booking.tsx": "e899b10d22020edd85b4ed9372aa21f365f04f02029e7905fa5e6df41867d928",
     "src/components/currency-provider.tsx": "cc704fffa0bffddfe9205571b27dee399ca6d999d0e26b012ebe6dfe24301060",
@@ -27,7 +27,7 @@
     "src/components/service-demos.tsx": "89c819af605718b6d6d2b05dacddb68d9c7e6e306ba3318036a39f30e6c270cf",
     "src/components/settings-form.tsx": "628d2d6ba25ea2992b3caa76d2bc6581707bde31650382889f5a3c34aa053e58",
     "src/components/site-footer.tsx": "308bd9b02c3450453eb9dbf0ea6a0a4ad35bfa192c1836d2096d3fa27e712bcf",
-    "src/components/site-header.tsx": "7dba80a0bcd7ba08706a275e015af35d69de5fe70b1d90d98cf76293c809e86d",
+    "src/components/site-header.tsx": "e549c3b80c4147a74dc42ab7d917fc48444ad09d3c4807826c19c80b59b4b05b",
     "src/components/stat-counter.tsx": "32a3282f96f81a4b69bdc4a629ba7bd172dfbd7906e514d7ab16eb1b991a0024",
     "src/components/super-admin-console.tsx": "45e79ef604a7ee72c6f9b72252a3452c01882eb08420fdce7695d1853b73d924",
     "src/components/super-admin-overview.tsx": "60026ffd3d163606a64b6adac4ebe40656165fd36dc617be77828aae68782225",
@@ -233,7 +233,7 @@
       "text": true
     },
     "src/data/site.ts": {
-      "hash": "e47c01f0f54133d425d74c9465bb44fbd094849be17545dcea1855f681d1cdcf",
+      "hash": "647f361793faf1eca93794e076ee384b9bc1772109e3e46433d65e52209574e3",
       "text": true
     },
     "src/data/technologies.ts": {
