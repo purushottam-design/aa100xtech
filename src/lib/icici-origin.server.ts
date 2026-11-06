@@ -64,11 +64,7 @@ export function assertIciciOrigin(request: Request, configured: string) {
     transport,
     source: process.env["ICICI_TRUST_PROXY"]?.trim() === "true" ? "trusted-proxy" : "request-url",
   };
-  const localDevelopment =
-    process.env["NODE_ENV"] === "development" &&
-    process.env["ICICI_RETURN_URL"]?.trim() === "http://localhost:3000/consultation" &&
-    configured === "http://localhost:3000";
-  if (!origin || (!localDevelopment && !origin.startsWith("https://")) || origin !== configured)
+  if (!origin || !origin.startsWith("https://") || origin !== configured)
     throw new IciciPaymentError(
       "ICICI_WRONG_ORIGIN",
       !origin

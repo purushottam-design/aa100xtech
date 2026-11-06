@@ -34,7 +34,8 @@ export function usePushNotifications() {
   const primed = useRef(false);
 
   useEffect(() => {
-    const ok = typeof window !== "undefined" && "Notification" in window && "serviceWorker" in navigator;
+    const ok =
+      typeof window !== "undefined" && "Notification" in window && "serviceWorker" in navigator;
     setSupported(ok);
     if (ok) setPermission(Notification.permission);
   }, []);
@@ -51,7 +52,12 @@ export function usePushNotifications() {
   // Surface newly sent announcements as device notifications.
   useEffect(() => {
     if (!enabled || !feed.data) return;
-    const rows = (feed.data.rows ?? []) as Array<{ id: string; title: string; body: string; link_url?: string | null }>;
+    const rows = (feed.data.rows ?? []) as Array<{
+      id: string;
+      title: string;
+      body: string;
+      link_url?: string | null;
+    }>;
     const seen = readSeen();
     if (!primed.current) {
       primed.current = true;
@@ -60,14 +66,23 @@ export function usePushNotifications() {
     }
     const fresh = rows.filter((r) => !seen.includes(r.id));
     if (fresh.length === 0) return;
-    navigator.serviceWorker.ready.then((reg) => {
-      for (const row of fresh) {
-        reg.active?.postMessage({
-          type: "aa-notify",
-          payload: { id: row.id, title: row.title, body: row.body, url: row.link_url || "/app/notifications" },
-        });
-      }
-    });
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(() => navigator.serviceWorker.ready)
+      .then((reg) => {
+        for (const row of fresh) {
+          reg.active?.postMessage({
+            type: "aa-notify",
+            payload: {
+              id: row.id,
+              title: row.title,
+              body: row.body,
+              url: row.link_url || "/notifications",
+            },
+          });
+        }
+      })
+      .catch(() => undefined);
     window.localStorage.setItem(SEEN_KEY, JSON.stringify(rows.map((r) => r.id)));
   }, [enabled, feed.data]);
 

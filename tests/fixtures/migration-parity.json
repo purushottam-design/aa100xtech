@@ -10,14 +10,13 @@
     "src/components/admin-panel-page.tsx": "742cb9f61c27da640d72ead03eb032a5b0e021919bd7c323b2ce9279067daa2c",
     "src/components/admin-panel-shell.tsx": "067a662bf876a8cd7928e096dc95c42b1eb3ad5996f6c7c4add3705e2d6e2f75",
     "src/components/admin-reports.tsx": "62efac2bd788f5b73ac64ea84439c049190566b33defd37d135b5b55d42c8ebe",
-    "src/components/admin-roles.tsx": "1cd46e230d6827361ec614f1b31fac69c49648944369991f886dc25ed8b3e9d9",
+    "src/components/admin-roles.tsx": "80b754139c48e7816793bd9f56a25c10277d0cbc15bf262a538c8a1c61318de2",
     "src/components/admin-security.tsx": "cf6305bfddf5179369ea2a93ea1ebd2960dd0c3d2ff3675e2ee50c5c5e528718",
     "src/components/admin-sessions.tsx": "e39754a508373938bf6d6c597832478daa9ade6eb4d6d3cae5ccbbb1cc6613c0",
     "src/components/admin-support.tsx": "d718b4eb1c6bd1d74b528df95e9c7a39396d5639b8d33671fe0601a4d1dd1566",
     "src/components/admin-two-factor.tsx": "3385c446bd85941ad96b9083e478ad0781fa1882d2c6e559219d615666fbaea5",
-    "src/components/app-shell.tsx": "2ef4f74ce5eaa0b79d7ed981477e562f0da2fce36382b6ef284beaf378952183",
     "src/components/careers-page.tsx": "da847c9eec342c58a3e632efb17b18b62e3a4a97bf6e7fa1e5e78b0923324e2a",
-    "src/components/consultation-booking.tsx": "e899b10d22020edd85b4ed9372aa21f365f04f02029e7905fa5e6df41867d928",
+    "src/components/consultation-booking.tsx": "d44ff1873a20cb794b0ee47151fbe80ad863ca1779c07ef2d1f874e272380be6",
     "src/components/currency-provider.tsx": "cc704fffa0bffddfe9205571b27dee399ca6d999d0e26b012ebe6dfe24301060",
     "src/components/currency-selector.tsx": "1597619e6f746c5006de0f48e6457e54bcf089632148b4da95a3bbbddbb67d4e",
     "src/components/dashboard-login-dialog.tsx": "a81357ec1f993e19af0cd575e5deca13f6a16ac5c23b8ab7a69523e6a8a4f626",
@@ -27,7 +26,7 @@
     "src/components/service-demos.tsx": "89c819af605718b6d6d2b05dacddb68d9c7e6e306ba3318036a39f30e6c270cf",
     "src/components/settings-form.tsx": "628d2d6ba25ea2992b3caa76d2bc6581707bde31650382889f5a3c34aa053e58",
     "src/components/site-footer.tsx": "308bd9b02c3450453eb9dbf0ea6a0a4ad35bfa192c1836d2096d3fa27e712bcf",
-    "src/components/site-header.tsx": "e549c3b80c4147a74dc42ab7d917fc48444ad09d3c4807826c19c80b59b4b05b",
+    "src/components/site-header.tsx": "87a02f62ac780cadec49ef822e62c9215f35021758e957a46c0cf741b47084d7",
     "src/components/stat-counter.tsx": "32a3282f96f81a4b69bdc4a629ba7bd172dfbd7906e514d7ab16eb1b991a0024",
     "src/components/super-admin-console.tsx": "45e79ef604a7ee72c6f9b72252a3452c01882eb08420fdce7695d1853b73d924",
     "src/components/super-admin-overview.tsx": "60026ffd3d163606a64b6adac4ebe40656165fd36dc617be77828aae68782225",
@@ -96,19 +95,9 @@
     "src/routes/_authenticated/dashboard.tsx": "58d7bd4835cda66cc57706ab1ad06a551f011d1a6c5b9affb281985e0427a5b6",
     "src/routes/_authenticated/team.tsx": "e170014d987e836587820700a6687b2164b022ef285ca7ada0345c982b58b7d3",
     "src/routes/about.tsx": "7bdbda0b01e36a99c7462a21e369538af3466241354e0722a0d20920f99c55f8",
-    "src/routes/admin-guide.tsx": "8528c149209bccef4d6e56f3e470a868e653030c6fa0320cbc89b438a4e0bb44",
-    "src/routes/admin.select.tsx": "0ccba4a9ab18a74ee5d95104544f08f020dee8445cdbe5959183ceadc1d0ebb8",
+    "src/routes/admin-guide.tsx": "d03d4a5310d2e734a73ac6f8bba89cd69a840edd25ebe7a0b08f98e2d9b6ee72",
+    "src/routes/admin.select.tsx": "981c42fd04877e60f312772bf73f72c6f39368e7616018715b6d237c886c253f",
     "src/routes/affiliates.tsx": "01bb376373e6bc45fa7a8f2db89b46ff4ebc6e7dfb7725058462e74a5c5e9f1d",
-    "src/routes/app.admin.tsx": "9035f414cdc31560c739c3fe2e8aafdd1c545bf95d8ab976b6f8dc325b19b1df",
-    "src/routes/app.book-consultation.tsx": "1b5a97803e0fb86f92aa0a3c76cd4d5a7036d2816a0d1bf7f1e9657cb58f751f",
-    "src/routes/app.home.tsx": "b99a9c4e429c70e23e7413079c1c6a9c15bcf294749e26a611936fe8db042136",
-    "src/routes/app.install.tsx": "fd30f22be3f8aaab51247180cfd15e92e55185ccf9368049168be4edcb11ae27",
-    "src/routes/app.login.tsx": "8009037b9f3a720326a84e7aebb175182be7a396a0c0ca63b2f48837af5cd1eb",
-    "src/routes/app.notifications.tsx": "2c6e6c041a605ffe4919d9fb3b4bd7f653456b2e442b51fd5db4e563cfc3ab2a",
-    "src/routes/app.profile.tsx": "4635abeb60a578435dd4ad2c1b674ef934a10951c00c679fbe4d3ef310879b30",
-    "src/routes/app.service.$id.tsx": "ba714b954e009f443335d52a1100ecbb9d7afc7caddac3c1ba0db25d7c83451c",
-    "src/routes/app.services.tsx": "5f26e2bec20f75cd40e7f511ecd37945ccd09cc778db5fbb9646361fda6682c2",
-    "src/routes/app.settings.tsx": "6c034631dc3675277d44f507357978d34bafec7950e7d50d990a79146c4ebb5c",
     "src/routes/auth.tsx": "a182812d8a4c638752480d1ee12682b1dad8ad608350d2779b34c90c6774465f",
     "src/routes/be-the-one.tsx": "39d4bcf79f362f180fdd17f5d82d19cd615f964372ae84a03b96ce7a1279b644",
     "src/routes/careers.apply.tsx": "14eea7e9bd8cea03d24aab223d4c03e309ec1cbf01f9a861adea10902d6c3bc6",
@@ -137,7 +126,13 @@
     "src/routes/services.explore.index.tsx": "1ac2f50432675eec269b8d3f776ed779efcebc9741ae2ef93d1c7f8d322dde0b",
     "src/routes/services.index.tsx": "563bfbca3444b1fb943405528203509c9dbd4444719456cf572e467cce623fb8",
     "src/routes/shipping-policy.tsx": "2f6141960e2cf109de8a151cbbd36106c94e6fd02b599560cfbb305dbe055a80",
-    "src/routes/terms-and-conditions.tsx": "64eeabf8e3138411b321f63103d9f4783695bf23945d78deb81d52085929bfef"
+    "src/routes/terms-and-conditions.tsx": "64eeabf8e3138411b321f63103d9f4783695bf23945d78deb81d52085929bfef",
+    "src/components/web-page-shell.tsx": "fbc720368ebcde7f76f523ad8609b070f848024f8b4db0c85e21aebf8794acae",
+    "src/routes/profile.tsx": "1ffb296c7b91182120677b1f21e458124bcc23d5b7381f117b704c01b0df2118",
+    "src/routes/settings.tsx": "4391e4d57b109d08b9e1ed5c27c88c4794b3665329ab36c5fbc7a1e3e37df877",
+    "src/routes/notifications.tsx": "3645454674d0a9e8fe329bc8dffee3cd752a4f25457fa0953626b69073459d69",
+    "src/routes/catalog.tsx": "abfa92b54d150d02a00e3d7833a0b7bee355ff6ab267571bf7f8820d9a8af7e6",
+    "src/routes/catalog-detail.tsx": "57911b5103ce94bb5bb96669202abf9022c9b9e9fa1148fd71bf6ee8e5a752be"
   },
   "files": {
     "public/aa-affiliate.js": {
@@ -177,7 +172,7 @@
       "text": false
     },
     "public/manifest.webmanifest": {
-      "hash": "c1ca8a8b713c8fb409af5c82a991beaa5175a4eb4746abf293d3174aa4905305",
+      "hash": "bca44272e6fd9e04add3d41f9b4be236e8c62f196df70135d06773c3844126a4",
       "text": true
     },
     "public/robots.txt": {
@@ -767,7 +762,7 @@
           },
           {
             "name": "description",
-            "content": "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on the website and in the phone app."
+            "content": "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on desktop and mobile browsers."
           },
           {
             "property": "og:title",
@@ -775,7 +770,7 @@
           },
           {
             "property": "og:description",
-            "content": "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on the website and in the phone app."
+            "content": "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on desktop and mobile browsers."
           },
           {
             "property": "og:type",
@@ -852,330 +847,6 @@
           {
             "name": "twitter:card",
             "content": "summary_large_image"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.admin.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Admin panels — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "Open the AA100XTech admin dashboards assigned to your account from the mobile app: company, interview, marketing, business or super admin."
-          },
-          {
-            "property": "og:title",
-            "content": "Admin panels — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "Open the AA100XTech admin dashboards assigned to your account from the mobile app: company, interview, marketing, business or super admin."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          },
-          {
-            "name": "robots",
-            "content": "noindex"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.book-consultation.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Book a consultation — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "Book a paid AA100XTech consultation from your phone. Secure payment runs through the existing AA100XTech checkout."
-          },
-          {
-            "property": "og:title",
-            "content": "Book a consultation — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "Book a paid AA100XTech consultation from your phone. Secure payment runs through the existing AA100XTech checkout."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.home.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "App home — AA100XTech"
-          },
-          {
-            "name": "description",
-            "content": "Your AA100XTech mobile dashboard: services, consultations and your account, powered by your existing AA100XTech login."
-          },
-          {
-            "property": "og:title",
-            "content": "App home — AA100XTech"
-          },
-          {
-            "property": "og:description",
-            "content": "Your AA100XTech mobile dashboard: services, consultations and your account, powered by your existing AA100XTech login."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          },
-          {
-            "name": "robots",
-            "content": "noindex"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.install.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Install the AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "Install the AA100XTech App on your phone for one-tap access to services, consultations and your account."
-          },
-          {
-            "property": "og:title",
-            "content": "Install the AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "Install the AA100XTech App on your phone for one-tap access to services, consultations and your account."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.login.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Sign in — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "Sign in to the AA100XTech mobile app with your existing AA100XTech account to view services, your profile and consultations."
-          },
-          {
-            "property": "og:title",
-            "content": "Sign in — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "Sign in to the AA100XTech mobile app with your existing AA100XTech account to view services, your profile and consultations."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          },
-          {
-            "name": "robots",
-            "content": "noindex"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.notifications.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Notifications — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "Turn on push alerts and read every AA100XTech announcement, booking update and admin message inside the mobile app."
-          },
-          {
-            "property": "og:title",
-            "content": "Notifications — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "Turn on push alerts and read every AA100XTech announcement, booking update and admin message inside the mobile app."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          },
-          {
-            "name": "robots",
-            "content": "noindex"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.profile.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Your profile — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "View your AA100XTech account details: name, contact information, department and assigned roles."
-          },
-          {
-            "property": "og:title",
-            "content": "Your profile — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "View your AA100XTech account details: name, contact information, department and assigned roles."
-          },
-          {
-            "property": "og:type",
-            "content": "profile"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          },
-          {
-            "name": "robots",
-            "content": "noindex"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.service.id.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Service details — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "View full details for an AA100XTech service, including category, description and how to book a consultation."
-          },
-          {
-            "property": "og:title",
-            "content": "Service details — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "View full details for an AA100XTech service, including category, description and how to book a consultation."
-          },
-          {
-            "property": "og:type",
-            "content": "article"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.services.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Services — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "Browse the live AA100XTech service catalogue from the app: web, mobile, AI, cloud and growth marketing offerings."
-          },
-          {
-            "property": "og:title",
-            "content": "Services — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "Browse the live AA100XTech service catalogue from the app: web, mobile, AI, cloud and growth marketing offerings."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          }
-        ]
-      }
-    },
-    {
-      "file": "src/lib/page-metadata/app.settings.ts",
-      "legacy": {
-        "meta": [
-          {
-            "title": "Settings — AA100XTech App"
-          },
-          {
-            "name": "description",
-            "content": "Update your AA100XTech contact details and sign out of the mobile app. Changes are saved to your existing account."
-          },
-          {
-            "property": "og:title",
-            "content": "Settings — AA100XTech App"
-          },
-          {
-            "property": "og:description",
-            "content": "Update your AA100XTech contact details and sign out of the mobile app. Changes are saved to your existing account."
-          },
-          {
-            "property": "og:type",
-            "content": "website"
-          },
-          {
-            "name": "twitter:card",
-            "content": "summary_large_image"
-          },
-          {
-            "name": "robots",
-            "content": "noindex"
           }
         ]
       }

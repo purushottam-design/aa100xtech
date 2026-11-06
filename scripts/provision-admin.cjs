@@ -56,6 +56,7 @@ async function provisionAdmin({
   env = process.env,
   apply = false,
   resetPassword = false,
+  roleOnly = false,
   legacy = false,
   panel = "super",
   expectedProject,
@@ -64,6 +65,8 @@ async function provisionAdmin({
   log = console.log,
 } = {}) {
   if (!roles[panel]) throw new Error("Choose a supported dashboard panel.");
+  if (roleOnly && resetPassword)
+    throw new Error("--role-only cannot be combined with --reset-password.");
   const prefix =
     legacy || (panel === "super" && !env.SUPER_ADMIN_EMAIL) ? "ADMIN" : prefixes[panel];
   if (legacy && panel !== "super")
@@ -104,11 +107,11 @@ async function provisionAdmin({
           : !strongPassword(password)
             ? "placeholder"
             : null;
-  if (apply && !passwordReady)
+  if (apply && !roleOnly && !passwordReady)
     throw new Error(
       `Set ${prefix}_PASSWORD to a unique password of at least 16 characters. Placeholder passwords are refused; no account changes were made.`,
     );
-  if (apply && !env.SUPABASE_PUBLISHABLE_KEY)
+  if (apply && !roleOnly && !env.SUPABASE_PUBLISHABLE_KEY)
     throw new Error(
       "Configure SUPABASE_PUBLISHABLE_KEY before applying; no account changes were made.",
     );
@@ -146,9 +149,12 @@ async function provisionAdmin({
     databaseRoleLookupCode,
     hasProvisionedRole: assigned.includes(roles[panel]),
     resetsExistingPassword: apply && resetPassword && !!user,
+    ...(roleOnly ? { roleOnly: true } : {}),
   };
   log(JSON.stringify(plan));
   if (!apply) return { ...plan, applied: false };
+  if (roleOnly && !user)
+    throw new Error("Role repair requires an existing account. No account was created.");
   if (
     user &&
     (user.email_confirmed_at === null ||
@@ -177,10 +183,15 @@ async function provisionAdmin({
     if (result.error) throw new Error("The explicitly requested password reset failed.");
     passwordChanged = true;
   }
-  const auth = client(env, env.SUPABASE_PUBLISHABLE_KEY, factory);
-  const verified = await auth.auth.signInWithPassword({ email, password });
+  // Operator-only role repair uses the service credential's authority over an
+  // existing confirmed account. It never changes or needs the user's password.
+  const auth = roleOnly ? undefined : client(env, env.SUPABASE_PUBLISHABLE_KEY, factory);
+  const verified = auth ? await auth.auth.signInWithPassword({ email, password }) : undefined;
   try {
-    if (verified.error || verified.data.user?.id !== user.id || !verified.data.session)
+    if (
+      !roleOnly &&
+      (verified.error || verified.data.user?.id !== user.id || !verified.data.session)
+    )
       throw new Error(
         "The configured password did not authenticate this existing account. Its password was not silently replaced. To explicitly reset it, use --apply --reset-password after choosing a strong environment password.",
       );
@@ -208,10 +219,11 @@ async function provisionAdmin({
       throw new Error("The dashboard role could not be independently verified.");
     const result = {
       applied: true,
-      passwordVerified: true,
+      passwordVerified: !roleOnly,
       roleVerified: true,
       created,
       passwordChanged,
+      ...(roleOnly ? { roleOnly: true } : {}),
       roleSource: roleAvailable
         ? "database-and-server-managed-auth"
         : "server-managed-auth-with-configured-email",
@@ -219,7 +231,7 @@ async function provisionAdmin({
     log(JSON.stringify(result));
     return result;
   } finally {
-    if (verified.data.session) await auth.auth.signOut({ scope: "local" });
+    if (verified?.data.session) await auth.auth.signOut({ scope: "local" });
   }
 }
 module.exports = { provisionAdmin, strongPassword };
@@ -231,6 +243,7 @@ if (require.main === module) {
   provisionAdmin({
     apply: process.argv.includes("--apply"),
     resetPassword: process.argv.includes("--reset-password"),
+    roleOnly: process.argv.includes("--role-only"),
     legacy: process.argv.includes("--legacy"),
     panel: panelIndex < 0 ? "super" : process.argv[panelIndex + 1],
     expectedProject: projectIndex < 0 ? undefined : process.argv[projectIndex + 1],

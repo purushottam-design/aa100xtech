@@ -33,8 +33,8 @@ test("all original page routes and published service URLs render", async ({
     expect(await response.text(), route).not.toContain("This page didn't load");
   }
   const redirect = await request.get("/app", { maxRedirects: 0 });
-  expect(redirect.status()).toBe(307);
-  expect(redirect.headers()["location"]).toBe("/app/home");
+  expect(redirect.status()).toBe(308);
+  expect(redirect.headers()["location"]).toBe("/");
   for (const route of [
     "/missing-migration-page",
     "/services/missing-migration-service",
@@ -145,15 +145,10 @@ for (const viewport of [
       fullPage: true,
     });
     await page.goto("/app/login");
-    // The existing app keeps its own logo header, without the public-site navigation.
-    await expect(
-      page.getByRole("navigation", { name: "Main navigation", exact: true }),
-    ).toHaveCount(0);
-    await expect(
-      page.getByRole("link", { name: "AA100XTech app home", exact: true }),
-    ).toBeVisible();
-    await expect(page.locator("footer")).toHaveCount(0);
-    await expect(page.locator("form")).toBeVisible();
+    await expect(page).toHaveURL(/\/auth$/);
+    await expect(page.getByRole("link", { name: "AA100XTech home", exact: true })).toBeVisible();
+    await expect(page.locator("footer")).toHaveCount(1);
+    await expect(page.locator("form").first()).toBeVisible();
     await page.goto("/dashboard");
     await expect(page).toHaveURL(/\/auth$/);
     expect(pageErrors).toEqual([]);

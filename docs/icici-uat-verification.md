@@ -1,13 +1,6 @@
 # ICICI UAT verification - 2026-11-03
 
-> Follow-up requested by the owner: local guest testing is now enabled through
-> `ICICI_UAT_GUEST_CHECKOUT=true` in `.env.development.local`. The configured
-> trusted HTTPS tunnel accepts anonymous availability/preparation/initiation in
-> development only. Live guest availability returns HTTP 200, `available:true`;
-> cross-site initiation remains HTTP 403 and forged callbacks HTTP 400. All 36
-> focused ICICI tests and TypeScript pass. The administrator-only results below
-> describe the earlier audit; production gates and incomplete bank UAT are
-> unchanged. See `docs/icici-uat.md` for the local guest opt-in conditions.
+> Historical audit. The guest path described by an earlier follow-up has been removed. See [the 6 November local/UAT report](icici-local-development.md) for the current Super Admin-only flow, local simulation, handoff migration and actual bank results. Earlier observations below retain their original dates.
 
 ## Outcome
 

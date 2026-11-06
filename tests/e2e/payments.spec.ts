@@ -64,6 +64,56 @@ async function openPaymentSummary(
 }
 
 for (const width of [1440, 390]) {
+  test(`localhost ICICI simulation cannot call a payment API or show a real paid booking at ${width}px`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.route("**/api/payments/icici/availability", (route) =>
+      route.fulfill({
+        json: {
+          icici: false,
+          available: false,
+          code: "ICICI_WRONG_ORIGIN",
+          localTesting: {
+            mock: true,
+            transition: false,
+            transitionReason:
+              "Secure ICICI UAT transfer is temporarily unavailable. Local simulation is still available.",
+          },
+        },
+      }),
+    );
+    const writes: string[] = [];
+    page.on("request", (request) => {
+      if (request.method() === "POST") writes.push(request.url());
+    });
+    await openPaymentSummary(page, false, false, async (dialog) => {
+      await expect(
+        dialog.getByText(
+          "Secure ICICI UAT transfer is temporarily unavailable. Local simulation is still available.",
+          { exact: true },
+        ),
+      ).toBeVisible();
+      await dialog.getByRole("button", { name: "Simulate ICICI locally", exact: true }).click();
+      const mock = dialog.getByRole("region", { name: "ICICI simulation", exact: true });
+      await expect(mock).toContainText("SIMULATED ICICI");
+      for (const outcome of ["success", "failure", "pending"]) {
+        await mock.getByRole("button", { name: `Simulate ${outcome}`, exact: true }).click();
+        await expect(mock.getByRole("status")).toContainText(
+          `Simulated ${outcome}. No real payment or booking status was changed.`,
+        );
+        await expect(
+          dialog.getByRole("heading", { name: "Payment Successful", exact: true }),
+        ).toHaveCount(0);
+      }
+      expect(writes).toEqual([]);
+      await expect(
+        dialog.getByRole("button", { name: "Continue to HTTPS ICICI UAT", exact: true }),
+      ).toBeDisabled();
+      await page.screenshot({ path: testInfo.outputPath(`icici-local-simulation-${width}.png`) });
+    });
+  });
+
   test(`existing Razorpay checkout remains default and ICICI stays unavailable at ${width}px`, async ({
     page,
   }, testInfo) => {

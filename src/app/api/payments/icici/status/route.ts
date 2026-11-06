@@ -2,5 +2,7 @@ import { checkoutCredentialsSchema, checkoutStatus } from "@/lib/icici-checkout.
 import { iciciJsonRequest } from "@/lib/icici-routes.server";
 export const runtime = "nodejs";
 export function POST(request: Request) {
-  return iciciJsonRequest(request, checkoutCredentialsSchema, checkoutStatus);
+  return iciciJsonRequest(request, checkoutCredentialsSchema, checkoutStatus, {
+    requireCheckoutAccess: true,
+  });
 }

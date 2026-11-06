@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 const title = "Admin guide — how to open Super Admin & Admin | AA100XTech";
 const description =
-  "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on the website and in the phone app.";
+  "Step-by-step picture guide: sign in, open the Super Admin console, open a role admin panel, create a new admin and set permissions — on desktop and mobile browsers.";
 
 export default AdminGuidePage;
 
@@ -23,16 +23,22 @@ const OPEN_SUPER: Step[] = [
   {
     n: 1,
     title: "My account → Sign in",
-    hindi: "Website par upar dayein “My account” par click karein. Sign-in page khulega (email + password).",
+    hindi:
+      "Website par upar dayein “My account” par click karein. Sign-in page khulega (email + password).",
     english: "Click “My account” at the top right of the site to reach the sign-in page.",
-    image: { src: "/guide/auth.png", alt: "AA100XTech sign-in page with email and password fields" },
+    image: {
+      src: "/guide/auth.png",
+      alt: "AA100XTech sign-in page with email and password fields",
+    },
     action: { label: "Open sign-in page", to: "/auth" },
   },
   {
     n: 2,
     title: "Super admin ka email/password daalein",
-    hindi: "Wahi email aur password daalein jo super admin ke liye set hai. Login hote hi “Choose panel” page aata hai.",
-    english: "Enter the super admin email and password. After login you land on the Choose panel page.",
+    hindi:
+      "Wahi email aur password daalein jo super admin ke liye set hai. Login hote hi “Choose panel” page aata hai.",
+    english:
+      "Enter the super admin email and password. After login you land on the Choose panel page.",
   },
   {
     n: 3,
@@ -45,7 +51,8 @@ const OPEN_SUPER: Step[] = [
   {
     n: 4,
     title: "Bayein sidebar se koi bhi section",
-    hindi: "Dashboard, Reports, Users, Admins & permissions, Roles, Hierarchy, Support, Notifications, Content, Activity & logins, Sessions, Two-factor, Settings.",
+    hindi:
+      "Dashboard, Reports, Users, Admins & permissions, Roles, Hierarchy, Support, Notifications, Content, Activity & logins, Sessions, Two-factor, Settings.",
     english: "Use the left sidebar to open any module of the console.",
   },
 ];
@@ -54,21 +61,25 @@ const OPEN_ADMIN: Step[] = [
   {
     n: 1,
     title: "Wahi ek hi login page",
-    hindi: "Company / Interview / Marketing / Business / Manager — sabke liye same login page hai, alag koi login nahi.",
+    hindi:
+      "Company / Interview / Marketing / Business / Manager — sabke liye same login page hai, alag koi login nahi.",
     english: "Every admin uses the same sign-in page — there is no separate admin login.",
     action: { label: "Open sign-in page", to: "/auth" },
   },
   {
     n: 2,
     title: "Sirf assigned panel dikhte hain",
-    hindi: "Login ke baad account ko jo panel diye gaye hain wahi dikhte hain (jaise Marketing Admin → /admin/marketing).",
+    hindi:
+      "Login ke baad account ko jo panel diye gaye hain wahi dikhte hain (jaise Marketing Admin → /admin/marketing).",
     english: "After sign-in only the panels assigned to that account are shown.",
   },
   {
     n: 3,
     title: "Permission server par check hoti hai",
-    hindi: "Jo permission super admin ne di hai wahi modules khulenge. Button sirf chhupaya nahi jaata — server har request par dobara check karta hai.",
-    english: "Modules open only with granted permissions; the server re-checks every request, buttons are not just hidden.",
+    hindi:
+      "Jo permission super admin ne di hai wahi modules khulenge. Button sirf chhupaya nahi jaata — server har request par dobara check karta hai.",
+    english:
+      "Modules open only with granted permissions; the server re-checks every request, buttons are not just hidden.",
   },
 ];
 
@@ -90,9 +101,14 @@ const CREATE_ADMIN: Step[] = [
   {
     n: 3,
     title: "Permissions → Select all / tick → Save",
-    hindi: "Us admin ki row me Permissions kholein, “Select all” ya zaroorat ke box tick karein aur Save dabayein.",
-    english: "Open Permissions on that admin's row, tick what they need (or Select all), then Save.",
-    image: { src: "/guide/roles.png", alt: "Roles page with permission checkboxes and select all option" },
+    hindi:
+      "Us admin ki row me Permissions kholein, “Select all” ya zaroorat ke box tick karein aur Save dabayein.",
+    english:
+      "Open Permissions on that admin's row, tick what they need (or Select all), then Save.",
+    image: {
+      src: "/guide/roles.png",
+      alt: "Roles page with permission checkboxes and select all option",
+    },
     action: { label: "Open Roles", to: "/admin/super", search: { section: "roles" } },
   },
 ];
@@ -149,9 +165,9 @@ function AdminGuidePage() {
         Super Admin aur Admin kaise kholein
       </h1>
       <p className="mt-3 text-muted-foreground">
-        Screenshots ke saath poora tarika: login karna, super console kholna, role admin panel kholna,
-        naya admin banana aur uski permissions set karna. Website aur phone app dono ek hi backend par
-        chalte hain, isliye data dono jagah same rehta hai.
+        Screenshots ke saath poora tarika: login karna, super console kholna, role admin panel
+        kholna, naya admin banana aur uski permissions set karna. Desktop aur phone ke browser mein
+        isi website se sabhi admin functions use karein.
       </p>
 
       <div className="mt-6 flex flex-wrap gap-3">
@@ -159,10 +175,12 @@ function AdminGuidePage() {
           <Link to="/auth">Sign in / Create account</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/admin/super" search={{ section: "overview" } as never}>Super console</Link>
+          <Link to="/admin/super" search={{ section: "overview" } as never}>
+            Super console
+          </Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/app/admin">Phone app admin screen</Link>
+          <Link to="/admin/select">Website admin dashboards</Link>
         </Button>
       </div>
 
@@ -184,34 +202,29 @@ function AdminGuidePage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="font-display text-2xl font-semibold">3. Naya admin banana aur permission dena</h2>
+        <h2 className="font-display text-2xl font-semibold">
+          3. Naya admin banana aur permission dena
+        </h2>
         <div className="mt-5">
           <StepList steps={CREATE_ADMIN} />
         </div>
       </section>
 
       <section className="mt-12">
-        <h2 className="font-display text-2xl font-semibold">4. Phone app me bhi wahi console</h2>
+        <h2 className="font-display text-2xl font-semibold">
+          4. Browser se sabhi functions kholein
+        </h2>
         <Card className="surface-card mt-5">
           <CardHeader>
-            <CardTitle className="font-display text-lg">App → Admin screen</CardTitle>
+            <CardTitle className="font-display text-lg">Website admin dashboards</CardTitle>
             <CardDescription>
-              App ke Admin screen par “Super admin console” card hai — Dashboard, Reports, Users, Admins,
-              Roles, Hierarchy, Support, Notifications, Content, Activity log, Sessions aur Two-factor ke
-              direct buttons. Ek tap me wahi section khulta hai, data website jaisa hi.
+              Desktop, tablet aur phone par website kholein. Admin dashboards, reports, users,
+              permissions, security aur settings sabhi browser mein available hain.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <figure className="overflow-hidden rounded-xl border border-border/60">
-              <img
-                src="/guide/app-admin2.png"
-                alt="Phone app admin screen showing the super admin console shortcut buttons"
-                loading="lazy"
-                className="mx-auto w-full max-w-xs object-cover object-top"
-              />
-            </figure>
-            <Button asChild className="mt-4">
-              <Link to="/app/admin">Open app admin screen</Link>
+            <Button asChild>
+              <Link to="/admin/select">Open admin dashboards</Link>
             </Button>
           </CardContent>
         </Card>

@@ -97,8 +97,6 @@ export function iciciUatConfig() {
       { blocked },
     );
   let callback: URL;
-  const localReturn =
-    process.env["NODE_ENV"] === "development" && returnURL === "http://localhost:3000/consultation";
   try {
     callback = new URL(returnURL!);
   } catch {
@@ -110,17 +108,17 @@ export function iciciUatConfig() {
     );
   }
   if (
-    (!localReturn && callback.protocol !== "https:") ||
+    callback.protocol !== "https:" ||
     callback.username ||
     callback.password ||
     callback.search ||
     callback.hash ||
-    (!localReturn && callback.pathname !== "/api/payments/icici/callback") ||
+    callback.pathname !== "/api/payments/icici/callback" ||
     returnURL!.length > 128
   )
     throw new IciciPaymentError(
       "ICICI_CONFIGURATION",
-      "ICICI_RETURN_URL must use HTTPS and /api/payments/icici/callback, be at most 128 characters, and have no credentials, query or fragment. Development also accepts http://localhost:3000/consultation.",
+      "ICICI_RETURN_URL must use HTTPS and /api/payments/icici/callback, be at most 128 characters, and have no credentials, query or fragment.",
       503,
       { invalid: ["ICICI_RETURN_URL"] },
     );

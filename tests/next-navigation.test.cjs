@@ -205,16 +205,16 @@ test("service worker retains Next static JS and CSS for offline reloads", async 
   assert.equal(cacheWrites.length, 2, "Offline responses are served from the original asset cache");
 });
 
-test("service worker still serves and caches ordinary app HTML", async () => {
+test("service worker serves website HTML", async () => {
   const { handlers, cacheWrites } = worker();
   let response;
   handlers.fetch({
-    request: new Request("https://aa100xtech.com/app/home"),
+    request: new Request("https://aa100xtech.com/"),
     respondWith: (pending) => {
       response = pending;
     },
   });
   assert.equal((await response).status, 200);
   await Promise.resolve();
-  assert.deepEqual(cacheWrites, ["https://aa100xtech.com/app/home"]);
+  assert.deepEqual(cacheWrites, ["https://aa100xtech.com/"]);
 });

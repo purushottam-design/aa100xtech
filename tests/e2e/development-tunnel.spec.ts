@@ -44,7 +44,8 @@ for (const width of [1440, 390]) {
     });
     expect(manifest.status).toBe(200);
     expect(manifest.type).toContain("application/manifest+json");
-    expect(manifest.body.start_url).toBe("/app/home");
+    expect(manifest.body.start_url).toBe("/");
+    expect(manifest.body.display).toBe("browser");
 
     await page.getByText("Projects completed", { exact: true }).scrollIntoViewIfNeeded();
     for (const [label, value] of [

@@ -128,7 +128,7 @@ export function AdminRoles() {
             <CardTitle className="font-display text-xl">Roles</CardTitle>
             <CardDescription>
               Build any role you need and choose exactly what it can do. Roles work the same on the
-              website and in the phone app.
+              website on desktop and mobile browsers.
             </CardDescription>
           </div>
           {isSuper ? <Button onClick={() => setCreating(true)}>+ Create role</Button> : null}
@@ -159,8 +159,12 @@ export function AdminRoles() {
                           {r.is_system ? <Badge variant="secondary">Built-in</Badge> : null}
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{r.description ?? "—"}</TableCell>
-                      <TableCell>{r.key === "supreme_admin" ? "All" : r.permissions.length}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {r.description ?? "—"}
+                      </TableCell>
+                      <TableCell>
+                        {r.key === "supreme_admin" ? "All" : r.permissions.length}
+                      </TableCell>
                       <TableCell>{r.adminCount}</TableCell>
                       <TableCell>
                         <div className="flex flex-wrap justify-end gap-2">
@@ -264,10 +268,7 @@ function RoleDialog({
   }
   if (!open && seeded !== null) setSeeded(null);
 
-  const allKeys = useMemo(
-    () => assignable.flatMap((g) => g.items.map((i) => i.key)),
-    [],
-  );
+  const allKeys = useMemo(() => assignable.flatMap((g) => g.items.map((i) => i.key)), []);
 
   const toggle = (key: string, on: boolean) =>
     setSelected((prev) => (on ? [...new Set([...prev, key])] : prev.filter((p) => p !== key)));
@@ -317,7 +318,9 @@ function RoleDialog({
           <Button type="button" size="sm" variant="outline" onClick={() => setSelected([])}>
             Remove all
           </Button>
-          <span className="self-center text-sm text-muted-foreground">{selected.length} selected</span>
+          <span className="self-center text-sm text-muted-foreground">
+            {selected.length} selected
+          </span>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">

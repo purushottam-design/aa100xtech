@@ -1,9 +1,11 @@
 import { iciciAvailability } from "@/lib/icici-checkout.server";
+import { iciciLocalTestingAvailability } from "@/lib/icici-handoff.server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const development = process.env.NODE_ENV === "development";
   const result = await iciciAvailability(request);
+  const localTesting = await iciciLocalTestingAvailability(request);
   if (development && !result.available)
     console.warn(`[ICICI availability] ${JSON.stringify(result)}`);
   return Response.json(
@@ -11,6 +13,7 @@ export async function GET(request: Request) {
       // Keep the original key for existing clients; available is the canonical key.
       icici: result.available,
       environment: "uat",
+      ...(localTesting ? { localTesting } : {}),
       // Opt-in, development-only evidence for comparing the app with ngrok's
       // inspector. Never expose Authorization, cookies or arbitrary headers.
       ...(development && process.env["ICICI_ORIGIN_DEBUG"] === "true"
@@ -32,6 +35,6 @@ export async function GET(request: Request) {
               : {}),
           }),
     },
-    { headers: { "cache-control": "no-store", vary: "Authorization" } },
+    { headers: { "cache-control": "no-store", vary: "Authorization, Cookie" } },
   );
 }

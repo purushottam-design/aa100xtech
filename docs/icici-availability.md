@@ -1,6 +1,8 @@
 # Consultation ICICI availability
 
-## Origin fix and current diagnosis (2026-11-02)
+Current behavior and actual live checks: [6 November local development/UAT report](icici-local-development.md). Real UAT requires Super Admin authorization; the guest bypass and HTTP callback exception are removed.
+
+## Historical origin diagnosis (2026-11-02)
 
 The active local configuration loads `.env.local` before `.env`. Both currently
 set `ICICI_RETURN_URL` to `https://aa100xtech.com/api/payments/icici/callback`.

@@ -51,8 +51,8 @@ test("navbar links resolve to existing routes without duplicates between primary
     assert.ok(!/^\/(admin|dashboard|affiliate-admin)/.test(href), href);
   }
   const more = headerNavigation.find((item) => item.label === "More").items;
-  assert.equal(more.length, 3);
-  for (const to of ["/about", "/consultation", "/contact"])
+  assert.equal(more.length, 4);
+  for (const to of ["/about", "/consultation", "/contact", "/catalog"])
     assert.ok(
       more.some((link) => link.to === to),
       to,

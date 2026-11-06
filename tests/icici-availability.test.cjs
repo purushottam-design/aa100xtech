@@ -22,6 +22,7 @@ function harness(patch = {}, failures = {}) {
   const reads = [];
   const logs = [];
   const database = {
+    auth: { getUser: async () => ({ data: { user: { id: "fixture-super" } }, error: null }) },
     from(table) {
       reads.push(table);
       const query = {
@@ -77,6 +78,7 @@ function harness(patch = {}, failures = {}) {
       "@/integrations/supabase/client.server": { supabaseAdmin: database },
       "@/lib/payment-database.server": { paymentAdmin: database },
       "@/lib/backend/handlers/consultations": {},
+      "@/lib/rbac.server": { authorizeSuper: async () => ({ isSuper: true }) },
     },
     globals,
   );
@@ -91,7 +93,12 @@ function harness(patch = {}, failures = {}) {
     logs,
     checkout,
     request: (host = origin, init) =>
-      route.GET(new Request(`${host}/api/payments/icici/availability`, init)),
+      route.GET(
+        new Request(`${host}/api/payments/icici/availability`, {
+          ...init,
+          headers: { authorization: "Bearer fixture-super-session", ...init?.headers },
+        }),
+      ),
   };
 }
 
@@ -417,7 +424,7 @@ test("production responses hide configuration diagnostics while retaining actual
     const body = await response.json();
     assert.equal(body.available, host === new URL(origin).host);
     assert.equal(body.origins, undefined);
-    assert.equal(response.headers.get("vary"), "Authorization");
+    assert.equal(response.headers.get("vary"), "Authorization, Cookie");
   }
   assert.deepEqual(h.logs, []);
 });

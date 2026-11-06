@@ -1,16 +1,29 @@
 {
-  "name": "AA100XTech App",
-  "short_name": "AA100X App",
-  "description": "AA100XTech mobile app — services, consultations and your account.",
-  "start_url": "/app/home",
-  "scope": "/app",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "name": "AA100XTech",
+  "short_name": "AA100XTech",
+  "description": "AA100XTech website ? services, consultations and your account.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
-    { "src": "/app-icon-512.png", "sizes": "816x816", "type": "image/png", "purpose": "any" },
-    { "src": "/app-icon-512.png", "sizes": "816x816", "type": "image/png", "purpose": "maskable" },
-    { "src": "/favicon.png", "sizes": "64x64", "type": "image/png" }
+    {
+      "src": "/app-icon-512.png",
+      "sizes": "816x816",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app-icon-512.png",
+      "sizes": "816x816",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
   ]
 }

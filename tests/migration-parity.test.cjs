@@ -11,7 +11,7 @@ const root = path.join(__dirname, "..");
 const hash = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
 // Captured from the original Git commit before migration, then updated only
-// for the requested influencer and payment additions.
+// for requested feature additions and the website-only interface.
 // Normalizing through
 // the JSX compiler ignores formatting while retaining text, classes, attributes,
 // event handlers, component order, and conditional rendering.
@@ -36,9 +36,9 @@ function markup(source, file) {
   return result;
 }
 
-test("all 58 existing page templates match the approved rendered JSX baseline", () => {
+test("all 53 website page templates match the approved rendered JSX baseline", () => {
   const pages = Object.entries(fixture.markup).filter(([file]) => file.startsWith("src/routes/"));
-  assert.equal(pages.length, 58);
+  assert.equal(pages.length, 53);
   for (const [file, expected] of pages) {
     const source = fs.readFileSync(path.join(root, file), "utf8");
     assert.equal(hash(JSON.stringify(markup(source, file))), expected, file);
@@ -103,8 +103,8 @@ function assertSeoFields(actual, legacy, file) {
   );
 }
 
-test("native Next metadata preserves SEO fields on all 58 pages and both dynamic 404 variants", () => {
-  assert.equal(fixture.metadata.length, 58);
+test("native Next metadata preserves SEO fields on 48 retained pages and both dynamic 404 variants", () => {
+  assert.equal(fixture.metadata.length, 48);
   for (const entry of fixture.metadata) {
     const module = loadMetadata(entry.file);
     const metadata = entry.input ? module.detailMetadata(entry.input) : module.metadata;
