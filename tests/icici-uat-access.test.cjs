@@ -167,7 +167,7 @@ test("controlled UAT cannot bypass bank activation, approved origin or the live-
   assert.equal(h.effects.initiated, 0);
 });
 
-test("explicit local tunnel guest testing needs no session and never records UAT completion", async () => {
+test("the retired local guest flag cannot authorize a UAT payment", async () => {
   const h = harness({
     NODE_ENV: "development",
     ICICI_UAT_GUEST_CHECKOUT: "true",
@@ -179,10 +179,13 @@ test("explicit local tunnel guest testing needs no session and never records UAT
     "x-forwarded-host": new URL(origin).host,
     "x-forwarded-proto": "https",
   };
-  assert.equal((await h.availability(undefined, "http://localhost:3000", headers)).available, true);
+  assert.equal(
+    (await h.availability(undefined, "http://localhost:3000", headers)).available,
+    false,
+  );
   for (const name of ["checkout", "initiate"])
-    assert.equal((await h.post(name, undefined, "http://localhost:3000", headers)).status, 200);
-  assert.deepEqual(h.effects, { prepared: 1, initiated: 1, validated: 0, authorized: 0 });
+    assert.equal((await h.post(name, undefined, "http://localhost:3000", headers)).status, 403);
+  assert.deepEqual(h.effects, { prepared: 0, initiated: 0, validated: 0, authorized: 0 });
   assert.equal(h.env.ICICI_UAT_TESTS_PASSED, "false");
 });
 
@@ -235,11 +238,12 @@ test("local guest opt-in cannot bypass deployment, activation, tunnel, CSRF or H
   }
 });
 
-test("only a genuinely completed UAT flag opens the existing customer UAT path", async () => {
+test("a completed UAT flag never substitutes for a legitimate Super Admin session", async () => {
   const h = harness({ ICICI_UAT_TESTS_PASSED: "true", ICICI_UAT_TEST_MODE: "false" });
-  assert.equal((await h.availability()).available, true);
-  assert.equal((await h.post("initiate")).status, 200);
-  assert.equal(h.effects.validated, 0);
+  assert.equal((await h.availability()).available, false);
+  assert.equal((await h.post("initiate")).status, 403);
+  assert.equal((await h.post("initiate", "fixture-user-token")).status, 200);
+  assert.equal(h.effects.validated, 1);
   assert.equal(h.effects.initiated, 1);
 });
 
@@ -307,4 +311,38 @@ test("the ICICI browser client forwards its existing session for availability an
   }
   assert.equal(requests[1].init.headers.get("x-aa-rpc"), "1");
   assert.equal(requests[1].init.headers.get("content-type"), "application/json");
+});
+
+test("the shared JSON route rejects a handoff used for a different checkout before any action", async () => {
+  const route = load(
+    "src/lib/icici-routes.server.ts",
+    {
+      "@/lib/icici-checkout.server": {},
+      "@/lib/icici-uat-access.server": {
+        assertIciciCheckoutAccess: async () => ({ checkoutId: "authorized-checkout" }),
+      },
+    },
+    { process: { env: defaults } },
+  );
+  let actions = 0;
+  const invoke = (id) =>
+    route.iciciJsonRequest(
+      new Request(origin + "/api/payments/icici/initiate", {
+        method: "POST",
+        headers: { origin, "x-aa-rpc": "1", "content-type": "application/json" },
+        body: JSON.stringify({ id }),
+      }),
+      z.object({ id: z.string() }),
+      async () => {
+        actions++;
+        return {};
+      },
+      { requireCheckoutAccess: true },
+    );
+  const denied = await invoke("another-checkout");
+  assert.equal(denied.status, 403);
+  assert.equal((await denied.json()).code, "ICICI_HANDOFF_SCOPE");
+  assert.equal(actions, 0);
+  assert.equal((await invoke("authorized-checkout")).status, 200);
+  assert.equal(actions, 1);
 });

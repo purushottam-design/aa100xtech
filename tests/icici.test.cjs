@@ -97,34 +97,19 @@ test("transaction hashes match the supplied Web Crypto logic and change with tra
     assert.notEqual(bank.generateSecureHash({ ...payload, ...patch }, secret), expected);
 });
 
-test("localhost consultation return is allowed only in development with matching origin", () => {
-  const local = {
-    ...env,
-    NODE_ENV: "development",
-    ICICI_RETURN_URL: "http://localhost:3000/consultation",
-  };
-  const bank = load("src/lib/icici.server.ts", {}, { process: { env: local } });
-  const config = bank.iciciUatConfig();
-  assert.equal(config.returnURL, local.ICICI_RETURN_URL);
-  const origin = load("src/lib/icici-origin.server.ts", {}, { process: { env: local } });
-  origin.assertIciciOrigin(
-    new Request("http://localhost:3000/api/payments/icici/initiate"),
-    config.origin,
-  );
-  assert.throws(() =>
-    origin.assertIciciOrigin(new Request("http://attacker.test/"), config.origin),
-  );
-  for (const patch of [
-    { NODE_ENV: "production" },
-    { ICICI_RETURN_URL: "http://attacker.test/consultation" },
-    { ICICI_RETURN_URL: "http://localhost:3000/consultation?forged=1" },
-  ]) {
-    const invalid = load(
-      "src/lib/icici.server.ts",
-      {},
-      { process: { env: { ...local, ...patch } } },
-    );
-    assert.throws(() => invalid.iciciUatConfig());
+test("HTTP localhost callbacks are rejected in every environment", () => {
+  for (const NODE_ENV of ["development", "production", "test"]) {
+    for (const callback of [
+      "http://localhost:3000/consultation",
+      "http://127.0.0.1:3000/api/payments/icici/callback",
+    ]) {
+      const bank = load(
+        "src/lib/icici.server.ts",
+        {},
+        { process: { env: { ...env, NODE_ENV, ICICI_RETURN_URL: callback } } },
+      );
+      assert.throws(() => bank.iciciUatConfig(), /must use HTTPS/);
+    }
   }
 });
 

@@ -26,7 +26,7 @@ export async function iciciJsonRequest<Schema extends z.ZodTypeAny>(
     // Validate the activation gate before touching the database or parsing input.
     const config = iciciUatConfig();
     assertIciciOrigin(request, config.origin);
-    if (requireCheckoutAccess) await assertIciciCheckoutAccess(request, config);
+    const access = requireCheckoutAccess ? await assertIciciCheckoutAccess(request, config) : {};
     if (!request.headers.get("content-type")?.startsWith("application/json"))
       throw new IciciPaymentError("INVALID_REQUEST", "A JSON request is required.", 400);
     const body = await request.text();
@@ -38,6 +38,12 @@ export async function iciciJsonRequest<Schema extends z.ZodTypeAny>(
     } catch {
       throw new IciciPaymentError("INVALID_REQUEST", "Please check the payment request.", 400);
     }
+    if (access.checkoutId && access.checkoutId !== (input as { id?: string }).id)
+      throw new IciciPaymentError(
+        "ICICI_HANDOFF_SCOPE",
+        "This UAT authorization belongs to a different checkout.",
+        403,
+      );
     return Response.json(
       { ok: true, ...((await runWithRequestContext(request, () => action(input))) as object) },
       { headers: { "cache-control": "no-store" } },

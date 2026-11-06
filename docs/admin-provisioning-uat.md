@@ -1,5 +1,20 @@
 # Development Super Admin provisioning and ICICI UAT
 
+## Role repair on 6 November 2026
+
+The user requested repair of the existing configured development Super Admin account and explicitly chose to keep its password. The new operator-only `--role-only` option repairs a confirmed existing account without signing in, creating accounts or changing passwords. Apply still requires the matching development project and refuses production, blocked accounts and combination with `--reset-password`.
+
+The role repair was applied to the confirmed development project and independently verified through Auth's administrator API: `roleVerified: true`, `passwordChanged: false`, `created: false`. The existing server-managed `app_metadata.aa_dashboard_roles` mechanism now supplies the missing `supreme_admin` role. The database role table remains unavailable; no database migration was applied. Public login and its authorization checks are unchanged.
+
+The actual running website's dashboard-login RPC then authenticated the dedicated account and its bearer token successfully accessed the protected `getMyAccess` RPC with `isSuper: true`. Only the temporary verification session was revoked afterward; the user's existing password and other sessions were preserved.
+
+```powershell
+npm.cmd run admin:provision -- --role-only --expected-project ryircgxjsieovvbmprqv
+npm.cmd run admin:provision -- --role-only --apply --expected-project ryircgxjsieovvbmprqv
+```
+
+`passwordReady` describes the local environment value used by password-based provisioning. It can remain false during role-only repair because the existing Auth password is preserved and is not checked or reset by this operation. The following findings describe the earlier password-reset workflow.
+
 ## Findings on 5 November 2026
 
 The operator confirmed `ryircgxjsieovvbmprqv` is the intended development project and explicitly authorized a reset of the configured `SUPER_ADMIN_EMAIL` account after supplying a new password locally. No production changes are authorized.

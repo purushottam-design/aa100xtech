@@ -1,6 +1,6 @@
 # ICICI PG v2: UAT integration
 
-The implementation is UAT-only. The current signing mode is `sorted-fields`, as instructed by the merchant and confirmed against the supplied bank reference. Local configuration permits controlled Super Administrator testing while `ICICI_UAT_TESTS_PASSED=false`. An isolated UAT Initiate Sale response has been verified, but STATUS is blocked and no payment has completed. See the [current verification report](icici-uat-verification.md) for actual results, authorization/schema limitations and remaining bank dependencies. Existing Razorpay credentials, SDK, order/verification functions, pricing and page layout are preserved.
+Current local development and bank verification results are in [the 6 November report](icici-local-development.md). The implementation is UAT-only. The current signing mode is `sorted-fields`, as instructed by the merchant and confirmed against the supplied bank reference. Local configuration permits controlled Super Administrator testing while `ICICI_UAT_TESTS_PASSED=false`. An isolated UAT Initiate Sale response has been verified, but STATUS is blocked and no payment has completed. See the [current verification report](icici-uat-verification.md) for actual results, authorization/schema limitations and remaining bank dependencies. Existing Razorpay credentials, SDK, order/verification functions, pricing and page layout are preserved.
 
 ## Document reconciliation
 
@@ -23,17 +23,11 @@ Form callbacks/advice always use the documented field hash over **POST body fiel
 
 ## Server configuration
 
-### Local guest testing
+### Local simulation and controlled HTTPS UAT
 
-At the owner's request, `.env.development.local` now enables
-`ICICI_UAT_GUEST_CHECKOUT=true`. With test mode enabled, guests can prepare and
-initiate consultation checkout on the exact configured `DEV_TUNNEL_ORIGIN`
-without login/signup. This opt-in requires `NODE_ENV=development`, trusted HTTPS
-forwarding and a matching callback origin; it has no effect in production builds.
-Origin/CSRF checks, checkout capabilities, bank signature verification and
-independent STATUS settlement remain enforced. It never sets
-`ICICI_UAT_TESTS_PASSED=true`. Use the ngrok HTTPS page rather than localhost.
-The unresolved bank STATUS HTTP 403 still prevents verified completion.
+Direct HTTP localhost supports the consultation UI and an explicitly labelled simulation. Simulation takes no payment, calls no payment API and never creates or marks a booking paid. Real ICICI initialization requires the configured HTTPS tunnel and legitimate Super Admin authorization. The old guest flag is ignored, and a passed-UAT flag cannot bypass authorization.
+
+A Super Admin signed in on localhost can use the dedicated HTTPS transition. Its 90-second one-time server-side ticket is sent by form POST. The destination requires a separate same-origin CSRF confirmation and issues a ten-minute, host-only, HttpOnly/Secure/SameSite=Strict authorization bound to one checkout. Supabase sessions are not copied between origins. Apply the new [handoff migration](../supabase/migrations/20261106140000_icici_uat_handoffs.sql) to the development database first.
 
 Use a separate HTTPS UAT deployment and test Supabase database. Do not use real customer booking information. Keep merchant secrets in server environment settings; never add `NEXT_PUBLIC_` credentials. Existing `.env` values were not modified.
 
@@ -55,7 +49,7 @@ Configuration prepared in the ignored `.env.local` (existing secrets remain in `
 
 ```dotenv
 ICICI_SIGNING_MODE=sorted-fields
-ICICI_RETURN_URL=https://aa100xtech.com/api/payments/icici/callback
+ICICI_RETURN_URL=https://tractor-nautical-snowbird.ngrok-free.dev/api/payments/icici/callback
 ICICI_UAT_ENABLED=true
 ICICI_UAT_MERCHANT_CONFIRMED=false
 ICICI_UAT_TESTS_PASSED=false
@@ -64,21 +58,21 @@ ICICI_UAT_TEST_MODE=true
 
 `ICICI_RETURN_URL` must be HTTPS, at most 128 characters, use the exact callback path and contain no user credentials, query string or fragment. The application origin must match it. Have ICICI register it and any required source IP/certificate allowlists. Register `/api/payments/icici/advice` on that origin for form-encoded payment advice.
 
-For local development (`npm run dev`) only, `ICICI_RETURN_URL=http://localhost:3000/consultation` is also supported. Set `ICICI_SIGNING_MODE=sorted-fields`, keep the bank secret in server-only `ICICI_SECRET_KEY`, and set `ICICI_TRUST_PROXY=false`. Browse `http://localhost:3000`. Each initiation signs the actual transaction fields, including amount, reference, customer mobile number, return URL and timestamp, with the sorted-value HMAC-SHA256 algorithm. Form POSTs to `/consultation` are internally rewritten to the verified callback handler, which reconciles bank status before returning to the page. The bank must permit this return URL; server-to-server advice cannot reach localhost. Existing UAT activation and access gates still apply. Production builds require the HTTPS callback URL above.
+HTTP callbacks, including the former localhost consultation return, are rejected in every environment. Keep the HTTPS ngrok callback and use the controlled transition for a localhost booking.
 
 The current merchant instruction selects **method 1**, `ICICI_SIGNING_MODE=sorted-fields`, matching API guide p6 and the Node.js reference p3. Use `json-v2` only for a separately confirmed Hash Calculation v2 contract. Do not infer it from `/v2/initiateSale` or try another mode after a failure.
 
 After bank activation and registration of the HTTPS callback, set `ICICI_UAT_MERCHANT_CONFIRMED=true`. Keep `ICICI_UAT_TESTS_PASSED=false` during initial testing. With `ICICI_UAT_TEST_MODE=true`, a signed-in super administrator can see/select ICICI and use checkout/initiation APIs. The server validates the Supabase user token and super-admin role for availability, preparation and initiation; anonymous customers and non-admins remain blocked. Availability refreshes when the signed-in session changes. This works on a deployed production Next.js build using the **UAT bank environment**, as well as development. The test-mode flag never changes UAT approval and never permits a live bank environment.
 
-Set `ICICI_UAT_TESTS_PASSED=true` only after actual bank UAT cases succeed. Completed UAT permits the existing customer UAT path without requiring a super-admin session; disable `ICICI_UAT_TEST_MODE` then. Availability also requires the matching HTTPS origin and working checkout/payment storage. Callback, advice and capability-protected status reconciliation remain independent of the tester's login, so a bank return cannot be stranded by an expired admin session. No browser-supplied flag or claimed role grants test access.
+Set `ICICI_UAT_TESTS_PASSED=true` only after actual bank UAT cases succeed. It records approval and never grants a role or anonymous UAT access. Availability, preparation, initiation and status reconciliation require Super Admin authorization or the scoped HTTPS handoff. Signed bank callbacks/advice remain independent of the browser login and still require independent verified STATUS before settlement.
 
-`aa100xtech.com` is an existing public domain selected by the user. The current public deployment still serves the older application and returns HTTP 500 for ICICI availability/callback GET probes. Deploy the Next.js application and server environment before using this callback with the bank. A domain's existence is not evidence that this code is deployed or that ICICI has registered it. Plain `http://localhost:3000` still cannot match this HTTPS origin.
+The production domain `https://aa100xtech.com` and its environment configuration are separate and unchanged. This adapter rejects live ICICI endpoints and environments.
 
 `ICICI_ENVIRONMENT=production` is rejected regardless of all flags. Live ICICI is intentionally unsupported until a future reviewed production activation. No `ICICI_ENABLED` or other legacy flag can enable it.
 
 ## Migrations and storage
 
-The latest read-only checks pass for all required booking/checkout columns and show the settlement RPC in the service-role API schema. No repair migration or live database write was needed in this follow-up. The REST API does not expose the migration ledger, indexes or trigger catalog. Run [the exact read-only SQL](../supabase/diagnostics/icici_uat_readiness.sql) in Supabase SQL Editor to inspect those details. Do not blindly replay the historical migrations: their plain CREATE statements are intentionally not rerunnable. No tables, rows or migration records were recreated or removed.
+The latest read-only checks pass for all required booking/checkout columns and show the settlement RPC in the service-role API schema. The new local-to-HTTPS handoff requires its additional development-only migration. The 6 November report separately records the synthetic pending UAT test booking created during live verification. The REST API does not expose the migration ledger, indexes or trigger catalog. Run [the exact read-only SQL](../supabase/diagnostics/icici_uat_readiness.sql) in Supabase SQL Editor to inspect those details. Do not blindly replay the historical migrations: their plain CREATE statements are intentionally not rerunnable. No tables, rows or migration records were recreated or removed.
 
 The new table is private under RLS; only `service_role` may read/write it or execute settlement. It stores booking details and a SHA-256 hash of a random 256-bit checkout capability. The capability is sent in JSON POST bodies, never in URLs. The owning browser keeps it in session storage for the bank return. Bank credentials and full bank payloads are never returned or logged.
 
@@ -109,7 +103,7 @@ The browser return uses HTTP 303 to the existing consultation page with only a c
 | `POST /api/payments/icici/callback` | Signed bank form, independent STATUS verification, browser 303 return |
 | `POST /api/payments/icici/advice` | Signed bank form, independent STATUS verification, durable 200 acknowledgement |
 
-The three JSON POST endpoints require same-origin requests with `x-aa-rpc: 1`. Generate `id` with `crypto.randomUUID()` and `token` from 32 cryptographically random bytes encoded as lowercase hex. Retry preparation with the same values and same booking. Changing details requires a fresh checkout. Never log the capability or paste it into a shared URL. Before UAT completion, checkout preparation and initiation also require the authenticated super-admin bearer token and explicit test mode; the ICICI browser client forwards the existing Supabase session automatically. The status endpoint remains protected by the original checkout capability, and callbacks/advice require the bank signature plus independent STATUS verification.
+The three JSON POST endpoints require same-origin requests with `x-aa-rpc: 1`. Generate `id` with `crypto.randomUUID()` and `token` from 32 cryptographically random bytes encoded as lowercase hex. Retry preparation with the same values and same booking. Changing details requires a fresh checkout. Never log the capability or paste it into a shared URL. Before UAT completion, checkout preparation and initiation also require the authenticated super-admin bearer token and explicit test mode; the ICICI browser client forwards the existing Supabase session automatically. The status endpoint requires the original checkout capability and Super Admin/scoped authorization, and callbacks/advice require the bank signature plus independent STATUS verification.
 
 ## UAT tests for either explicitly selected mode
 
@@ -119,7 +113,7 @@ The three JSON POST endpoints require same-origin requests with `x-aa-rpc: 1`. G
 4. Run bank-issued rejection, cancellation, pending, expiry and eventual-success cases. Recheck the same pending reference; do not issue another SALE. Test a bank/advice outage and return without the original browser session. Check that unverifiable outcomes remain pending with a support path.
 5. Tamper with callback fields/hash, add unsigned fields, duplicate a form key, use wrong merchant/reference/amount/currency, and send a query-string success claim. None may confirm a booking. Repeat valid callbacks and status requests concurrently: assert one stored settlement/confirmation and unchanged transaction ID.
 6. Double-click initiation and retry after an ambiguous timeout. Attempt switching providers while pending. Assert one external attempt per checkout, no fallback signing request and no Razorpay order for ICICI. Perform a separate Razorpay test-key checkout to verify the existing order/signature/SDK behavior and feedback.
-7. Before the bank UAT suite passes, use `ICICI_UAT_TEST_MODE=true` and sign in as a super administrator on the matching HTTPS UAT application. Confirm anonymous and non-admin visitors cannot select or initiate ICICI. After the bank suite passes, explicitly set `ICICI_UAT_TESTS_PASSED=true` and `ICICI_UAT_TEST_MODE=false` on that UAT deployment, then test the existing customer radio/button and browser return. Do not change to a production bank endpoint; live ICICI remains unsupported.
+7. Before the bank UAT suite passes, use `ICICI_UAT_TEST_MODE=true` and sign in as a super administrator on the matching HTTPS UAT application. Confirm anonymous and non-admin visitors cannot select or initiate ICICI. After the bank suite passes, explicitly set `ICICI_UAT_TESTS_PASSED=true` and `ICICI_UAT_TEST_MODE=false` on that UAT deployment, then retest the authorized radio/button and browser return; a completed flag does not enable anonymous UAT. Do not change to a production bank endpoint; live ICICI remains unsupported.
 
 ## Implementation files
 

@@ -2,11 +2,13 @@
 
 Investigated against the configured Supabase project and running Next.js development server on 5 November 2026. No real credentials, account identifiers or tokens are included here.
 
+Update on 6 November: the user explicitly requested role repair while preserving the existing dedicated Super Admin password. The operator-only `--role-only` provisioning option was applied and its `supreme_admin` Auth marker verified. Live dashboard login and protected access both passed, and the temporary verification session was revoked. No password reset or database migration was performed. See [the role repair report](admin-provisioning-uat.md#role-repair-on-6-november-2026). Earlier descriptions of the missing marker below are historical findings.
+
 ## Architecture and root cause
 
 This is Next.js 16.4.3 / React 19 with Supabase Auth and Postgres. The modal is `src/components/dashboard-login-dialog.tsx`. It calls the same-origin POST RPC `/api/rpc/dashboard-auth/dashboardLogin`, registered in `src/lib/backend/registry.server.ts` and implemented in `src/lib/backend/handlers/dashboard-auth.ts`. The protected RPC middleware is `src/integrations/supabase/auth-middleware.ts`.
 
-`/app/admin` is the existing public dashboard chooser/login gateway. The actual Super Admin dashboard is `/admin` (`PANEL_PATH.super`). The gateway can render to signed-out visitors; private dashboard data and all administrative actions require a verified, authorized session server-side.
+`/admin/select` is the public dashboard chooser/login gateway; the retired `/app/admin` redirects there. The actual Super Admin dashboard is `/admin` (`PANEL_PATH.super`). The gateway can render to signed-out visitors; private dashboard data and all administrative actions require a verified, authorized session server-side.
 
 The rejected login was an authorization/provisioning failure, not a tunnel cookie error:
 

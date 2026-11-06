@@ -27,6 +27,7 @@ function harness({
     : null;
   let assigned = false;
   const writes = { create: 0, passwords: 0, metadata: 0, roles: 0, revoked: 0 };
+  let passwordChecks = 0;
   const logs = [];
   const admin = {
     auth: {
@@ -93,6 +94,7 @@ function harness({
   const auth = {
     auth: {
       async signInWithPassword(input) {
+        passwordChecks++;
         assert.equal(input.password, password);
         return {
           data: { user: matches ? user : null, session: matches ? {} : null },
@@ -111,6 +113,7 @@ function harness({
     writes,
     logs,
     user: () => user,
+    passwordChecks: () => passwordChecks,
     run: (options = {}) =>
       provisionAdmin({
         env,
@@ -206,4 +209,55 @@ test("blocked accounts, missing public key and unexpected role lookup errors fai
   await assert.rejects(missing.run({ apply: true }), /no account changes/);
   for (const h of [blocked, broken, missing])
     assert.equal(h.writes.passwords + h.writes.metadata + h.writes.roles, 0);
+});
+
+test("explicit operator role repair preserves the existing password and does not sign in", async () => {
+  const h = harness({ missingRoles: true, matches: false });
+  h.env.SUPER_ADMIN_PASSWORD = "change-me";
+  delete h.env.SUPABASE_PUBLISHABLE_KEY;
+  const preview = await h.run({ roleOnly: true });
+  assert.equal(preview.applied, false);
+  assert.equal(preview.roleOnly, true);
+  assert.equal(h.writes.metadata, 0);
+  const repaired = await h.run({ roleOnly: true, apply: true });
+  assert.equal(repaired.roleVerified, true);
+  assert.equal(repaired.passwordChanged, false);
+  assert.equal(repaired.passwordVerified, false);
+  await h.run({ roleOnly: true, apply: true });
+  assert.deepEqual(h.writes, { create: 0, passwords: 0, metadata: 1, roles: 0, revoked: 0 });
+  assert.equal(h.passwordChecks(), 0);
+  assert.equal(h.user().app_metadata.retained, true);
+  assert.deepEqual(h.user().app_metadata.aa_dashboard_roles, ["supreme_admin"]);
+  assert.doesNotMatch(h.logs.join(""), /change-me|fixture-vault|admin@example|service-fixture/);
+});
+
+test("role repair requires an existing confirmed account and refuses reset, production and wrong projects", async () => {
+  for (const [h, options, message] of [
+    [harness({ exists: false }), {}, /existing account/],
+    [harness({ blocked: true }), {}, /explicitly unban/],
+    [harness(), { resetPassword: true }, /cannot be combined/],
+    [harness(), { expectedProject: undefined }, /expected-project/],
+    [harness(), { expectedProject: "different" }, /expected-project/],
+    [harness({ databaseError: { code: "42501" } }), {}, /role lookup failed/],
+  ]) {
+    await assert.rejects(h.run({ roleOnly: true, apply: true, ...options }), message);
+    assert.equal(h.writes.create + h.writes.passwords + h.writes.metadata + h.writes.roles, 0);
+    assert.equal(h.passwordChecks(), 0);
+  }
+  const production = harness();
+  production.env.NODE_ENV = "production";
+  await assert.rejects(production.run({ roleOnly: true, apply: true }), /production/);
+  assert.equal(production.writes.metadata, 0);
+});
+
+test("role repair records a restored database role and retains other operator-assigned Auth roles", async () => {
+  const h = harness({ matches: false });
+  h.user().app_metadata.aa_dashboard_roles = ["marketing_admin"];
+  delete h.env.SUPER_ADMIN_PASSWORD;
+  const repaired = await h.run({ roleOnly: true, apply: true });
+  assert.equal(repaired.roleSource, "database-and-server-managed-auth");
+  assert.equal(repaired.roleVerified, true);
+  assert.deepEqual(h.user().app_metadata.aa_dashboard_roles, ["marketing_admin", "supreme_admin"]);
+  assert.deepEqual(h.writes, { create: 0, passwords: 0, metadata: 1, roles: 1, revoked: 0 });
+  assert.equal(h.passwordChecks(), 0);
 });

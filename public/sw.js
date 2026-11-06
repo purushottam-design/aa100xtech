@@ -1,5 +1,5 @@
-const CACHE = "aa100x-app-next-v3";
-const SHELL = ["/app/home", "/app-icon-512.png", "/favicon.png", "/manifest.webmanifest"];
+const CACHE = "aa100x-web-v4";
+const SHELL = ["/", "/app-icon-512.png", "/favicon.png", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -51,7 +51,7 @@ self.addEventListener("fetch", (event) => {
         const hit = await caches.match(req);
         if (hit) return hit;
         if (req.mode === "navigate") {
-          const shell = await caches.match("/app/home");
+          const shell = await caches.match("/");
           if (shell) return shell;
         }
         return Response.error();
@@ -67,11 +67,11 @@ function show(payload) {
     icon: "/app-icon-512.png",
     badge: "/favicon.png",
     tag: payload.id || undefined,
-    data: { url: payload.url || "/app/notifications" },
+    data: { url: payload.url || "/notifications" },
   });
 }
 
-// Announcements relayed from the app while it is open.
+// Announcements relayed from the website while it is open.
 self.addEventListener("message", (event) => {
   const msg = event.data;
   if (msg && msg.type === "aa-notify" && msg.payload) event.waitUntil(show(msg.payload));
@@ -90,7 +90,7 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = (event.notification.data && event.notification.data.url) || "/app/notifications";
+  const target = (event.notification.data && event.notification.data.url) || "/notifications";
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
       for (const client of list) {

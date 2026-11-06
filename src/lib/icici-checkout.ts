@@ -34,7 +34,7 @@ export async function fetchIciciAvailability(signal?: AbortSignal) {
   });
 }
 export async function iciciRequest<T>(
-  action: "checkout" | "initiate" | "status",
+  action: "checkout" | "initiate" | "status" | "handoff/resume",
   input: unknown,
 ): Promise<T> {
   const headers = await attachSupabaseAuth();
@@ -46,6 +46,7 @@ export async function iciciRequest<T>(
     cache: "no-store",
     headers,
     body: JSON.stringify(input),
+    signal: AbortSignal.timeout(30000),
   });
   const result = await response.json();
   if (!response.ok || !result.ok)

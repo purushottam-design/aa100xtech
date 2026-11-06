@@ -32,7 +32,7 @@ test("dashboard login displays invalid credentials and recovers from a network f
   await expect(page.getByText("Checking your roles…", { exact: true })).toBeHidden({
     timeout: 30_000,
   });
-  await page.getByRole("button", { name: "Continue", exact: true }).first().click();
+  await page.getByRole("button", { name: "Open dashboard", exact: true }).first().click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Super Admin Login" })).toBeVisible();
   await dialog.getByLabel("Email", { exact: true }).fill("fixture@example.test");
@@ -52,7 +52,7 @@ test("dashboard login displays invalid credentials and recovers from a network f
   await dialog.getByRole("button", { name: "Login", exact: true }).click();
   await expect(dialog.getByRole("alert")).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Login", exact: true })).toBeEnabled();
-  await expect(page).toHaveURL(/\/app\/admin$/);
+  await expect(page).toHaveURL(/\/admin\/select$/);
 });
 
 test("live configured administrator: login, refresh, logout, revoked bearer and protected route", async ({
@@ -76,7 +76,7 @@ test("live configured administrator: login, refresh, logout, revoked bearer and 
   await expect(page.getByText("Checking your roles…", { exact: true })).toBeHidden({
     timeout: 30_000,
   });
-  await page.getByRole("button", { name: "Continue", exact: true }).first().click();
+  await page.getByRole("button", { name: "Open dashboard", exact: true }).first().click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Email", { exact: true }).fill(email!);
   await dialog.getByLabel("Password", { exact: true }).fill(password!);
@@ -94,7 +94,7 @@ test("live configured administrator: login, refresh, logout, revoked bearer and 
     await expect(page.getByRole("heading", { name: "Admin console", exact: true })).toBeVisible();
     await page.goto("/app/profile", { waitUntil: "domcontentloaded" });
     await page.getByRole("button", { name: "Log out", exact: true }).click();
-    await expect(page).toHaveURL(/\/app\/login$/);
+    await expect(page).toHaveURL(/\/auth$/);
     const revoked = await fetch(`${target.origin}/api/rpc/accounts/getSupremeAdminAccess`, {
       signal: AbortSignal.timeout(15_000),
       headers: {

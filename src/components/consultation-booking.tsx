@@ -12,7 +12,6 @@ import {
 } from "react";
 import { ArrowRight, Check, CreditCard, Loader2, ShieldCheck, XCircle } from "lucide-react";
 import { Link } from "@/lib/navigation";
-import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +20,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PaymentGatewaySelector } from "@/components/payment-gateway-selector";
+import { IciciLocalTesting } from "@/components/icici-local-testing";
 import { defaultPaymentGateway, type PaymentGateway } from "@/lib/payment-gateways";
 import {
   consultationAttempt,
@@ -144,6 +144,11 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   const [iciciChecking, setIciciChecking] = useState(true);
   const [iciciUnavailableReason, setIciciUnavailableReason] = useState<string>();
   const [checkout, setCheckout] = useState<CheckoutCapability | null>(null);
+  const [localTesting, setLocalTesting] = useState<{
+    mock: boolean;
+    transition: boolean;
+    transitionReason?: string;
+  } | null>(null);
   const draftCheckout = useRef<{
     serialized: string;
     capability: CheckoutCapability;
@@ -186,6 +191,7 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
         .then((result) => {
           if (signal.aborted) return;
           setIciciAvailable((result?.available ?? result?.icici) === true);
+          setLocalTesting(result?.localTesting ?? null);
           if (result?.code === "ICICI_WRONG_ORIGIN")
             setIciciUnavailableReason("Open the configured HTTPS website to use ICICI Bank.");
           else if (result?.code === "ICICI_UAT_TEST_ACCESS_REQUIRED")
@@ -218,6 +224,43 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    const handoffId = new URLSearchParams(window.location.search).get("icici_handoff");
+    if (handoffId) {
+      void iciciRequest<{
+        capability: CheckoutCapability;
+        booking: BookingForm & { planId: string };
+        amount: number;
+        currency: string;
+        reference: string;
+      }>("handoff/resume", { id: handoffId })
+        .then((result) => {
+          if (!active) return;
+          // This capability is newly issued on HTTPS; localhost sessions are never copied.
+          sessionStorage.setItem("icici-uat-checkout", JSON.stringify(result.capability));
+          setCheckout(result.capability);
+          setPlanId(result.booking.planId);
+          setForm(result.booking);
+          setPaymentGateway("icici");
+          setIciciAvailable(true);
+          setIciciChecking(false);
+          setOrder({
+            bookingId: result.reference,
+            orderId: "",
+            amount: result.amount,
+            currency: result.currency,
+            keyId: "",
+          });
+          setStep("summary");
+          setIsOpen(true);
+          window.history.replaceState(null, "", "/consultation");
+        })
+        .catch((error) => {
+          if (active)
+            toast.error(
+              error instanceof Error ? error.message : "The UAT checkout could not be restored.",
+            );
+        });
+    }
     const returnedId = new URLSearchParams(window.location.search).get("icici_return");
     if (returnedId) {
       try {
@@ -716,6 +759,17 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
                   )}
                 </Button>
               </div>
+              {localTesting?.mock && (
+                <IciciLocalTesting
+                  booking={{ ...form, planId: plan.id }}
+                  amount={plan.price}
+                  validate={validate}
+                  canTransition={localTesting.transition}
+                  transitionReason={localTesting.transitionReason}
+                  signedIn={!!session}
+                  disabled={creating || paying}
+                />
+              )}
             </div>
           ) : null}
 
@@ -1023,16 +1077,12 @@ function PlanCard({
 }
 
 function FloatingButton() {
-  const pathname = usePathname();
-  const isMobileApp = pathname === "/app" || pathname.startsWith("/app/");
   return (
     <aside
       aria-label="Expert consultation"
       className="fixed inset-x-4 z-40 mx-auto flex max-w-xl items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-[#fffbf5] p-3 shadow-lg sm:px-4"
       style={{
-        bottom: isMobileApp
-          ? "calc(5rem + env(safe-area-inset-bottom))"
-          : "max(1rem, env(safe-area-inset-bottom))",
+        bottom: "max(1rem, env(safe-area-inset-bottom))",
       }}
     >
       <p className="min-w-0 text-xs font-medium leading-5 text-muted-foreground sm:text-sm">

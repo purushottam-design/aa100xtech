@@ -28,6 +28,7 @@ const moreItems: readonly HeaderLink[] = [
   // { to: "/portfolio", label: "Portfolio" },
   { to: "/consultation", label: "Consultation" },
   { to: "/contact", label: "Contact Us" },
+  { to: "/catalog", label: "Service Catalogue" },
   // { to: "/creator-moves-365", label: "Creator Moves 365" },
   // { to: "/partners", label: "Partners" },
   // { to: "/affiliates", label: "Affiliates" },
@@ -38,7 +39,6 @@ const moreItems: readonly HeaderLink[] = [
   // { to: "/services/explore", label: "Explore Service Types" },
   // { to: "/partners/plans", label: "Partner Plans" },
   // { to: "/partners/apply", label: "Become a Partner" },
-  // { to: "/app/home", label: "AA100XTech App" },
 ];
 
 // Header-only configuration: footer navigation and every existing route stay intact.

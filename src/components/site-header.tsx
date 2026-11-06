@@ -33,6 +33,14 @@ const navClass =
 const mobileClass =
   "rounded-lg px-3 py-3 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
+const accountLinks: readonly HeaderLink[] = [
+  { to: "/dashboard", label: "My account" },
+  { to: "/profile", label: "Profile" },
+  { to: "/settings", label: "Settings" },
+  { to: "/notifications", label: "Notifications" },
+  { to: "/admin/select", label: "Admin dashboards" },
+];
+
 function HeaderDropdown({ label, items }: { label: string; items: readonly HeaderLink[] }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -156,13 +164,17 @@ export function SiteHeader() {
         </nav>
         <div className="flex shrink-0 items-center gap-2">
           <CurrencySelector className="hidden px-2 xl:inline-flex" />
-          {showAuthButtons && !loading && (
-            <Button asChild className="hidden whitespace-nowrap sm:inline-flex">
-              <Link to={session ? "/dashboard" : "/auth"}>
-                {session ? "My account" : "Sign in / Sign up"}
-              </Link>
-            </Button>
-          )}
+          {showAuthButtons &&
+            !loading &&
+            (session ? (
+              <div className="hidden sm:block">
+                <HeaderDropdown label="My account" items={accountLinks} />
+              </div>
+            ) : (
+              <Button asChild className="hidden whitespace-nowrap sm:inline-flex">
+                <Link to="/auth">Sign in / Sign up</Link>
+              </Button>
+            ))}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="xl:hidden" aria-label="Open menu">
@@ -175,6 +187,17 @@ export function SiteHeader() {
             >
               <SheetTitle className="font-display">Menu</SheetTitle>
               <nav aria-label="Mobile navigation" className="mt-6 flex flex-col gap-1">
+                {session &&
+                  accountLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      className={mobileClass}
+                      onClick={() => setOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 {headerNavigation.map((item) =>
                   item.kind === "services" ? (
                     <MobileServicesMenu key={item.label} onNavigate={() => setOpen(false)} />
@@ -251,10 +274,10 @@ export function SiteHeader() {
                   ),
                 )}
                 <CurrencySelector className="mt-3 w-full justify-start" />
-                {showAuthButtons && !loading && (
+                {showAuthButtons && !loading && !session && (
                   <Button asChild className="mt-2">
-                    <Link to={session ? "/dashboard" : "/auth"} onClick={() => setOpen(false)}>
-                      {session ? "My account" : "Sign in / Sign up"}
+                    <Link to="/auth" onClick={() => setOpen(false)}>
+                      Sign in / Sign up
                     </Link>
                   </Button>
                 )}
