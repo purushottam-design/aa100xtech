@@ -4,7 +4,8 @@ import { Link } from "@/lib/navigation";
 import { serviceNavigation } from "@/data/service-navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import { ServiceIcon, ServiceNavigationLinks } from "./service-navigation-links";
-import { BeTheOneNavLink } from "./be-the-one-nav-link";
+import { ServiceFeaturedLinks } from "./service-featured-links";
+import { site } from "@/data/site";
 
 export function MobileServicesMenu({ onNavigate }: { onNavigate: () => void }) {
   return (
@@ -25,7 +26,7 @@ export function MobileServicesMenu({ onNavigate }: { onNavigate: () => void }) {
         </div>
         <AccordionContent className="pb-0">
           <div className="mx-3">
-            <BeTheOneNavLink onNavigate={onNavigate} />
+            <ServiceFeaturedLinks onNavigate={onNavigate} prideHref={site.myNameMyPrideUrl} />
           </div>
           <Link
             to="/services"

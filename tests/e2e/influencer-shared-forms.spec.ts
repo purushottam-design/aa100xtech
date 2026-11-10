@@ -20,14 +20,10 @@ async function controls(form: Locator) {
   );
 }
 
-test("embedded forms exactly reuse standalone controls and have unique accessible IDs", async ({
+test("partner page keeps the shared brand form without the influencer application section", async ({
   page,
 }, info) => {
   test.setTimeout(180000);
-  await page.goto("/influencer-marketing/for-influencers");
-  const creatorControls = await controls(
-    page.getByRole("form", { name: "Influencer application", exact: true }),
-  );
   await page.goto("/influencer-marketing/for-brands");
   const brandControls = await controls(
     page.getByRole("form", { name: "Brand campaign inquiry", exact: true }),
@@ -35,9 +31,9 @@ test("embedded forms exactly reuse standalone controls and have unique accessibl
   await page.goto("/influencer-partners");
   const creator = page.getByRole("form", { name: "Influencer application", exact: true });
   const brand = page.getByRole("form", { name: "Brand campaign inquiry", exact: true });
-  await expect(creator).toHaveCount(1);
+  await expect(creator).toHaveCount(0);
+  await expect(page.locator("#uip-creator-form-title")).toHaveCount(0);
   await expect(brand).toHaveCount(1);
-  expect(await controls(creator)).toEqual(creatorControls);
   expect(await controls(brand)).toEqual(brandControls);
   await expect(page.locator(".ipp-form-panel,.ip-application-form,.ipp-detailed-link")).toHaveCount(
     0,
@@ -47,9 +43,7 @@ test("embedded forms exactly reuse standalone controls and have unique accessibl
     return ids.filter((id, i) => ids.indexOf(id) !== i);
   });
   expect(duplicateIds).toEqual([]);
-  await creator.getByLabel("Email Address").fill("creator@example.invalid");
   await brand.getByLabel("Business Email").fill("brand@example.invalid");
-  await expect(creator.getByLabel("Email Address")).toHaveValue("creator@example.invalid");
   await expect(brand.getByLabel("Business Email")).toHaveValue("brand@example.invalid");
   for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -59,13 +53,12 @@ test("embedded forms exactly reuse standalone controls and have unique accessibl
         return { x: r.x, y: r.y, width: r.width, bottom: r.bottom };
       }),
     );
-    expect(Math.abs(boxes[0]!.width - boxes[1]!.width)).toBeLessThan(2);
-    if (width >= 1024) expect(boxes[1]!.x).toBeGreaterThan(boxes[0]!.x + boxes[0]!.width);
-    else expect(boxes[1]!.y).toBeGreaterThan(boxes[0]!.bottom);
+    expect(boxes).toHaveLength(1);
+    expect(boxes[0]!.width).toBeLessThanOrEqual(760);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    await expect(creator.getByLabel("Full Name")).toHaveCSS("height", "36px");
+    await expect(brand.getByLabel("Company / Brand Name")).toHaveCSS("height", "36px");
     if (width === 390 || width === 1440) {
       await page.locator(".uip-forms").scrollIntoViewIfNeeded();
       await page.screenshot({ path: info.outputPath(`shared-forms-${width}.png`), fullPage: true });
@@ -75,12 +68,14 @@ test("embedded forms exactly reuse standalone controls and have unique accessibl
 });
 
 for (const kind of ["creator", "brand"] as const) {
-  test(`embedded ${kind} form validates, keeps input on errors and uses the shared API receipt`, async ({
+  test(`${kind} form validates, keeps input on errors and uses the shared API receipt`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: kind === "creator" ? 390 : 1440, height: 1000 });
-    await page.goto("/influencer-partners");
-    const panel = page.locator(kind === "creator" ? "#join" : "#brand-enquiry");
+    await page.goto(
+      kind === "creator" ? "/influencer-marketing/for-influencers" : "/influencer-partners",
+    );
+    const panel = page.locator(kind === "creator" ? "main" : "#brand-enquiry");
     const form = panel.getByRole("form");
     const button = form.getByRole("button", {
       name: kind === "creator" ? "Submit Influencer Application" : "Submit Campaign Inquiry",

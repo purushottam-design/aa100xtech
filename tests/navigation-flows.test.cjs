@@ -200,9 +200,8 @@ test("header destinations and reversible authentication visibility", () => {
   assert.ok(site.headerNavLinks.some((item) => item.to === "/consultation"));
   assert.deepEqual(
     Array.from(site.joinUsLinks, (item) => item.label),
-    ["Jobs", "Influencer Partners"],
+    ["Jobs"],
   );
-  assert.equal(site.marketingLinks[0].params.slug, "social-media-marketing");
-  assert.equal(site.marketingLinks[1].to, "/influencer-marketing");
-  assert.equal(site.joinUsLinks[1].to, "/influencers");
+  assert.equal(site.marketingLinks[0].to, "/marketing/social-media-ads");
+  assert.equal(site.marketingLinks[3].to, "/influencers");
 });

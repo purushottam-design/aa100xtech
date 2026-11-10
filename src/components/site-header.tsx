@@ -2,7 +2,7 @@
 
 import { Link } from "@/lib/navigation";
 import { ChevronDown, Menu } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { CurrencySelector } from "@/components/currency-selector";
 import { ServicesMegaMenu } from "@/components/services-mega-menu";
@@ -41,23 +41,100 @@ const accountLinks: readonly HeaderLink[] = [
   { to: "/admin/select", label: "Admin dashboards" },
 ];
 
-function HeaderDropdown({ label, items }: { label: string; items: readonly HeaderLink[] }) {
+function HeaderDropdown({
+  label,
+  items,
+  hoverOpen = false,
+}: {
+  label: string;
+  items: readonly HeaderLink[];
+  hoverOpen?: boolean;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openedByHover = useRef(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  function cancelClose() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  }
+  function pointerEnter(event: React.PointerEvent) {
+    if (!hoverOpen || event.pointerType !== "mouse") return;
+    cancelClose();
+    if (!open) openedByHover.current = true;
+    setOpen(true);
+  }
+  function pointerLeave(event: React.PointerEvent) {
+    if (!hoverOpen || event.pointerType !== "mouse") return;
+    cancelClose();
+    if (!openedByHover.current && contentRef.current?.contains(document.activeElement)) return;
+    closeTimer.current = setTimeout(() => setOpen(false), 180);
+  }
+  useEffect(
+    () => () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    },
+    [],
+  );
   useEffect(() => setOpen(false), [pathname]);
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu open={open} onOpenChange={setOpen} modal={!hoverOpen}>
       <DropdownMenuTrigger
+        ref={triggerRef}
+        onPointerEnter={pointerEnter}
+        onPointerLeave={pointerLeave}
+        onPointerDown={(event) => {
+          if (hoverOpen && openedByHover.current && open && event.pointerType === "mouse")
+            event.preventDefault();
+        }}
+        onKeyDown={(event) => {
+          cancelClose();
+          openedByHover.current = false;
+          if (hoverOpen && ["ArrowDown", "ArrowUp"].includes(event.key)) {
+            event.preventDefault();
+            setOpen(true);
+            const last = event.key === "ArrowUp";
+            // Reopening during the exit animation retains the Radix content;
+            // move focus explicitly because its mount effect will not rerun.
+            requestAnimationFrame(() => {
+              const links = contentRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]');
+              (last ? links?.[links.length - 1] : links?.[0])?.focus();
+            });
+          }
+        }}
         data-active={items.some((link) => headerLinkActive(link, pathname))}
         className={`${navClass} flex items-center gap-1`}
       >
         {label}
-        <ChevronDown aria-hidden="true" className="size-3.5" />
+        <ChevronDown
+          aria-hidden="true"
+          className={`size-3.5 transition-transform motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent
+        ref={contentRef}
+        onPointerEnter={pointerEnter}
+        onPointerLeave={pointerLeave}
+        onKeyDown={() => {
+          cancelClose();
+          openedByHover.current = false;
+        }}
+        onCloseAutoFocus={(event) => {
+          // Hover menus must not move focus after a delayed exit animation.
+          if (hoverOpen) event.preventDefault();
+        }}
+        onEscapeKeyDown={(event) => {
+          if (!hoverOpen) return;
+          event.preventDefault();
+          cancelClose();
+          openedByHover.current = false;
+          setOpen(false);
+          triggerRef.current?.focus();
+        }}
         align="end"
         sideOffset={12}
-        className="site-nav-dropdown max-h-[calc(100dvh-7rem)] w-64 rounded-xl border-primary/15 bg-white p-2 text-foreground shadow-lg shadow-black/10"
+        className="site-nav-dropdown max-h-[calc(100dvh-7rem)] w-64 rounded-xl border-primary/15 bg-white p-2 text-foreground shadow-lg shadow-black/10 motion-reduce:animate-none"
       >
         {items.map((link) =>
           link.children ? (
@@ -91,6 +168,10 @@ function HeaderDropdown({ label, items }: { label: string; items: readonly Heade
                 params={link.params}
                 activeOptions={{ exact: true }}
                 activeProps={{ className: "bg-primary/8 text-primary" }}
+                aria-current={headerLinkActive(link, pathname) ? "page" : undefined}
+                className={
+                  headerLinkActive(link, pathname) ? "bg-primary/8 text-primary" : undefined
+                }
                 onClick={() => setOpen(false)}
               >
                 {link.label}
@@ -146,7 +227,12 @@ export function SiteHeader() {
             item.kind === "services" ? (
               <ServicesMegaMenu key={item.label} />
             ) : item.kind === "dropdown" ? (
-              <HeaderDropdown key={item.label} label={item.label} items={item.items} />
+              <HeaderDropdown
+                key={item.label}
+                label={item.label}
+                items={item.items}
+                hoverOpen={item.label === "Marketing"}
+              />
             ) : (
               <Link
                 key={item.to}
@@ -247,8 +333,11 @@ export function SiteHeader() {
                                   params={link.params}
                                   activeOptions={{ exact: true }}
                                   activeProps={{ className: "bg-primary/8 text-primary" }}
+                                  aria-current={
+                                    headerLinkActive(link, pathname) ? "page" : undefined
+                                  }
                                   onClick={() => setOpen(false)}
-                                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                                  className={`block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${headerLinkActive(link, pathname) ? "bg-primary/8 text-primary" : "text-muted-foreground"}`}
                                 >
                                   {link.label}
                                 </Link>

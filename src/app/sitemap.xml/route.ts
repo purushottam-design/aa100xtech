@@ -1,5 +1,6 @@
 import { services } from "@/data/services";
 import { serviceTypes } from "@/data/service-types";
+import { marketingServices, marketingServiceHref } from "@/data/marketing-services";
 import { listPublishedInfluencers } from "@/lib/influencers.server";
 import { publishedBlog } from "@/lib/published-content.server";
 
@@ -54,6 +55,7 @@ export const GET = async () => {
   const { rows: articles } = await publishedBlog();
   const paths = [
     ...staticPaths,
+    ...marketingServices.map(marketingServiceHref),
     ...services.map((service) => `/services/${service.slug}`),
     ...serviceTypes.map((service) => `/services/explore/${service.slug}`),
     ...profiles.map((profile) => `/influencers/${profile.slug}`),

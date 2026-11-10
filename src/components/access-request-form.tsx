@@ -3,12 +3,26 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Briefcase, Building2, Check, Lock, Megaphone, ShieldCheck, TrendingUp } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  Check,
+  Lock,
+  Megaphone,
+  ShieldCheck,
+  TrendingUp,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { signUpAccount } from "@/lib/accounts.functions";
@@ -32,7 +46,11 @@ export const accessRequestSchema = z.object({
     (v) => v === null || z.string().email().safeParse(v).success,
     "Enter a valid company email or leave it blank",
   ),
-  whatsapp_number: z.string().trim().min(6, "Enter a valid WhatsApp number").max(30, "WhatsApp number is too long"),
+  whatsapp_number: z
+    .string()
+    .trim()
+    .min(6, "Enter a valid WhatsApp number")
+    .max(30, "WhatsApp number is too long"),
   telegram_number: optionalText(30).refine(
     (v) => v === null || v.length >= 6,
     "Enter a valid Telegram number or leave it blank",
@@ -125,6 +143,7 @@ export function AccessRequestForm({
 }) {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [extraSelects, setExtraSelects] = useState<Record<string, string>>({});
@@ -133,6 +152,7 @@ export function AccessRequestForm({
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setSubmitError(null);
     if (!role) {
       toast.error("Please select an account type.");
       return;
@@ -144,7 +164,10 @@ export function AccessRequestForm({
     // APIs and the admin console keep working unchanged.
     const extras = activeType?.extras ?? [];
     const missing = extras.find(
-      (f) => "required" in f && f.required && !(("options" in f ? extraSelects[f.name] : value(f.name)) ?? "").trim(),
+      (f) =>
+        "required" in f &&
+        f.required &&
+        !(("options" in f ? extraSelects[f.name] : value(f.name)) ?? "").trim(),
     );
     if (missing) {
       toast.error(`Please fill in ${missing.label.toLowerCase()}.`);
@@ -159,7 +182,11 @@ export function AccessRequestForm({
       .join("\n");
 
     const note = value("message");
-    const composedMessage = [`Account type: ${activeType?.label ?? role}`, extraLines, note ? `Notes: ${note}` : ""]
+    const composedMessage = [
+      `Account type: ${activeType?.label ?? role}`,
+      extraLines,
+      note ? `Notes: ${note}` : "",
+    ]
       .filter(Boolean)
       .join("\n")
       .slice(0, 1000);
@@ -212,14 +239,19 @@ export function AccessRequestForm({
       existing = result?.code === "email_exists";
     } catch (error) {
       setBusy(false);
-      toast.error(error instanceof Error ? error.message : "Could not create your account. Please try again.");
+      const message =
+        error instanceof Error ? error.message : "Could not create your account. Please try again.";
+      setSubmitError(message);
+      toast.error(message);
       return;
     }
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: d.personal_email,
-      password,
-    });
+    const { error: signInError } = await supabase.auth
+      .signInWithPassword({
+        email: d.personal_email,
+        password,
+      })
+      .catch(() => ({ error: new Error("Sign-in is temporarily unavailable.") }));
     setBusy(false);
 
     if (signInError) {
@@ -232,7 +264,9 @@ export function AccessRequestForm({
       return;
     }
 
-    toast.success(existing ? "Signed in to your existing account" : "Account created — you are signed in");
+    toast.success(
+      existing ? "Signed in to your existing account" : "Account created — you are signed in",
+    );
     onSuccess();
     navigate({ to: "/dashboard", replace: true });
   }
@@ -244,7 +278,9 @@ export function AccessRequestForm({
       <div className="space-y-5">
         <div>
           <p className="text-sm font-semibold text-foreground">What are you here for?</p>
-          <p className="mt-1 text-sm text-muted-foreground">Select your account type to continue.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Select your account type to continue.
+          </p>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -258,7 +294,9 @@ export function AccessRequestForm({
                 aria-pressed={selected}
                 onClick={() => setPicked(t.value)}
                 className={`relative flex h-full flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                  selected ? "border-primary bg-primary/10 shadow-lg shadow-primary/10" : "border-border/60 bg-card/40"
+                  selected
+                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                    : "border-border/60 bg-card/40"
                 }`}
               >
                 {selected ? (
@@ -346,10 +384,17 @@ export function AccessRequestForm({
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="text-sm font-semibold text-foreground">{activeType?.label} details</legend>
+        <legend className="text-sm font-semibold text-foreground">
+          {activeType?.label} details
+        </legend>
         <div className="grid items-end gap-4 sm:grid-cols-2">
           {(activeType?.extras ?? []).map((f) => (
-            <Field key={f.name} htmlFor={id(f.name)} label={f.label} optional={!("required" in f && f.required)}>
+            <Field
+              key={f.name}
+              htmlFor={id(f.name)}
+              label={f.label}
+              optional={!("required" in f && f.required)}
+            >
               {"options" in f ? (
                 <Select
                   value={extraSelects[f.name] ?? ""}
@@ -462,11 +507,20 @@ export function AccessRequestForm({
 
       <div className="space-y-2">
         <Label htmlFor={id("message")}>
-          Anything we should know? <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+          Anything we should know?{" "}
+          <span className="text-xs font-normal text-muted-foreground">(optional)</span>
         </Label>
         <Textarea id={id("message")} name="message" rows={4} maxLength={1000} />
       </div>
 
+      {submitError ? (
+        <p
+          role="alert"
+          className="rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
+        >
+          {submitError}
+        </p>
+      ) : null}
       <Button type="submit" className="w-full" disabled={busy}>
         {busy ? "Sending…" : submitLabel}
       </Button>
@@ -491,9 +545,14 @@ function Field({
 }) {
   return (
     <div className="flex h-full min-w-0 flex-col gap-2">
-      <Label htmlFor={htmlFor} className="flex flex-1 flex-wrap items-start gap-x-1.5 leading-tight">
+      <Label
+        htmlFor={htmlFor}
+        className="flex flex-1 flex-wrap items-start gap-x-1.5 leading-tight"
+      >
         <span>{label}</span>
-        {optional ? <span className="text-xs font-normal text-muted-foreground">(optional)</span> : null}
+        {optional ? (
+          <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+        ) : null}
       </Label>
       <div className="[&>*]:w-full">{children}</div>
     </div>

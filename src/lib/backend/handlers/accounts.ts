@@ -344,6 +344,22 @@ const signUpSchema = z.object({
   details: z.string().trim().max(1000).optional(),
 });
 
+function signupFailure(error: unknown): never {
+  const failure = error as { status?: number; message?: string; name?: string } | null;
+  const unavailable =
+    !failure?.status ||
+    failure.status >= 500 ||
+    /fetch failed|network|timeout|connection/i.test(failure.message ?? "");
+  setResponseStatus(unavailable ? 503 : failure.status === 429 ? 429 : 400);
+  throw new Error(
+    unavailable
+      ? "Account creation is temporarily unavailable. Please try again later or contact support."
+      : failure.status === 429
+        ? "Too many account creation attempts. Please wait and try again."
+        : "Could not create your account. Please check your details and try again.",
+  );
+}
+
 export const signUpAccount = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => signUpSchema.parse(data))
   .handler(async ({ data }) => {
@@ -352,19 +368,21 @@ export const signUpAccount = createServerFn({ method: "POST" })
       throw new Error("This email address cannot be registered here.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: { full_name: data.fullName, role: data.role },
-    });
+    const { data: created, error } = await supabaseAdmin.auth.admin
+      .createUser({
+        email: data.email,
+        password: data.password,
+        email_confirm: true,
+        user_metadata: { full_name: data.fullName, role: data.role },
+      })
+      .catch(signupFailure);
 
     if (error || !created?.user) {
       if (/already been registered|already exists/i.test(error?.message ?? "")) {
         // Not an exceptional case: let the client try signing in with these credentials.
         return { ok: false as const, code: "email_exists" as const };
       }
-      throw new Error(error?.message ?? "Could not create your account");
+      signupFailure(error);
     }
 
     const userId = created.user.id;
@@ -392,7 +410,7 @@ export const signUpAccount = createServerFn({ method: "POST" })
     }
     if (profileError) {
       await supabaseAdmin.auth.admin.deleteUser(userId);
-      throw new Error(profileError.message);
+      signupFailure(profileError);
     }
 
     const { error: roleError } = await supabaseAdmin
@@ -404,7 +422,7 @@ export const signUpAccount = createServerFn({ method: "POST" })
       !!roleError && /schema cache|does not exist|relation/i.test(roleError.message);
     if (roleError && !roleTableMissing) {
       await supabaseAdmin.auth.admin.deleteUser(userId);
-      throw new Error(roleError.message);
+      signupFailure(roleError);
     }
 
     // Keep the admin console in the loop (best effort — never blocks sign-up).

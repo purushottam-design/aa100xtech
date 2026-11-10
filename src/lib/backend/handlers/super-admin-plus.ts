@@ -14,6 +14,7 @@ import {
 } from "@/lib/backend/request-context.server";
 import { z } from "zod";
 import { safePublicUrl } from "@/lib/public-links";
+import { invalidateCmsPageMetadata } from "@/lib/cms-metadata.server";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -718,6 +719,7 @@ export const saveContentBlock = createServerFn({ method: "POST" })
           .maybeSingle()
       : await client.from("content_blocks").insert(payload).select("id").single();
     if (error || !saved) throw new Error("Content could not be saved. Please try again.");
+    invalidateCmsPageMetadata();
     await logActivity(me.userId, "content_saved", "cms", `${data.blockType}: ${data.title}`);
     return { ok: true };
   });
@@ -737,6 +739,7 @@ export const deleteContentBlock = createServerFn({ method: "POST" })
     if (existing?.active) await requireAdmin(context as Ctx, "content.publish");
     const { error } = await client.from("content_blocks").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
+    invalidateCmsPageMetadata();
     await logActivity(me.userId, "content_deleted", "cms", data.id);
     return { ok: true };
   });

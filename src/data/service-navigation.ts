@@ -1,5 +1,4 @@
 import { services, type Service } from "./services";
-import { marketingLinks } from "./site";
 
 export type ServiceNavigationItem = {
   title: string;
@@ -42,16 +41,19 @@ export function buildServiceNavigation(
   }
   // These approved pages are outside the priced services catalog.
   const marketing = groups.find((group) => group.id === "marketing")!;
-  for (const link of marketingLinks) {
-    if ("params" in link) continue; // Social Media Marketing is already in the catalog.
-    marketing.items.push({ title: link.label, href: link.to, icon: "Megaphone" });
-    if (link.to === "/influencer-partners")
-      marketing.items.push({
-        title: "Viral Influencer Marketing",
-        href: "/influencer-marketing#viral-influencer-marketing",
-        icon: "Sparkles",
-      });
-  }
+  // Keep the existing Services menu independent of the Marketing dropdown.
+  marketing.items.push(
+    {
+      title: "Influencer Programs & Influencer Marketing",
+      href: "/influencer-partners",
+      icon: "Megaphone",
+    },
+    {
+      title: "Viral Influencer Marketing",
+      href: "/influencer-marketing#viral-influencer-marketing",
+      icon: "Sparkles",
+    },
+  );
   return groups.filter((group) => group.items.length);
 }
 

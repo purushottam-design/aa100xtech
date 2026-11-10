@@ -102,9 +102,9 @@ function Reveal({ children, className = "" }: { children: ReactNode; className?:
 function Actions() {
   return (
     <div className="uip-actions">
-      <a className="uip-button" href="#join">
+      <Link className="uip-button" href="/influencer-marketing/for-influencers">
         Join as Influencer <ArrowRight size={17} aria-hidden />
-      </a>
+      </Link>
       <a className="uip-button uip-button-secondary" href="#brand-enquiry">
         Partner as a Brand <ArrowUpRight size={17} aria-hidden />
       </a>
@@ -228,7 +228,7 @@ export function InfluencerPartnersPage({
                 title: "Turn your influence into opportunity.",
                 benefits: creatorBenefits,
                 cta: "Apply as Influencer Partner",
-                href: "#join",
+                href: "/influencer-marketing/for-influencers",
                 tone: "purple",
               },
               {
@@ -244,6 +244,7 @@ export function InfluencerPartnersPage({
             ].map(({ id, icon: Icon, label, title, benefits, cta, href, tone }) => (
               <Reveal key={id}>
                 <article id={id} className={`uip-card uip-path uip-${tone}`}>
+                  {id === "for-influencers" && <span id="join" aria-hidden="true" />}
                   <span className="uip-icon">
                     <Icon aria-hidden />
                   </span>
@@ -408,7 +409,7 @@ export function InfluencerPartnersPage({
             unavailable={unavailable}
             marketing
             onCollaborate={collaborate}
-            registrationHref="#join"
+            registrationHref="/influencer-marketing/for-influencers"
           />
         </section>
 
@@ -418,18 +419,9 @@ export function InfluencerPartnersPage({
             <h2 id="uip-apply-title">
               One connection. <span>A world of opportunity.</span>
             </h2>
-            <p>Tell us about yourself or the campaign you have in mind.</p>
+            <p>Tell us about the campaign you have in mind.</p>
           </div>
-          <div className="uip-two-col uip-forms">
-            <section
-              id="join"
-              className="uip-form-panel uip-purple"
-              aria-labelledby="uip-creator-form-title"
-            >
-              <h3 id="uip-creator-form-title">Apply as Influencer Partner</h3>
-              <p>Your story, your audience, your next step.</p>
-              <MarketingIntakeForm kind="creator" embedded />
-            </section>
+          <div className="uip-forms">
             <section
               id="brand-enquiry"
               className="uip-form-panel uip-blue"

@@ -3,12 +3,28 @@
 import { Link, useNavigate } from "@/lib/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import {
+  BriefcaseBusiness,
+  Building2,
+  GraduationCap,
+  LogIn,
+  Megaphone,
+  UserRoundPlus,
+} from "lucide-react";
+import styles from "./auth.module.css";
 
 import { AccessRequestForm } from "@/components/access-request-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { PANEL_PATH, panelsForRoles } from "@/lib/admin-panels";
 import { getMyAccount } from "@/lib/accounts.functions";
@@ -21,6 +37,7 @@ const signInModes = [
     id: "company",
     label: "Company Login",
     short: "Company",
+    icon: Building2,
     description: "For AA100XTech employees and the supreme user.",
     roles: ["supreme_admin", "employee"],
   },
@@ -28,6 +45,7 @@ const signInModes = [
     id: "marketing",
     label: "Marketing Partners",
     short: "Marketing",
+    icon: Megaphone,
     description: "For influencer and affiliate partners on the 30-level ladder.",
     roles: ["partner"],
   },
@@ -35,6 +53,7 @@ const signInModes = [
     id: "business",
     label: "Business Partners",
     short: "Business",
+    icon: BriefcaseBusiness,
     description: "For clients and business partners with an active project or retainer.",
     roles: ["customer", "partner"],
   },
@@ -42,6 +61,7 @@ const signInModes = [
     id: "interviews",
     label: "Interviews — Job Seekers",
     short: "Interviews",
+    icon: GraduationCap,
     description: "For candidates in the interview and trial process.",
     roles: ["job_seeker"],
   },
@@ -56,6 +76,7 @@ function AuthPage() {
   const [signUpDone, setSignUpDone] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const active = signInModes.find((m) => m.id === mode)!;
+  const ActiveModeIcon = active.icon;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -138,135 +159,168 @@ function AuthPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-2xl text-center">
-        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          Welcome to AA100XTech
-        </h1>
-        <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-          Create your account first — choose your account type, set an email and password, and you
-          can sign in straight away on Company, Interviews, Marketing or Business login.
-        </p>
-        <p className="mt-3 text-sm">
-          Admin ya super admin ho?{" "}
-          <Link to="/admin-guide" className="font-medium text-primary underline underline-offset-4">
-            Picture guide dekhein — panel kaise khulta hai
-          </Link>
-        </p>
-      </div>
+    <div className={styles["page"]}>
+      <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div className={styles["intro"]}>
+          <span className={styles["introAccent"]} aria-hidden="true" />
+          <h1 className={styles["title"]}>
+            Welcome to <span className={styles["brand"]}>AA100X Tech</span>
+          </h1>
+          <p className={styles["introCopy"]}>
+            Create your account first — choose your account type, set an email and password, and you
+            can sign in straight away on Company, Interviews, Marketing or Business login.
+          </p>
+          <p className={styles["guide"]}>
+            Admin ya super admin ho?{" "}
+            <Link to="/admin-guide" className={styles["guideLink"]}>
+              Picture guide dekhein — panel kaise khulta hai
+            </Link>
+          </p>
+        </div>
 
-      <div className="mt-10 flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-start">
-        {/* Sign in — first on mobile, right column on desktop */}
-        <Card className="surface-card order-1 lg:order-2">
-          <CardHeader>
-            <CardTitle className="font-display">Already have an account?</CardTitle>
-            <CardDescription>
-              Sign in to your AA100XTech account. {active.description}
-            </CardDescription>
-          </CardHeader>
+        <div className="mt-10 flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-start">
+          {/* Sign in — first on mobile, right column on desktop */}
+          <Card className={`surface-card order-1 lg:order-2 ${styles["card"]}`}>
+            <CardHeader className={styles["cardHeader"]}>
+              <span className={styles["cardIcon"]}>
+                <LogIn className="size-5" aria-hidden="true" />
+              </span>
+              <CardTitle className={styles["cardTitle"]}>Already have an account?</CardTitle>
+              <CardDescription
+                className={styles["cardDescription"]}
+                id="login-mode-description"
+                aria-live="polite"
+              >
+                Sign in to your AA100XTech account. {active.description}
+              </CardDescription>
+            </CardHeader>
 
-          <CardContent>
-            <div
-              role="tablist"
-              aria-label="Login mode"
-              className="mb-5 grid grid-cols-2 gap-1 rounded-xl border border-border/60 p-1 sm:grid-cols-4"
-            >
-              {signInModes.map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={m.id === mode}
-                  onClick={() => setMode(m.id)}
-                  className={`rounded-lg px-2 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                    m.id === mode
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
+            <CardContent>
+              <div className="mb-5 space-y-2">
+                <Label htmlFor="login-mode">Login as</Label>
+                <Select
+                  value={mode}
+                  disabled={busy}
+                  onValueChange={(value) => {
+                    const selected = signInModes.find((item) => item.id === value);
+                    if (selected) setMode(selected.id);
+                  }}
                 >
-                  {m.short}
-                </button>
-              ))}
-            </div>
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  ref={emailRef}
-                  type="email"
-                  required
-                  maxLength={255}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                />
+                  <SelectTrigger
+                    id="login-mode"
+                    aria-describedby="login-mode-description"
+                    className="h-12 rounded-xl border-primary/30 bg-primary/5 px-4 font-medium shadow-sm transition-colors hover:border-primary/60 hover:bg-primary/10 focus:ring-2"
+                  >
+                    <SelectValue>
+                      <span className="flex items-center gap-3">
+                        <ActiveModeIcon
+                          className="size-4 shrink-0 text-amber-700"
+                          aria-hidden="true"
+                        />
+                        {active.short}
+                      </span>
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-primary/20 bg-background p-1.5 shadow-lg motion-reduce:animate-none">
+                    {signInModes.map(({ id, short, icon: Icon }) => (
+                      <SelectItem
+                        key={id}
+                        value={id}
+                        textValue={short}
+                        className="cursor-pointer rounded-lg py-3 pl-3 pr-9 font-medium focus:bg-primary/10 focus:text-foreground data-[state=checked]:bg-primary/8"
+                      >
+                        <span className="flex items-center gap-3">
+                          <Icon className="size-4 shrink-0 text-amber-700" aria-hidden="true" />
+                          {short}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  maxLength={128}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={busy}>
-                {busy ? "Signing in…" : "Sign in"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Sign up request — second on mobile, left column on desktop */}
-        <Card className="surface-card order-2 lg:order-1">
-          <CardHeader>
-            <CardTitle className="font-display">Create your account</CardTitle>
-            <CardDescription>
-              {signUpDone
-                ? "Your account is ready."
-                : "Create your account with an email and password, then sign in on any login mode."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {signUpDone ? (
-              <div className="space-y-4">
-                <div className="rounded-xl border border-primary/40 bg-primary/5 p-4 text-sm text-muted-foreground">
-                  <p className="font-medium text-foreground">Account created</p>
-                  <p className="mt-1">
-                    You can now sign in with the same email and password on Company, Interviews,
-                    Marketing or Business login.
-                  </p>
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    ref={emailRef}
+                    type="email"
+                    required
+                    maxLength={255}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                  />
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => emailRef.current?.focus()}
-                >
-                  Go to Sign In
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    maxLength={128}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={busy}>
+                  {busy ? "Signing in…" : "Sign in"}
                 </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => setSignUpDone(false)}
-                >
-                  Create another account
-                </Button>
-              </div>
-            ) : (
-              <AccessRequestForm
-                idPrefix="signup"
-                submitLabel="Create my account"
-                onSuccess={() => setSignUpDone(true)}
-              />
-            )}
-          </CardContent>
-        </Card>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Sign up request — second on mobile, left column on desktop */}
+          <Card className={`surface-card order-2 lg:order-1 ${styles["card"]}`}>
+            <CardHeader className={styles["cardHeader"]}>
+              <span className={styles["cardIcon"]}>
+                <UserRoundPlus className="size-5" aria-hidden="true" />
+              </span>
+              <CardTitle className={styles["cardTitle"]}>Create your account</CardTitle>
+              <CardDescription className={styles["cardDescription"]}>
+                {signUpDone
+                  ? "Your account is ready."
+                  : "Create your account with an email and password, then sign in on any login mode."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {signUpDone ? (
+                <div className="space-y-4">
+                  <div className="rounded-xl border border-primary/40 bg-primary/5 p-4 text-sm text-muted-foreground">
+                    <p className="font-medium text-foreground">Account created</p>
+                    <p className="mt-1">
+                      You can now sign in with the same email and password on Company, Interviews,
+                      Marketing or Business login.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => emailRef.current?.focus()}
+                  >
+                    Go to Sign In
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => setSignUpDone(false)}
+                  >
+                    Create another account
+                  </Button>
+                </div>
+              ) : (
+                <AccessRequestForm
+                  idPrefix="signup"
+                  submitLabel="Create my account"
+                  onSuccess={() => setSignUpDone(true)}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

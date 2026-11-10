@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation";
 import Page from "@/routes/services.$slug";
-import { serviceBySlug } from "@/data/services";
+import { serviceBySlug, services } from "@/data/services";
 import { detailMetadata } from "@/lib/page-metadata/services.slug";
 
 type Props = { params: Promise<{ slug: string }> };
+
+export function generateStaticParams() {
+  return services.map(({ slug }) => ({ slug }));
+}
 
 export async function generateMetadata({ params }: Props) {
   const service = serviceBySlug((await params).slug);

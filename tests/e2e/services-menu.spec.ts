@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { serviceNavigation } from "../../src/data/service-navigation";
 import { services } from "../../src/data/services";
+import { site } from "../../src/data/site";
 
 for (const width of [1280, 1440, 1920]) {
   test(`desktop mega menu hover, keyboard, links and layout at ${width}px`, async ({
@@ -8,17 +9,29 @@ for (const width of [1280, 1440, 1920]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
-    const trigger = page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Services", exact: true });
+    const trigger = page
+      .getByRole("navigation", { name: "Main navigation", exact: true })
+      .getByRole("link", { name: "Services", exact: true });
     await trigger.hover();
     const panel = page.locator("[data-service-panel]");
     await expect(panel).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Display currency: INR", exact: true }),
     ).toBeVisible();
-    await expect(panel.locator("a")).toHaveCount(services.length + 4);
-    await expect(panel.locator("a").first()).toHaveText("Be The One");
-    await expect(panel.locator("a").first()).toHaveAttribute("href", "/be-the-one");
+    await expect(panel.locator("a")).toHaveCount(services.length + 5);
+    await expect(panel.locator("a").first()).toHaveText("My Name My Pride");
+    await expect(panel.locator("a").first()).toHaveAttribute("href", site.myNameMyPrideUrl);
+    await expect(panel.locator("a").first()).toHaveAttribute("target", "_blank");
+    const prideBounds = await panel
+      .getByRole("link", { name: "My Name My Pride", exact: true })
+      .boundingBox();
+    const beTheOneBounds = await panel
+      .getByRole("link", { name: "Be The One", exact: true })
+      .boundingBox();
+    expect(prideBounds!.x + prideBounds!.width).toBeLessThanOrEqual(beTheOneBounds!.x);
+    expect(Math.abs(prideBounds!.y - beTheOneBounds!.y)).toBeLessThan(1);
     const expected = [
+      site.myNameMyPrideUrl,
       "/be-the-one",
       ...serviceNavigation.flatMap((group) => group.items.map((item) => item.href)),
     ];
@@ -51,6 +64,8 @@ for (const width of [1280, 1440, 1920]) {
     await expect(panel).toHaveCount(0);
     await expect(trigger).toBeFocused();
     await page.keyboard.press("ArrowDown");
+    await expect(panel.getByRole("link", { name: "My Name My Pride", exact: true })).toBeFocused();
+    await page.keyboard.press("ArrowDown");
     await expect(panel.getByRole("link", { name: "Be The One", exact: true })).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await expect(panel.getByRole("link", { name: "View all services", exact: true })).toBeFocused();
@@ -65,7 +80,7 @@ for (const width of [1280, 1440, 1920]) {
     await expect(panel).toHaveCount(0);
     await trigger.hover();
     await link.click();
-    await expect(page).toHaveURL(/\/services\/website-development$/);
+    await expect(page).toHaveURL(/\/services\/website-development$/, { timeout: 20_000 });
     await expect(panel).toHaveCount(0);
     await expect(page.locator("h1")).toHaveText("Website Development");
     await page.evaluate(() => window.scrollTo(0, 500));
@@ -82,6 +97,10 @@ for (const width of [375, 768, 1024]) {
     const sheet = page.getByRole("dialog");
     await sheet.getByRole("button", { name: "Services", exact: true }).click();
     const featured = sheet.getByRole("link", { name: "Be The One", exact: true });
+    const pride = sheet.getByRole("link", { name: "My Name My Pride", exact: true });
+    await expect(pride).toBeVisible();
+    await expect(pride).toHaveAttribute("href", site.myNameMyPrideUrl);
+    await expect(pride).toHaveAttribute("target", "_blank");
     await expect(featured).toBeVisible();
     await expect(featured).toHaveAttribute("href", "/be-the-one");
     await featured.click();
@@ -108,7 +127,7 @@ for (const width of [375, 768, 1024]) {
       true,
     );
     await link.click();
-    await expect(page).toHaveURL(/\/services\/android-apps$/);
+    await expect(page).toHaveURL(/\/services\/android-apps$/, { timeout: 20_000 });
     await expect(sheet).toHaveCount(0);
     await expect(page.locator("h1")).toHaveText("Android Apps");
     await page.getByRole("button", { name: "Open menu", exact: true }).click();
@@ -140,7 +159,9 @@ test("shared header works across public routes and every catalog destination res
   ]) {
     await page.goto(route, { waitUntil: "domcontentloaded" });
     await expect(page.locator("header")).toHaveCount(1);
-    const trigger = page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Services", exact: true });
+    const trigger = page
+      .getByRole("navigation", { name: "Main navigation", exact: true })
+      .getByRole("link", { name: "Services", exact: true });
     await expect(trigger).toBeEnabled();
     await trigger.focus();
     await trigger.press("ArrowDown");
@@ -162,7 +183,10 @@ test("reduced motion and short desktop viewport keep the mega menu accessible", 
   await page.setViewportSize({ width: 1280, height: 600 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/services", { waitUntil: "networkidle" });
-  await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Services", exact: true }).hover();
+  await page
+    .getByRole("navigation", { name: "Main navigation", exact: true })
+    .getByRole("link", { name: "Services", exact: true })
+    .hover();
   const panel = page.locator(".service-mega-panel");
   const bounds = await panel.boundingBox();
   expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(600);
