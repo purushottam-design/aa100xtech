@@ -23,7 +23,7 @@ const joinItems: readonly HeaderLink[] = [
   { to: "/request-access", label: "Request an Account" },
 ];
 
-const moreItems: readonly HeaderLink[] = [
+export const moreItems: readonly HeaderLink[] = [
   { to: "/about", label: "About Us" },
   // { to: "/portfolio", label: "Portfolio" },
   { to: "/consultation", label: "Consultation" },
@@ -46,9 +46,7 @@ export const headerNavigation = [
   { kind: "link", to: "/", label: "Home" },
   { kind: "services", label: "Services" },
   { kind: "link", to: "/clients", label: "Our Top Clients" },
-  { kind: "link", to: "/be-the-one", label: "Be The One" },
   { kind: "link", to: "https://theamanlife.com/", label: "Founder" },
-  { kind: "dropdown", label: "Join Us", items: joinItems },
   { kind: "dropdown", label: "Marketing", items: marketingLinks as readonly HeaderLink[] },
-  { kind: "dropdown", label: "More", items: moreItems },
+  { kind: "dropdown", label: "Join Us", items: joinItems },
 ] as const;

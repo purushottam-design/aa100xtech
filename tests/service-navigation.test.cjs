@@ -8,7 +8,7 @@ test("service navigation includes each catalog service once and preserves the ac
   const groups = buildServiceNavigation();
   const items = groups.flatMap((group) => Array.from(group.items));
   assert.equal(new Set(items.map((item) => item.href)).size, items.length);
-  assert.equal(items.length, services.length + 3);
+  assert.equal(items.length, services.length + 2);
   for (const service of services) {
     const matches = items.filter((item) => item.href === `/services/${service.slug}`);
     assert.equal(matches.length, 1, service.slug);
@@ -16,7 +16,7 @@ test("service navigation includes each catalog service once and preserves the ac
     assert.equal(matches[0].icon, service.icon);
     assert.ok(service.navigationGroup);
   }
-  assert.ok(items.some((item) => item.href === "/influencer-programs"));
+  assert.ok(items.some((item) => item.href === "/influencer-partners"));
   assert.ok(items.some((item) => item.href === "/influencer-marketing#viral-influencer-marketing"));
   assert.equal(
     items.some((item) => /game development/i.test(item.title)),

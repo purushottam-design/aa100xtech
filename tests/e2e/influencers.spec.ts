@@ -7,11 +7,12 @@ for (const width of [1440, 768, 390]) {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/influencers", { waitUntil: "domcontentloaded" });
-    await expect(page.locator("h1")).toHaveText("Partner With Influence.Grow With Impact.");
+    await expect(page.locator("h1")).toHaveText("Influencer Programs & Influencer Marketing");
     await expect(page.locator("header")).toBeVisible();
     await expect(page.locator("footer")).toBeAttached();
     await expect(page.locator(".ip-spotlight")).toHaveCount(0);
     await expect(page.getByLabel("Search influencers by name")).toHaveCount(0);
+    await page.locator("#partner-details > summary").click();
     await page
       .locator("summary")
       .filter({ hasText: "Is website or app development always free?" })
@@ -29,10 +30,10 @@ for (const width of [1440, 768, 390]) {
     if (width >= 1280)
       await expect(page.getByRole("button", { name: "Join Us", exact: true })).toBeVisible();
     await page
-      .locator(".ipp-hero-copy")
+      .locator(".uip-hero-copy")
       .getByRole("link", { name: "Join as Influencer", exact: true })
       .click();
-    await expect(page).toHaveURL(/\/influencers#join$/);
+    await expect(page).toHaveURL(/\/influencer-partners#join$/);
     await expect(
       page.getByRole("form", { name: "Influencer application", exact: true }),
     ).toBeVisible();

@@ -32,7 +32,7 @@ test("embedded forms exactly reuse standalone controls and have unique accessibl
   const brandControls = await controls(
     page.getByRole("form", { name: "Brand campaign inquiry", exact: true }),
   );
-  await page.goto("/influencers");
+  await page.goto("/influencer-partners");
   const creator = page.getByRole("form", { name: "Influencer application", exact: true });
   const brand = page.getByRole("form", { name: "Brand campaign inquiry", exact: true });
   await expect(creator).toHaveCount(1);
@@ -53,7 +53,7 @@ test("embedded forms exactly reuse standalone controls and have unique accessibl
   await expect(brand.getByLabel("Business Email")).toHaveValue("brand@example.invalid");
   for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
-    const boxes = await page.locator(".ipp-marketing-panel").evaluateAll((nodes) =>
+    const boxes = await page.locator(".uip-form-panel").evaluateAll((nodes) =>
       nodes.map((node) => {
         const r = node.getBoundingClientRect();
         return { x: r.x, y: r.y, width: r.width, bottom: r.bottom };
@@ -67,7 +67,7 @@ test("embedded forms exactly reuse standalone controls and have unique accessibl
     );
     await expect(creator.getByLabel("Full Name")).toHaveCSS("height", "36px");
     if (width === 390 || width === 1440) {
-      await page.locator(".ipp-marketing-forms").scrollIntoViewIfNeeded();
+      await page.locator(".uip-forms").scrollIntoViewIfNeeded();
       await page.screenshot({ path: info.outputPath(`shared-forms-${width}.png`), fullPage: true });
     }
   }
@@ -78,7 +78,8 @@ for (const kind of ["creator", "brand"] as const) {
   test(`embedded ${kind} form validates, keeps input on errors and uses the shared API receipt`, async ({
     page,
   }) => {
-    await page.goto("/influencers");
+    await page.setViewportSize({ width: kind === "creator" ? 390 : 1440, height: 1000 });
+    await page.goto("/influencer-partners");
     const panel = page.locator(kind === "creator" ? "#join" : "#brand-enquiry");
     const form = panel.getByRole("form");
     const button = form.getByRole("button", {

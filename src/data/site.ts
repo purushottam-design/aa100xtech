@@ -36,7 +36,7 @@ export const showAuthButtons = true;
 
 export const joinUsLinks = [
   { to: "/careers", label: "Jobs" },
-  { to: "/influencers", label: "Influencer Partners" },
+  { to: "/influencer-partners#join", label: "Influencer Partners" },
 ] as const;
 
 export const marketingLinks = [
@@ -46,13 +46,9 @@ export const marketingLinks = [
     label: "Social Media Marketing",
   },
   {
-    to: "/influencer-marketing",
-    label: "Influencer Marketing",
-    children: [
-      { to: "/influencer-marketing#creators", label: "Our Influencer Partners" },
-    ],
+    to: "/influencer-partners",
+    label: "Influencer Programs & Influencer Marketing",
   },
-  { to: "/influencer-programs", label: "Influencer Programs" },
 ] as const;
 
 export const moreLinks = [
@@ -60,20 +56,20 @@ export const moreLinks = [
   { to: "/clients", label: "Our Clients" },
   { to: "/be-the-one", label: "Be The One" },
   { to: "/creator-moves-365", label: "Creator Moves 365" },
-  { to: "/influencers", label: "Influencer Partner Program" },
+  { to: "/influencer-partners", label: "Influencer Partner Program" },
   { to: "/influencer-success-program", label: "Influencer Success Program" },
   { to: "/partners", label: "Partners" },
   { to: "/affiliates", label: "Affiliates" },
   { to: "/founders", label: "Aman" },
   { to: "/influencer-marketing", label: "Influencer Marketing" },
-  { to: "/influencer-programs", label: "Influencer Programs" },
+  { to: "/influencer-partners#creative-services", label: "Influencer Programs" },
 ] as const;
 
 export const programLinks = [
   { to: "/creator-moves-365", label: "Creator Moves 365" },
-  { to: "/influencers", label: "Influencer Partner Program" },
+  { to: "/influencer-partners", label: "Influencer Partner Program" },
   { to: "/influencer-success-program", label: "Influencer Success Program" },
-  { to: "/influencer-programs", label: "Influencer Programs" },
+  { to: "/influencer-partners#creative-services", label: "Influencer Programs" },
   { to: "/affiliates", label: "Affiliates" },
   { to: "/consultation", label: "Consultation" },
 ] as const;

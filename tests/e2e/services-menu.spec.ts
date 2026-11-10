@@ -8,7 +8,7 @@ for (const width of [1280, 1440, 1920]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
-    const trigger = page.getByRole("button", { name: "Services", exact: true });
+    const trigger = page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Services", exact: true });
     await trigger.hover();
     const panel = page.locator("[data-service-panel]");
     await expect(panel).toBeVisible();
@@ -16,7 +16,12 @@ for (const width of [1280, 1440, 1920]) {
       page.getByRole("button", { name: "Display currency: INR", exact: true }),
     ).toBeVisible();
     await expect(panel.locator("a")).toHaveCount(services.length + 4);
-    const expected = serviceNavigation.flatMap((group) => group.items.map((item) => item.href));
+    await expect(panel.locator("a").first()).toHaveText("Be The One");
+    await expect(panel.locator("a").first()).toHaveAttribute("href", "/be-the-one");
+    const expected = [
+      "/be-the-one",
+      ...serviceNavigation.flatMap((group) => group.items.map((item) => item.href)),
+    ];
     expect(
       await panel
         .locator("a")
@@ -46,13 +51,15 @@ for (const width of [1280, 1440, 1920]) {
     await expect(panel).toHaveCount(0);
     await expect(trigger).toBeFocused();
     await page.keyboard.press("ArrowDown");
+    await expect(panel.getByRole("link", { name: "Be The One", exact: true })).toBeFocused();
+    await page.keyboard.press("ArrowDown");
     await expect(panel.getByRole("link", { name: "View all services", exact: true })).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await expect(link).toBeFocused();
     await page.keyboard.press("End");
     await expect(panel.locator("a").last()).toBeFocused();
     await page.keyboard.press("Escape");
-    await trigger.press("Enter");
+    await trigger.press("ArrowDown");
     await expect(panel).toBeVisible();
     await page.mouse.click(5, 5);
     await expect(panel).toHaveCount(0);
@@ -73,6 +80,14 @@ for (const width of [375, 768, 1024]) {
     await page.goto("/portfolio", { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Open menu", exact: true }).click();
     const sheet = page.getByRole("dialog");
+    await sheet.getByRole("button", { name: "Services", exact: true }).click();
+    const featured = sheet.getByRole("link", { name: "Be The One", exact: true });
+    await expect(featured).toBeVisible();
+    await expect(featured).toHaveAttribute("href", "/be-the-one");
+    await featured.click();
+    await expect(page).toHaveURL(/\/be-the-one$/);
+    await expect(sheet).toHaveCount(0);
+    await page.getByRole("button", { name: "Open menu", exact: true }).click();
     await sheet.getByRole("button", { name: "Services", exact: true }).click();
     const category = sheet.getByRole("button", { name: "Website & App Development", exact: true });
     await category.click();
@@ -125,7 +140,7 @@ test("shared header works across public routes and every catalog destination res
   ]) {
     await page.goto(route, { waitUntil: "domcontentloaded" });
     await expect(page.locator("header")).toHaveCount(1);
-    const trigger = page.getByRole("button", { name: "Services", exact: true });
+    const trigger = page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Services", exact: true });
     await expect(trigger).toBeEnabled();
     await trigger.focus();
     await trigger.press("ArrowDown");
@@ -147,7 +162,7 @@ test("reduced motion and short desktop viewport keep the mega menu accessible", 
   await page.setViewportSize({ width: 1280, height: 600 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/services", { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Services", exact: true }).hover();
+  await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Services", exact: true }).hover();
   const panel = page.locator(".service-mega-panel");
   const bounds = await panel.boundingBox();
   expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(600);
