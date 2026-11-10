@@ -5,6 +5,7 @@ export type HeaderLink = {
   label: string;
   params?: Readonly<Record<string, string>>;
   children?: readonly HeaderLink[];
+  activePaths?: readonly string[];
 };
 
 export function headerHref(link: HeaderLink) {
@@ -15,7 +16,9 @@ export function headerHref(link: HeaderLink) {
 
 export function headerLinkActive(link: HeaderLink, pathname: string) {
   const target = headerHref(link);
-  return pathname === target || (target !== "/" && pathname.startsWith(`${target}/`));
+  return [target, ...(link.activePaths ?? [])].some(
+    (path) => pathname === path || (path !== "/" && pathname.startsWith(`${path}/`)),
+  );
 }
 
 const joinItems: readonly HeaderLink[] = [

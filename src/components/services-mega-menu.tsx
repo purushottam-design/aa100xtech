@@ -6,7 +6,8 @@ import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link } from "@/lib/navigation";
 import { serviceNavigation } from "@/data/service-navigation";
 import { ServiceIcon, ServiceNavigationLinks } from "./service-navigation-links";
-import { BeTheOneNavLink } from "./be-the-one-nav-link";
+import { ServiceFeaturedLinks } from "./service-featured-links";
+import { site } from "@/data/site";
 
 export function ServicesMegaMenu() {
   const [open, setOpen] = useState(false);
@@ -129,7 +130,7 @@ export function ServicesMegaMenu() {
           className="absolute inset-x-0 top-full z-50 px-4 pt-2 sm:px-6"
         >
           <div className="service-mega-panel max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain rounded-2xl border border-primary/15 bg-background p-5 shadow-2xl shadow-black/15">
-            <BeTheOneNavLink onNavigate={close} />
+            <ServiceFeaturedLinks onNavigate={close} prideHref={site.myNameMyPrideUrl} />
             <div className="mb-5 flex items-center justify-between gap-4 border-b border-border/60 pb-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">

@@ -19,7 +19,7 @@ test("unified partner sections, existing workflows and creator photography fit a
   await expect(page.locator(".uip-tabs a")).toHaveCount(3);
   await expect(page.locator(".uip-steps li")).toHaveCount(4);
   await expect(page.getByRole("form", { name: "Influencer application", exact: true })).toHaveCount(
-    1,
+    0,
   );
   await expect(page.getByRole("form", { name: "Brand campaign inquiry", exact: true })).toHaveCount(
     1,
@@ -61,7 +61,11 @@ test("unified partner sections, existing workflows and creator photography fit a
     .locator(".uip-hero-copy")
     .getByRole("link", { name: "Join as Influencer", exact: true })
     .click();
-  await expect(page.locator("#uip-creator-form-title")).toBeInViewport();
+  await expect(page).toHaveURL(/\/influencer-marketing\/for-influencers$/);
+  await expect(
+    page.getByRole("form", { name: "Influencer application", exact: true }),
+  ).toBeVisible();
+  await page.goBack();
   await page.locator(".uip-hero-copy").getByRole("link", { name: "Partner as a Brand" }).click();
   await expect(page.locator("#uip-brand-form-title")).toBeInViewport();
   await page.getByLabel("Filter by category", { exact: true }).selectOption("technology");

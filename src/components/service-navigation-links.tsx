@@ -1,3 +1,5 @@
+"use client";
+
 import { Link } from "@/lib/navigation";
 import {
   Apple,
@@ -27,7 +29,7 @@ import {
   Users,
   Video,
 } from "lucide-react";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import type { ServiceNavigationItem } from "@/data/service-navigation";
 
 const icons = {
@@ -71,6 +73,7 @@ export function ServiceNavigationLinks({
   items: readonly ServiceNavigationItem[];
   onNavigate: () => void;
 }) {
+  const [prefetchTarget, setPrefetchTarget] = useState<string | null>(null);
   return (
     <ul className="space-y-1">
       {items.map((item, index) => (
@@ -80,7 +83,10 @@ export function ServiceNavigationLinks({
         >
           <Link
             to={item.href}
-            prefetch={false}
+            prefetch={prefetchTarget === item.href}
+            onMouseEnter={() => setPrefetchTarget(item.href)}
+            onFocus={() => setPrefetchTarget(item.href)}
+            onTouchStart={() => setPrefetchTarget(item.href)}
             onClick={onNavigate}
             className="service-menu-link group flex items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-[13px] leading-5 text-muted-foreground transition-colors hover:bg-primary/8 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             activeOptions={{ exact: true }}

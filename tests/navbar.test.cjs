@@ -17,17 +17,25 @@ test("navbar preserves the requested primary order and existing submenu destinat
     join.some((link) => link.to === "/careers/apply"),
     false,
   );
-  assert.ok(join.some((link) => link.to === "/influencer-partners#join"));
-  const marketing = headerNavigation.find((item) => item.label === "Marketing").items;
-  assert.ok(marketing.some((link) => headerHref(link) === "/services/social-media-marketing"));
-  assert.equal(marketing.length, 2);
-  assert.ok(
-    marketing.some(
-      (link) =>
-        link.to === "/influencer-partners" &&
-        link.label === "Influencer Programs & Influencer Marketing",
-    ),
+  assert.deepEqual(
+    Array.from(join, (link) => link.label),
+    ["Jobs", "Request an Account"],
   );
+  const marketing = headerNavigation.find((item) => item.label === "Marketing").items;
+  assert.deepEqual(
+    Array.from(marketing, (link) => [link.label, headerHref(link)]),
+    [
+      ["Social Media Ads Marketing", "/marketing/social-media-ads"],
+      ["Banner Marketing", "/marketing/banner-marketing"],
+      ["Newspaper Marketing", "/marketing/newspaper-marketing"],
+      ["Influencer Marketing", "/influencers"],
+      ["Hoarding Ads", "/marketing/hoarding-ads"],
+      ["Celebrity Marketing", "/marketing/celebrity-marketing"],
+    ],
+  );
+  const influencer = marketing.find((link) => link.to === "/influencers");
+  assert.equal(headerLinkActive(influencer, "/influencer-partners"), true);
+  assert.equal(headerLinkActive(influencer, "/influencer-marketing/for-brands"), true);
 });
 
 test("navbar links resolve to existing routes without duplicates between primary and secondary menus", () => {
@@ -45,7 +53,8 @@ test("navbar links resolve to existing routes without duplicates between primary
     const pathname = href.split("#")[0];
     assert.ok(
       fs.existsSync(`src/app${pathname === "/" ? "" : pathname}/page.tsx`) ||
-        /^\/services\/[^/]+$/.test(href),
+        /^\/services\/[^/]+$/.test(href) ||
+        (/^\/marketing\/[^/]+$/.test(href) && fs.existsSync("src/app/marketing/[slug]/page.tsx")),
       href,
     );
     assert.ok(!/^\/(admin|dashboard|affiliate-admin)/.test(href), href);

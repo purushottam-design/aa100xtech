@@ -1,0 +1,185 @@
+.page {
+  --muted-foreground: var(--text-secondary);
+  background:
+    radial-gradient(ellipse at 50% 0%, #fde68a40, transparent 50rem),
+    linear-gradient(180deg, var(--brand-cream), #fff 55rem);
+}
+
+.intro {
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.introAccent {
+  display: block;
+  width: 3rem;
+  height: 4px;
+  margin: 0 auto 1.5rem;
+  border-radius: 999px;
+  background: var(--brand-gradient);
+}
+
+.title {
+  color: var(--heading);
+  font-size: clamp(2rem, 3.5vw, 2.85rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.brand {
+  display: inline-block;
+  white-space: nowrap;
+  letter-spacing: 0.025em;
+  word-spacing: 0.18em;
+  background: linear-gradient(110deg, #b45309, #c2410c);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.introCopy {
+  max-width: 44rem;
+  margin: 1.15rem auto 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.guide {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem 0.5rem;
+  width: fit-content;
+  margin: 1.25rem auto 0;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #ffffffb3;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.guideLink {
+  color: #9a3412;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.guideLink:hover {
+  color: #7c2d12;
+}
+
+.guideLink:focus-visible {
+  outline: 2px solid var(--brand-orange);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+.page .card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 12px 36px #b4530910;
+}
+
+.cardHeader {
+  position: relative;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--brand-cream), var(--brand-light));
+}
+
+.cardHeader::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--brand-gradient);
+  content: "";
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #f4cf87;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #b45309;
+  box-shadow: 0 3px 10px #f59e0b12;
+}
+
+.cardTitle {
+  color: var(--heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cardDescription {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.page label {
+  color: #442b13;
+}
+
+.page input,
+.page textarea,
+.page [role="combobox"] {
+  border-color: #ecdfcb;
+  border-radius: 0.75rem;
+  background: #fffefa;
+  box-shadow: 0 2px 4px #442b1305;
+}
+
+.page input {
+  min-height: 2.75rem;
+}
+
+.page [role="combobox"] {
+  min-height: 3rem;
+  background: var(--brand-cream);
+}
+
+.page input:focus-visible,
+.page textarea:focus-visible,
+.page [role="combobox"]:focus-visible {
+  border-color: var(--brand-orange);
+  outline: 2px solid #fbbf2440;
+  outline-offset: 1px;
+}
+
+.page button[type="submit"] {
+  min-height: 2.9rem;
+  border-radius: 0.8rem;
+  background-image: var(--brand-button-gradient);
+  color: var(--heading);
+  font-weight: 700;
+  box-shadow: 0 8px 20px #f59e0b20;
+}
+
+@media (max-width: 639px) {
+  .introCopy {
+    font-size: 0.88rem;
+  }
+
+  .guide {
+    padding: 0.65rem 0.8rem;
+    border-radius: 0.9rem;
+    font-size: 0.74rem;
+  }
+}

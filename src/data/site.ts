@@ -16,6 +16,7 @@ export const site = {
   phoneApprovalPending: false,
   gstin: "10ABCCA6080A1ZH",
   domain: "www.aa100xtech.com",
+  myNameMyPrideUrl: "https://mynamemypride.com",
 } as const;
 
 export const navLinks: readonly { to: string; label: string; href?: string }[] = [
@@ -34,21 +35,19 @@ export const headerNavLinks = navLinks.filter((link) => link.to !== "/careers");
 // Re-enable navigation account controls without changing authentication routes.
 export const showAuthButtons = true;
 
-export const joinUsLinks = [
-  { to: "/careers", label: "Jobs" },
-  { to: "/influencer-partners#join", label: "Influencer Partners" },
-] as const;
+export const joinUsLinks = [{ to: "/careers", label: "Jobs" }] as const;
 
 export const marketingLinks = [
+  { to: "/marketing/social-media-ads", label: "Social Media Ads Marketing" },
+  { to: "/marketing/banner-marketing", label: "Banner Marketing" },
+  { to: "/marketing/newspaper-marketing", label: "Newspaper Marketing" },
   {
-    to: "/services/$slug",
-    params: { slug: "social-media-marketing" },
-    label: "Social Media Marketing",
+    to: "/influencers",
+    label: "Influencer Marketing",
+    activePaths: ["/influencer-partners", "/influencer-marketing"],
   },
-  {
-    to: "/influencer-partners",
-    label: "Influencer Programs & Influencer Marketing",
-  },
+  { to: "/marketing/hoarding-ads", label: "Hoarding Ads" },
+  { to: "/marketing/celebrity-marketing", label: "Celebrity Marketing" },
 ] as const;
 
 export const moreLinks = [
