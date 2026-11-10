@@ -111,9 +111,9 @@ export const socialProfile = z
 export const creatorIntakeSchema = z.object({
   ...base,
   full_name: required(),
-  city: required(80),
-  state: required(80),
-  country: required(80),
+  city: optional(80),
+  state: optional(80),
+  country: optional(80),
   profiles: z
     .array(socialProfile)
     .min(1, "Select at least one platform")
@@ -129,7 +129,7 @@ export const creatorIntakeSchema = z.object({
   engagement: z.number().min(0).max(100).nullable(),
   collaboration: z.enum(["Paid", "Barter", "Affiliate", "Open to All"]),
   previous_collaborations: optional(),
-  biography: z.string().trim().min(20, "Please write at least 20 characters").max(1200),
+  biography: optional(1200),
   publication_consent: z.boolean().default(false),
 });
 export const brandIntakeSchema = z.object({
@@ -137,8 +137,8 @@ export const brandIntakeSchema = z.object({
   company: required(),
   contact_name: required(),
   company_website: z.union([publicUrl, z.literal("")]).default(""),
-  industry: required(),
-  location: required(160),
+  industry: optional(120),
+  location: optional(160),
   objective: z.enum(objectives),
   platforms: z.array(z.enum(["Instagram", "YouTube", "Facebook", "Snapchat", "Other"])).min(1),
   category: z.enum(categories),

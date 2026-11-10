@@ -1,16 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { headerNavigation, headerHref } from "../../src/data/header-navigation";
 
-const labels = [
-  "Home",
-  "Services",
-  "Our Top Clients",
-  "Be The One",
-  "Founder",
-  "Join Us",
-  "Marketing",
-  "More",
-];
+const labels = ["Home", "Services", "Our Top Clients", "Founder", "Marketing", "Join Us"];
 async function settle(page: import("@playwright/test").Page) {
   await page.evaluate(async () => {
     await Promise.all(
@@ -23,14 +14,14 @@ async function settle(page: import("@playwright/test").Page) {
 }
 
 for (const width of [1280, 1440, 1920]) {
-  test(`desktop navbar order, spacing and dropdowns at ${width}px`, async ({ page }, testInfo) => {
+  test(`desktop navbar order, spacing and dropdowns at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/contact");
     const header = page.locator("header");
     const nav = page.getByRole("navigation", { name: "Main navigation", exact: true });
-    await expect(nav.getByRole("button", { name: "Services", exact: true })).toBeEnabled();
+    await expect(nav.getByRole("link", { name: "Services", exact: true })).toBeEnabled();
     expect((await nav.locator("a,button").allTextContents()).map((label) => label.trim())).toEqual(
       labels,
     );
@@ -56,7 +47,7 @@ for (const width of [1280, 1440, 1920]) {
       );
     for (let index = 1; index < bounds.length; index++)
       expect(bounds[index]!.x).toBeGreaterThanOrEqual(bounds[index - 1]!.right);
-    for (const name of ["Join Us", "Marketing", "More"]) {
+    for (const name of ["Join Us", "Marketing"]) {
       const trigger = nav.getByRole("button", { name, exact: true });
       await trigger.click();
       const menu = page.getByRole("menu");
@@ -78,18 +69,13 @@ for (const width of [1280, 1440, 1920]) {
         }
       }
       await settle(page);
-      if (name === "More")
-        await page.screenshot({ path: testInfo.outputPath(`navbar-more-${width}.png`) });
       await page.keyboard.press("Escape");
       await expect(menu).toHaveCount(0);
       await expect(trigger).toBeFocused();
     }
-    await expect(nav.getByRole("button", { name: "More", exact: true })).toHaveAttribute(
-      "data-active",
-      "true",
-    );
-    await nav.getByRole("button", { name: "More", exact: true }).press("ArrowDown");
-    await expect(page.getByRole("menuitem", { name: "About Us", exact: true })).toBeFocused();
+    await expect(nav.getByRole("button", { name: "More", exact: true })).toHaveCount(0);
+    await nav.getByRole("button", { name: "Join Us", exact: true }).press("ArrowDown");
+    await expect(page.getByRole("menuitem", { name: "Jobs", exact: true })).toBeFocused();
     await settle(page);
     await page.mouse.click(5, 200);
     await expect(page.getByRole("menu")).toHaveCount(0);
@@ -105,19 +91,14 @@ for (const width of [375, 768, 1024, 1279]) {
     await page.goto("/contact");
     await page.getByRole("button", { name: "Open menu", exact: true }).click();
     const sheet = page.getByRole("dialog", { name: "Menu", exact: true });
-    for (const name of ["Services", "Join Us", "Marketing", "More"]) {
+    for (const name of ["Services", "Join Us", "Marketing"]) {
       const trigger = sheet.getByRole("button", { name, exact: true });
       await trigger.click();
       await expect(trigger).toHaveAttribute("aria-expanded", "true");
-      if (name === "More")
-        await expect(sheet.getByRole("link", { name: "Contact Us", exact: true })).toHaveAttribute(
-          "aria-current",
-          "page",
-        );
       await trigger.click();
       await expect(trigger).toHaveAttribute("aria-expanded", "false");
     }
-    await sheet.getByRole("button", { name: "More", exact: true }).click();
+    await expect(sheet.getByRole("button", { name: "More", exact: true })).toHaveCount(0);
     await settle(page);
     expect(await sheet.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
       true,
@@ -126,8 +107,8 @@ for (const width of [375, 768, 1024, 1279]) {
       true,
     );
     await page.screenshot({ path: testInfo.outputPath(`navbar-mobile-${width}.png`) });
-    await sheet.getByRole("link", { name: "Contact Us", exact: true }).click();
-    await expect(page).toHaveURL(/\/contact$/);
+    await sheet.getByRole("link", { name: "Home", exact: true }).click();
+    await expect(page).toHaveURL(/\/$/);
     await expect(sheet).toHaveCount(0);
   });
 }

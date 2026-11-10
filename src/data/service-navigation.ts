@@ -45,7 +45,7 @@ export function buildServiceNavigation(
   for (const link of marketingLinks) {
     if ("params" in link) continue; // Social Media Marketing is already in the catalog.
     marketing.items.push({ title: link.label, href: link.to, icon: "Megaphone" });
-    if (link.to === "/influencer-marketing")
+    if (link.to === "/influencer-partners")
       marketing.items.push({
         title: "Viral Influencer Marketing",
         href: "/influencer-marketing#viral-influencer-marketing",

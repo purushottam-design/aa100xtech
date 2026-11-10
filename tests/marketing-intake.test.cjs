@@ -177,6 +177,21 @@ test("real handler saves only validated private data, returns DB receipt, and do
   assert.equal((await server({ failure: { code: "23505" } }).submit(brand, "brand")).status, 409);
   assert.equal((await server({ created: false }).submit(creator)).status, 200);
 });
+test("both intake handlers accept skipped optional details while keeping essential fields required", async () => {
+  const minimalCreator = { ...creator, city: "", state: "", country: "", biography: "" };
+  const minimalBrand = { ...brand, industry: "", location: "" };
+  const creatorServer = server();
+  assert.equal((await creatorServer.submit(minimalCreator)).status, 201);
+  assert.equal(creatorServer.writes[0].args.p_payload.biography, "");
+  assert.equal((await server().submit(minimalBrand, "brand")).status, 201);
+  assert.equal(creatorIntakeSchema.safeParse({ ...minimalCreator, full_name: "" }).success, false);
+  assert.equal(brandIntakeSchema.safeParse({ ...minimalBrand, contact_name: "" }).success, false);
+  assert.equal(
+    creatorIntakeSchema.safeParse({ ...minimalCreator, biography: "a".repeat(1201) }).success,
+    false,
+  );
+});
+
 test("private kits validate contents and size, and cleanup follows failed or duplicate persistence", async () => {
   const kit = new File(["%PDF-1.7\n synthetic test content\n%%EOF"], "test.pdf", {
     type: "application/pdf",

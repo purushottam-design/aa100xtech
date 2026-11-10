@@ -4,15 +4,29 @@ import { Link } from "@/lib/navigation";
 import { serviceNavigation } from "@/data/service-navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import { ServiceIcon, ServiceNavigationLinks } from "./service-navigation-links";
+import { BeTheOneNavLink } from "./be-the-one-nav-link";
 
 export function MobileServicesMenu({ onNavigate }: { onNavigate: () => void }) {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="services" className="border-0">
-        <AccordionTrigger className="rounded-lg px-3 py-3 text-base font-medium hover:bg-secondary hover:no-underline">
-          Services
-        </AccordionTrigger>
+        <div className="flex items-center justify-between">
+          <Link
+            to="/services"
+            onClick={onNavigate}
+            className="flex-1 rounded-lg px-3 py-3 text-base font-medium hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            Services
+          </Link>
+          <AccordionTrigger
+            aria-label="Services"
+            className="rounded-lg px-3 py-3 hover:bg-secondary hover:no-underline"
+          />
+        </div>
         <AccordionContent className="pb-0">
+          <div className="mx-3">
+            <BeTheOneNavLink onNavigate={onNavigate} />
+          </div>
           <Link
             to="/services"
             onClick={onNavigate}

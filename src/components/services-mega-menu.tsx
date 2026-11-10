@@ -6,12 +6,12 @@ import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { Link } from "@/lib/navigation";
 import { serviceNavigation } from "@/data/service-navigation";
 import { ServiceIcon, ServiceNavigationLinks } from "./service-navigation-links";
+import { BeTheOneNavLink } from "./be-the-one-nav-link";
 
 export function ServicesMegaMenu() {
   const [open, setOpen] = useState(false);
-  const [interactive, setInteractive] = useState(false);
   const root = useRef<HTMLDivElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
+  const trigger = useRef<HTMLAnchorElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const keyboardOpen = useRef(false);
   const panelId = useId();
@@ -24,8 +24,6 @@ export function ServicesMegaMenu() {
     cancelClose();
     setOpen(false);
   };
-
-  useEffect(() => setInteractive(true), []);
 
   useEffect(() => {
     setOpen(false);
@@ -106,18 +104,14 @@ export function ServicesMegaMenu() {
         if (!event.currentTarget.contains(event.relatedTarget)) close();
       }}
     >
-      <button
+      <Link
         ref={trigger}
         id={triggerId}
-        type="button"
-        disabled={!interactive}
+        to="/services"
         aria-expanded={open}
         aria-controls={panelId}
         data-active={pathname.startsWith("/services")}
-        onClick={() => {
-          cancelClose();
-          setOpen((value) => !value);
-        }}
+        onClick={close}
         className={`site-nav-trigger relative flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${open || pathname.startsWith("/services") ? "bg-secondary text-foreground" : "text-muted-foreground"}`}
       >
         Services{" "}
@@ -125,7 +119,7 @@ export function ServicesMegaMenu() {
           aria-hidden="true"
           className={`size-3.5 transition-transform ${open ? "rotate-180" : ""}`}
         />
-      </button>
+      </Link>
       {open && (
         <div
           id={panelId}
@@ -135,6 +129,7 @@ export function ServicesMegaMenu() {
           className="absolute inset-x-0 top-full z-50 px-4 pt-2 sm:px-6"
         >
           <div className="service-mega-panel max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain rounded-2xl border border-primary/15 bg-background p-5 shadow-2xl shadow-black/15">
+            <BeTheOneNavLink onNavigate={close} />
             <div className="mb-5 flex items-center justify-between gap-4 border-b border-border/60 pb-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">

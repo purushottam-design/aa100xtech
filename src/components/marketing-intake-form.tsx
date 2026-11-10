@@ -36,9 +36,9 @@ const creatorFields: Field[][] = [
     { name: "full_name", label: "Full Name", required: true },
     { name: "email", label: "Email Address", type: "email", required: true },
     { name: "phone", label: "WhatsApp / Mobile Number", type: "tel", required: true },
-    { name: "city", label: "City", required: true },
-    { name: "state", label: "State", required: true },
-    { name: "country", label: "Country", required: true },
+    { name: "city", label: "City" },
+    { name: "state", label: "State" },
+    { name: "country", label: "Country" },
   ],
   [
     { name: "category", label: "Primary Content Category", options: categories, required: true },
@@ -60,8 +60,7 @@ const creatorFields: Field[][] = [
       name: "biography",
       label: "Short Bio / About Yourself",
       type: "textarea",
-      required: true,
-      help: "20–1,200 characters. Tell us about your content and creator journey.",
+      help: "Up to 1,200 characters. Tell us about your content and creator journey.",
     },
   ],
 ];
@@ -77,8 +76,8 @@ const brandFields: Field[][] = [
       type: "url",
       help: "Full https:// address",
     },
-    { name: "industry", label: "Business Category / Industry", required: true },
-    { name: "location", label: "City / Country", required: true },
+    { name: "industry", label: "Business Category / Industry" },
+    { name: "location", label: "City / Country" },
   ],
   [
     { name: "objective", label: "Campaign Objective", options: objectives, required: true },
@@ -179,6 +178,7 @@ function FormField({
       <label htmlFor={id} className="mb-2 block text-sm font-medium">
         {f.label}
         {f.required && <span className="text-primary"> *</span>}
+        {!f.required && <span className="text-muted-foreground"> (Optional)</span>}
       </label>
       {f.options ? (
         <select {...attrs} className={control}>

@@ -2,21 +2,14 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { test } = require("node:test");
 const load = require("./helpers/load-server.cjs");
-const { headerNavigation, headerHref, headerLinkActive } = load("src/data/header-navigation.ts");
+const { headerNavigation, headerHref, headerLinkActive, moreItems } = load(
+  "src/data/header-navigation.ts",
+);
 
 test("navbar preserves the requested primary order and existing submenu destinations", () => {
   assert.deepEqual(
     Array.from(headerNavigation, (item) => item.label),
-    [
-      "Home",
-      "Services",
-      "Our Top Clients",
-      "Be The One",
-      "Founder",
-      "Join Us",
-      "Marketing",
-      "More",
-    ],
+    ["Home", "Services", "Our Top Clients", "Founder", "Marketing", "Join Us"],
   );
   const join = headerNavigation.find((item) => item.label === "Join Us").items;
   assert.ok(join.some((link) => link.to === "/careers"));
@@ -24,11 +17,17 @@ test("navbar preserves the requested primary order and existing submenu destinat
     join.some((link) => link.to === "/careers/apply"),
     false,
   );
-  assert.ok(join.some((link) => link.to === "/influencers"));
+  assert.ok(join.some((link) => link.to === "/influencer-partners#join"));
   const marketing = headerNavigation.find((item) => item.label === "Marketing").items;
   assert.ok(marketing.some((link) => headerHref(link) === "/services/social-media-marketing"));
-  assert.ok(marketing.some((link) => link.to === "/influencer-marketing"));
-  assert.ok(marketing.some((link) => link.to === "/influencer-programs"));
+  assert.equal(marketing.length, 2);
+  assert.ok(
+    marketing.some(
+      (link) =>
+        link.to === "/influencer-partners" &&
+        link.label === "Influencer Programs & Influencer Marketing",
+    ),
+  );
 });
 
 test("navbar links resolve to existing routes without duplicates between primary and secondary menus", () => {
@@ -43,14 +42,15 @@ test("navbar links resolve to existing routes without duplicates between primary
       continue;
     }
     assert.ok(!href.includes("$"), href);
+    const pathname = href.split("#")[0];
     assert.ok(
-      fs.existsSync(`src/app${href === "/" ? "" : href}/page.tsx`) ||
+      fs.existsSync(`src/app${pathname === "/" ? "" : pathname}/page.tsx`) ||
         /^\/services\/[^/]+$/.test(href),
       href,
     );
     assert.ok(!/^\/(admin|dashboard|affiliate-admin)/.test(href), href);
   }
-  const more = headerNavigation.find((item) => item.label === "More").items;
+  const more = moreItems;
   assert.equal(more.length, 4);
   for (const to of ["/about", "/consultation", "/contact", "/catalog"])
     assert.ok(

@@ -4,6 +4,7 @@ import { usePublicSite } from "@/hooks/use-public-site";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { services } from "@/data/services";
 import { legalLinks, moreLinks, navLinks, programLinks } from "@/data/site";
+import { moreItems } from "@/data/header-navigation";
 
 const footerServices = [
   "website-development",
@@ -22,7 +23,7 @@ export function SiteFooter() {
   const site = usePublicSite();
   return (
     <footer className="border-t border-border/60 bg-surface/40 pb-24">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8 xl:grid-cols-6">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8 xl:grid-cols-7">
         <div className="sm:col-span-2">
           <div className="flex items-center">
             <span className="brand-logo-wrap">
@@ -106,6 +107,19 @@ export function SiteFooter() {
           <h3 className="text-sm font-semibold">Programs</h3>
           <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
             {programLinks.map((link) => (
+              <li key={link.to}>
+                <Link to={link.to} className="transition-colors hover:text-foreground">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold">More</h3>
+          <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+            {moreItems.map((link) => (
               <li key={link.to}>
                 <Link to={link.to} className="transition-colors hover:text-foreground">
                   {link.label}
