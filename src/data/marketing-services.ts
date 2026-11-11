@@ -20,6 +20,18 @@ export type MarketingService = {
   faqs: { question: string; answer: string }[];
   ctaHeading: string;
   ctaDescription: string;
+  copy?: {
+    heroTag: string;
+    primaryButton: string;
+    secondaryButton: string;
+    heroNote: string;
+    offerings: { label: string; heading: string; intro: string };
+    why: { label: string; heading: string; intro: string };
+    process: { label: string; heading: string; intro: string };
+    audiences: { label: string; heading: string; intro: string };
+    faq: { label: string; heading: [string, string] };
+    cta: { label: string; note: string };
+  };
 };
 
 export const marketingServices: MarketingService[] = [
@@ -174,121 +186,162 @@ export const marketingServices: MarketingService[] = [
     heading: "A clear message.",
     highlight: "An unmissable presence.",
     intro:
-      "From a website launch to an event entrance, make your brand easy to notice and understand. We design banners around your message, your audience and the place they will appear.",
+      "From a website grand launch to a busy event venue entrance, make your brand easy to notice and understand with high-impact banner marketing. We design and place banners around your exact message, your target audience, and the physical or digital space where they will appear.",
     image: "/marketing/banner-marketing.webp",
     imageAlt: "Designer using a stylus and graphics tablet to develop visual creative",
     imageCaption: "One brand story, adapted to every format.",
-    aboutHeading: "Designed to be seen. Built to communicate.",
+    aboutHeading: "Designed to be seen. Built for high-impact banner marketing.",
     about: [
-      "A good banner gives people a reason to pause and a clear next step. The right headline, visual hierarchy and format help your message work across websites, digital placements, storefronts and events.",
-      "AA100X TECH translates your campaign brief into consistent, practical creatives. We help plan dimensions, placement and production requirements so each banner fits its setting, whether it is viewed on a phone or printed for a venue.",
+      "A good marketing banner gives people a compelling reason to pause and a clear next step. The right headline, visual hierarchy, and correct dimension format help your promotional message work seamlessly across high-traffic websites, digital display placements, outdoor storefronts, and live corporate events.",
+      "Absolute Advancement 100X Tech translates your campaign brief into consistent, practical banner creatives. We help plan precise dimensions, strategic placements, and professional production requirements so each advertising banner fits its setting perfectly—whether it is viewed on a mobile phone screen or printed large for a physical venue.",
     ],
     benefits: [
-      "Keep your brand consistent across placements",
-      "Make offers and next steps easier to understand",
-      "Prepare creative for digital and print requirements",
+      "Keep your brand identity consistent across all digital and physical banner placements.",
+      "Make special offers and calls to action much easier for target customers to understand.",
+      "Prepare professional creative files that fully meet technical digital display and print production requirements.",
     ],
     offerings: [
       {
-        title: "Promotional banners",
+        title: "Promotional Banners",
         description:
-          "Introduce offers, seasonal campaigns and product launches with a clear headline and call to action.",
+          "Introduce limited-time offers, seasonal promotional campaigns, and brand product launches with a clear headline and powerful call to action.",
       },
       {
-        title: "Digital advertising banners",
+        title: "Digital Advertising Banners",
         description:
-          "Create display ad variations suited to the dimensions and specifications of your chosen advertising channels.",
+          "Create high-converting display ad banner variations suited precisely to the dimensions and specs of your chosen online advertising channels.",
       },
       {
-        title: "Website banners",
+        title: "Website Banners",
         description:
-          "Design responsive hero and campaign banners that complement your website and point visitors to the right page.",
+          "Design responsive website hero banners and campaign banners that instantly complement your web pages and guide visitors to the right landing page.",
       },
       {
-        title: "Event banners",
+        title: "Event Banners",
         description:
-          "Plan backdrops, standees and venue banners with readable typography and practical production sizes.",
+          "Plan large-scale backdrops, standees, roll-up banners, and venue display banners with readable typography and practical production sizes.",
       },
       {
-        title: "Business promotional creatives",
+        title: "Business Promotional Creatives",
         description:
-          "Build a coordinated visual direction for store promotions, service announcements and business campaigns.",
+          "Build a coordinated visual banner direction for retail store promotions, local service announcements, and corporate marketing campaigns.",
       },
       {
-        title: "Design and placement",
+        title: "Design & Placement Coordination",
         description:
-          "Prepare approved files and coordinate agreed placement or print requirements with the relevant provider.",
+          "Prepare approved banner files and coordinate agreed media placement or print requirements with the relevant publishing provider or printer.",
       },
     ],
     reasons: [
       {
-        title: "Message-led design",
-        description: "Every layout starts with the main point your audience should remember.",
-      },
-      {
-        title: "Consistency across sizes",
-        description: "Your campaign keeps its identity as we adapt layouts for different spaces.",
-      },
-      {
-        title: "Practical production",
+        title: "Message-Led Banner Design",
         description:
-          "File formats, safe areas and print specifications are considered before handover.",
+          "Every layout starts with the main point your target audience should remember and act upon.",
       },
       {
-        title: "Collaborative approvals",
+        title: "Visual Consistency Across Sizes",
         description:
-          "Review the design and scope of revisions before files are released or placement begins.",
+          "Your banner campaign keeps its sharp identity as we adapt layouts for different spaces and dimensions.",
+      },
+      {
+        title: "Practical Production Standards",
+        description:
+          "File formats, bleed areas, safe zones, and print specifications are thoroughly considered before final handover.",
+      },
+      {
+        title: "Collaborative Approvals",
+        description:
+          "Review your banner designs and scope of revisions carefully before files are released or media placement begins.",
       },
     ],
     process: [
-      "Discuss your campaign, brand assets and intended placements.",
-      "Agree on messaging, sizes, creative direction and production requirements.",
-      "Design, review and release approved banners for the agreed channels.",
-      "Check live display or print output and refine suitable digital variations.",
-      "Summarise delivered assets, placements and any available campaign feedback.",
+      "Discuss your marketing campaign goals, brand assets, and intended banner placement locations.",
+      "Agree on core messaging, banner dimensions, creative visual direction, and production requirements.",
+      "Design, review, and release approved marketing banners for all agreed digital or physical channels.",
+      "Check live display performance or physical print output and refine suitable digital banner variations.",
+      "Summarize delivered banner assets, verified placements, and any available campaign performance feedback.",
     ],
     audiences: [
-      "Give a new launch a consistent visual identity.",
-      "Promote offers without rebuilding your entire brand.",
-      "Coordinate approved creative across teams and events.",
-      "Highlight products, collections and seasonal promotions.",
-      "Make storefronts, local events and offers easier to notice.",
+      "Give a brand new product launch a consistent, unmissable visual identity through eye-catching banners.",
+      "Promote seasonal offers and local services effectively without having to rebuild your entire brand.",
+      "Coordinate approved banner creative effortlessly across large regional teams, offices, and major events.",
+      "Highlight trending products, new collections, and limited-time sales promotions with dynamic banners.",
+      "Make your storefronts, local community events, and special store discounts much easier for passersby to notice.",
     ],
     faqs: [
       {
         question: "Do you design both digital and printed banners?",
         answer:
-          "Yes. We can scope website banners, digital display ads, promotional print banners, standees and event backdrops. Each format is prepared to the specifications agreed for its intended placement.",
+          "Yes, we create digital banners for websites and online ads, as well as print-ready files for physical hoardings, standees, and venue displays.",
       },
       {
-        question: "What do you need before design starts?",
+        question: "What do you need before banner design starts?",
         answer:
-          "Please share your logo, brand guidelines if available, approved text, offer details, images you have rights to use and the required dimensions. We can help refine the brief when those details are still taking shape.",
+          "We need your brand logo, brand color guidelines, campaign objectives, preferred text or offers, and any specific size dimensions required.",
       },
       {
-        question: "Can one design be used in several sizes?",
+        question: "Can one banner design be used in several sizes?",
         answer:
-          "We can create a coordinated set of sizes. Each layout may need adjustments to keep text readable and the main message visible; resizing is planned as part of the scope rather than simply stretching one file.",
+          "Yes, we adapt a master design concept into various horizontal, vertical, and square dimensions to fit different platforms.",
       },
       {
         question: "Are printing and media placement included?",
         answer:
-          "Design, printing, installation and paid media placements are separate items unless your proposal explicitly combines them. We confirm vendor responsibilities, specifications and costs before you approve the work.",
+          "Our primary scope covers professional design, sizing, and file preparation. We can also coordinate with trusted print or media partners upon request.",
       },
       {
         question: "Can you help place a banner on our website?",
         answer:
-          "Yes, when website access and the technical scope allow it. We can discuss responsive behaviour, link destinations and performance so the banner works as part of the page experience.",
+          "Yes, our technical team can embed and position your website hero or promotional banners directly into your web pages.",
       },
       {
-        question: "Which files will we receive?",
+        question: "Which file formats will we receive?",
         answer:
-          "Deliverables depend on the agreed scope and placement: for example, optimised web images or print-ready files. Editable source files, licensed fonts and third-party asset rights are confirmed in the proposal.",
+          "You will receive high-resolution print-ready files (PDF, CDR/AI) and optimized digital formats (PNG, JPEG, WebP) ready for use.",
       },
     ],
-    ctaHeading: "Make your next message stand out.",
+    ctaHeading: "Make your next marketing message unmissable.",
     ctaDescription:
-      "Share your campaign idea and where the banner will appear. We will help shape the right creative and formats.",
+      "Share your campaign idea and where your banner needs to appear. We will help shape the right creative and formats.",
+    copy: {
+      heroTag: "BANNER MARKETING & DESIGN",
+      primaryButton: "Get a Free Banner Consultation",
+      secondaryButton: "Get Customised Banner Proposal",
+      heroNote:
+        "Start with your campaign brief. We will help shape your next banner marketing step.",
+      offerings: {
+        label: "OUR BANNER MARKETING SERVICES",
+        heading: "Our Banner Marketing Services",
+        intro:
+          "Thoughtful planning, purposeful creative design, and practical support for your entire banner marketing campaign.",
+      },
+      why: {
+        label: "WHY CHOOSE US",
+        heading: "Why Choose Our Banner Marketing Team",
+        intro:
+          "A clear scope, a collaborative creative process, and a team that connects your banner campaigns directly with wider business growth.",
+      },
+      process: {
+        label: "OUR PROCESS",
+        heading: "How Our Banner Marketing Works",
+        intro:
+          "One shared, transparent plan, from your first conversation to the final banner campaign review.",
+      },
+      audiences: {
+        label: "WHO WE HELP",
+        heading: "Who Can Benefit From Our Banner Marketing?",
+        intro:
+          "Your business stage, target market, and growth priorities shape the right banner marketing campaign.",
+      },
+      faq: {
+        label: "FREQUENTLY ASKED QUESTIONS",
+        heading: ["Banner Marketing:", "Frequently Asked Questions"],
+      },
+      cta: {
+        label: "LET'S GROW YOUR BUSINESS",
+        note: "Send a consultation enquiry or share your banner marketing requirements for a tailored proposal.",
+      },
+    },
   },
   {
     slug: "newspaper-marketing",
@@ -303,89 +356,89 @@ export const marketingServices: MarketingService[] = [
       "classified advertisements",
       "regional newspaper campaigns",
     ],
-    heading: "Your story, in print.",
-    highlight: "Your message, closer to home.",
+    heading: "Your brand, in daily newspapers.",
+    highlight: "Your message, in every hand.",
     intro:
-      "Connect with readers in the places that matter to your business. We help plan newspaper campaigns with thoughtful publication selection, clear creative and coordinated placements.",
+      "Connect directly with local and regional readers through well-planned newspaper advertisements. We help you select the right city editions, create print-ready designs, and coordinate seamless bookings.",
     image: "/marketing/newspaper-marketing.webp",
     imageAlt: "Printed newspapers showing the texture and layout of traditional print media",
     imageCaption: "Local relevance, thoughtful planning and print-ready creative.",
-    aboutHeading: "Put your business in the daily conversation.",
+    aboutHeading: "Make your business part of the daily newspaper read.",
     about: [
-      "Newspaper advertising places your offer alongside the news and information readers choose to spend time with. Publication, edition, language, ad size and publication date all influence how well a placement fits your audience.",
-      "AA100X TECH helps you navigate those choices. We shape your message, prepare artwork to publisher specifications and coordinate the booking process, with publication availability and written approvals confirmed before release.",
+      "Newspaper advertising puts your business announcements directly in front of an engaged audience that spends quality time reading daily editions. Choosing the right city edition, regional language, and ad size ensures your budget delivers maximum local visibility. AA100X TECH helps you navigate those choices, preparing artwork to publisher specifications with written approvals confirmed before release.",
     ],
     benefits: [
-      "Focus on relevant cities, editions and readership",
-      "Choose a format suited to your message",
-      "Connect print enquiries with your wider marketing activity",
+      "Focus on relevant cities, editions, and readership based on where your core customers live and shop.",
+      "Choose ad formats suited to your message—from classified text ads to full-page display announcements.",
+      "Connect print enquiries seamlessly with your wider marketing activity using dedicated numbers or landing page links.",
     ],
     offerings: [
       {
-        title: "Advertisement planning",
+        title: "Advertisement Planning",
         description:
-          "Recommend publication types, editions, dates and ad formats around your audience and campaign goal.",
+          "Recommend publication types, editions, dates, and ad formats around your audience and campaign goal.",
       },
       {
-        title: "Print advertisement design",
+        title: "Print Advertisement Design",
         description:
-          "Create readable, print-ready artwork with the right hierarchy, dimensions and required brand details.",
+          "Create readable, print-ready artwork with the right column widths, dimensions, and required brand details.",
       },
       {
-        title: "Classified advertisements",
+        title: "Classified Advertisements",
         description:
-          "Prepare concise classified copy and coordinate category, word limits and publisher requirements.",
+          "Prepare concise classified copy and coordinate category lines, word limits, and publisher requirements.",
       },
       {
-        title: "Display advertisements",
+        title: "Display Advertisements",
         description:
-          "Develop visual display ads for launches, promotions and business announcements at agreed sizes.",
+          "Develop visual display ads for launches, promotions, and business announcements at agreed sizes.",
       },
       {
-        title: "Regional newspaper campaigns",
+        title: "Regional Newspaper Campaigns",
         description:
           "Plan local or regional editions and language adaptations appropriate to your target communities.",
       },
       {
-        title: "Ad placement coordination",
+        title: "Ad Placement Coordination",
         description:
-          "Coordinate artwork submission, booking deadlines, proof approval and publication confirmation where available.",
+          "Coordinate artwork submission, booking deadlines, digital proof approvals, and publication confirmations.",
       },
     ],
     reasons: [
       {
-        title: "Relevant media choices",
+        title: "Relevant Media Choices",
         description:
           "Publication recommendations reflect your audience and location, with availability checked before booking.",
       },
       {
-        title: "Attention to print detail",
+        title: "Attention to Print Detail",
         description:
-          "We consider artwork specifications and readability before your message goes to press.",
+          "We consider artwork specifications, font readability, and column layouts before your message goes to press.",
       },
       {
-        title: "Clear approvals",
-        description: "Review copy, artwork, publication details and quoted costs before release.",
+        title: "Clear Approvals",
+        description:
+          "Review copy, artwork, publication details, and quoted costs before final release.",
       },
       {
-        title: "Coordinated execution",
+        title: "Coordinated Execution",
         description:
-          "Keep publisher deadlines, creative preparation and campaign timing connected.",
+          "Keep publisher deadlines, creative preparation, and campaign timing smoothly connected.",
       },
     ],
     process: [
-      "Discuss your offer, target readers, location and preferred dates.",
-      "Choose suitable editions, ad formats, artwork needs and booking options.",
-      "Submit approved artwork and coordinate the agreed newspaper booking.",
-      "Check publication details and use enquiry feedback to inform later insertions.",
-      "Provide available publication confirmations and summarise campaign observations.",
+      "Discuss your business offer, target readers, preferred location, and advertising dates.",
+      "Choose suitable editions, ad formats (classified or display), artwork needs, and booking options.",
+      "Submit approved print artwork and secure confirmed placement slots with the publication desk.",
+      "Check physical publication details and use enquiry feedback to inform later insertions.",
+      "Provide official publication tearsheets or digital confirmation proofs along with campaign performance summaries.",
     ],
     audiences: [
-      "Introduce a business to a selected local readership.",
-      "Announce offers, openings and services in relevant editions.",
-      "Coordinate regional announcements and multi-edition campaigns.",
-      "Support launches with print messages linked to an online destination.",
-      "Reach readers around your shops, offices and service areas.",
+      "Introduce a brand new business or service to a selected local readership.",
+      "Announce festive offers, grand openings, and local services in relevant editions.",
+      "Coordinate regional brand announcements and multi-edition campaigns effortlessly.",
+      "Support major sales launches with print messages linked to an online destination.",
+      "Reach active readers directly around your physical shops, offices, and service areas.",
     ],
     faqs: [
       {
@@ -421,7 +474,43 @@ export const marketingServices: MarketingService[] = [
     ],
     ctaHeading: "Bring your next announcement to the right readers.",
     ctaDescription:
-      "Tell us your target city, preferred publication date and message. We will help plan the next steps.",
+      "Tell us your target city, preferred publication date, and message. We will help plan the next steps.",
+    copy: {
+      heroTag: "NEWSPAPER MARKETING",
+      primaryButton: "Get a Free Consultation",
+      secondaryButton: "Get Customised Proposal",
+      heroNote: "Start with your brief. We will help shape your next newspaper marketing step.",
+      offerings: {
+        label: "FROM IDEA TO EXECUTION",
+        heading: "Our Newspaper Marketing Services",
+        intro:
+          "Thoughtful planning, purposeful creative design, and practical support for your entire newspaper advertising campaign.",
+      },
+      why: {
+        label: "A CONSIDERED APPROACH",
+        heading: "Why Choose Our Newspaper Marketing Team",
+        intro:
+          "A clear scope, a collaborative process and a team that connects your marketing with the wider business.",
+      },
+      process: {
+        label: "CLARITY AT EVERY STAGE",
+        heading: "How Our Newspaper Advertising Works",
+        intro: "One shared plan, from the first conversation to the campaign review.",
+      },
+      audiences: {
+        label: "BUILT AROUND YOUR BUSINESS",
+        heading: "Who Can Benefit From Our Newspaper Marketing?",
+        intro: "Your stage, your market and your priorities shape the campaign.",
+      },
+      faq: {
+        label: "Before we begin",
+        heading: ["Good questions.", "Clear answers."],
+      },
+      cta: {
+        label: "YOUR NEXT MOVE STARTS HERE",
+        note: "Send a consultation enquiry or share your requirements for a tailored proposal.",
+      },
+    },
   },
   {
     slug: "hoarding-ads",
@@ -694,7 +783,9 @@ export const marketingServices: MarketingService[] = [
 ];
 
 export const marketingServiceHref = (service: Pick<MarketingService, "slug">) =>
-  `/marketing/${service.slug}`;
+  service.slug === "social-media-ads"
+    ? "/social-media-ads-marketing"
+    : `/marketing/${service.slug}`;
 
 export function findMarketingService(slug: string) {
   return marketingServices.find((service) => service.slug === slug);

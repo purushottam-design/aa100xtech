@@ -143,6 +143,7 @@ export const consultationServices = [
   "Software Development",
   "Cloud Infrastructure",
   "Digital Marketing",
+  "Social Media Ads Marketing",
   "E-commerce",
   "Custom Software",
   "Other",

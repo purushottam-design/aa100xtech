@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/lib/navigation";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Quote } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { SectionHeading } from "@/components/section-heading";
@@ -74,7 +74,7 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,hsl(var(--primary)/0.16),transparent_70%)]" />
-        <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-28">
+        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-primary">
               <span className="size-1.5 animate-pulse rounded-full bg-primary" />
@@ -106,34 +106,70 @@ export function CareersPage({ cohort }: { cohort: CareersCohort }) {
               </Button>
             </div>
             {cohort.kicker ? (
-              <p className="mt-6 font-display text-sm uppercase tracking-[0.2em] text-muted-foreground">
-                {cohort.kicker}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="glass-card rounded-2xl p-6">
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
-              Trial brief · sample
-            </p>
-            <h2 className="mt-4 font-display text-xl font-bold">{cohort.sampleBrief.title}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {cohort.sampleBrief.body}
-            </p>
-            <dl className="mt-6 grid grid-cols-3 gap-3 border-t border-border/60 pt-5 text-center">
-              {[
-                { k: "Window", v: "10 days" },
-                { k: "Updates", v: "daily, 1 line" },
-                { k: "Decision", v: "day 10" },
-              ].map((i) => (
-                <div key={i.k}>
-                  <dt className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                    {i.k}
-                  </dt>
-                  <dd className="mt-1 text-sm font-semibold">{i.v}</dd>
+              <aside
+                aria-labelledby="careers-philosophy"
+                className="relative mt-10 overflow-hidden rounded-3xl border border-amber-200 bg-linear-to-br from-amber-50 via-white to-orange-50 p-5 shadow-sm sm:p-8"
+              >
+                <div className="flex items-start gap-4">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-amber-200 bg-white text-orange-600 sm:size-12">
+                    <Quote className="size-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-orange-700">
+                      Our hiring philosophy
+                    </p>
+                    <h2
+                      id="careers-philosophy"
+                      className="mt-2 text-2xl font-bold leading-snug tracking-tight text-slate-950 sm:text-3xl"
+                    >
+                      {cohort.kicker}
+                    </h2>
+                  </div>
                 </div>
-              ))}
-            </dl>
+                <div className="mt-6 grid gap-3 lg:grid-cols-3">
+                  <figure className="rounded-2xl border border-amber-200/70 bg-white/85 p-5 sm:p-6">
+                    <figcaption className="text-xs font-semibold tracking-wide text-orange-700">
+                      हिन्दी / Hindi
+                    </figcaption>
+                    <blockquote
+                      lang="hi"
+                      className="mt-4 text-xl font-semibold leading-relaxed text-slate-900"
+                    >
+                      काम बोलेगा।
+                      <br />
+                      <span className="font-normal text-slate-600">रिज़्यूमे बाद में।</span>
+                    </blockquote>
+                  </figure>
+                  <figure className="rounded-2xl border border-amber-200/70 bg-white/85 p-5 sm:p-6">
+                    <figcaption className="text-xs font-semibold tracking-wide text-orange-700">
+                      English
+                    </figcaption>
+                    <blockquote
+                      lang="en"
+                      className="mt-4 text-xl font-semibold leading-relaxed text-slate-900"
+                    >
+                      Let your work speak.
+                      <br />
+                      <span className="font-normal text-slate-600">Your résumé comes later.</span>
+                    </blockquote>
+                  </figure>
+                  <figure className="rounded-2xl border border-amber-200/70 bg-white/85 p-5 sm:p-6">
+                    <figcaption className="text-xs font-semibold tracking-wide text-orange-700">
+                      اردو / Urdu
+                    </figcaption>
+                    <blockquote
+                      lang="ur"
+                      dir="rtl"
+                      className="mt-4 font-serif text-2xl font-semibold leading-loose text-slate-900"
+                    >
+                      کام بولے گا۔
+                      <br />
+                      <span className="font-normal text-slate-600">ریزیومے بعد میں۔</span>
+                    </blockquote>
+                  </figure>
+                </div>
+              </aside>
+            ) : null}
           </div>
         </div>
 

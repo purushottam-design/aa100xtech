@@ -25,7 +25,7 @@ test("navbar preserves the requested primary order and existing submenu destinat
   assert.deepEqual(
     Array.from(marketing, (link) => [link.label, headerHref(link)]),
     [
-      ["Social Media Ads Marketing", "/marketing/social-media-ads"],
+      ["Social Media Ads Marketing", "/social-media-ads-marketing"],
       ["Banner Marketing", "/marketing/banner-marketing"],
       ["Newspaper Marketing", "/marketing/newspaper-marketing"],
       ["Influencer Marketing", "/influencers"],

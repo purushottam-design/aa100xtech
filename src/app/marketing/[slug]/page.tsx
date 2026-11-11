@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { MarketingServicePage } from "@/components/marketing-service-page";
 import {
   findMarketingService,
@@ -42,5 +42,6 @@ export async function generateMetadata({
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const service = findMarketingService((await params).slug);
   if (!service) notFound();
+  if (service.slug === "social-media-ads") permanentRedirect("/social-media-ads-marketing");
   return <MarketingServicePage service={service} />;
 }

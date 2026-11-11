@@ -54,7 +54,7 @@ export function validWebsiteOrigin(request: Request) {
   );
 }
 
-export async function saveWebsiteRequest(request: Request) {
+export async function saveWebsiteRequest(request: Request, requireSocialAds = false) {
   if (!validWebsiteOrigin(request))
     return json({ saved: false, message: "Cross-site request rejected." }, 403);
   if (!request.headers.get("content-type")?.startsWith("multipart/form-data"))
@@ -97,7 +97,12 @@ export async function saveWebsiteRequest(request: Request) {
       },
       400,
     );
-  const { website: _trap, startedAt, campaign, ...data } = parsed.data;
+  if (requireSocialAds && !parsed.data.socialAds)
+    return json(
+      { saved: false, message: "Complete the advertising proposal form and privacy consent." },
+      400,
+    );
+  const { website: _trap, startedAt, campaign, socialAds, ...data } = parsed.data;
   if (Date.now() - startedAt < 2000 || startedAt > Date.now())
     return json(
       {
@@ -170,6 +175,7 @@ export async function saveWebsiteRequest(request: Request) {
     ...data,
     filePath,
     ...(campaign ? { campaign: JSON.stringify(campaign) } : {}),
+    ...(socialAds ? { socialAds: JSON.stringify(socialAds), status: "New" } : {}),
   };
   const recipient = data.kind === "career" ? site.hrEmail : (await publicSiteSettings()).email;
   const { data: created, error } = await db.rpc("submit_website_request", {
@@ -177,7 +183,12 @@ export async function saveWebsiteRequest(request: Request) {
     request_kind: data.kind,
     request_payload: payload,
     request_hash: digest(
-      JSON.stringify({ ...data, fileDigest, ...(campaign ? { campaign } : {}) }),
+      JSON.stringify({
+        ...data,
+        fileDigest,
+        ...(campaign ? { campaign } : {}),
+        ...(socialAds ? { socialAds } : {}),
+      }),
     ),
     sender_hash: digest(data.email.toLowerCase()),
     destination: recipient,
@@ -231,5 +242,32 @@ export async function saveWebsiteRequest(request: Request) {
         notification_status: notification === "previously_saved" ? "pending" : notification,
       })
       .eq("id", data.id);
+  if (
+    created &&
+    socialAds &&
+    process.env["RESEND_API_KEY"] &&
+    process.env["NOTIFICATION_FROM_EMAIL"]
+  ) {
+    try {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${process.env["RESEND_API_KEY"]}`,
+          "content-type": "application/json",
+          "Idempotency-Key": `${data.id}-confirmation`,
+        },
+        body: JSON.stringify({
+          from: process.env["NOTIFICATION_FROM_EMAIL"],
+          to: [data.email],
+          reply_to: recipient,
+          subject: "Your social media advertising enquiry | AA100XTech",
+          text: "Thank you for sharing your advertising requirements. Your enquiry has been received successfully. Our team will review your information and contact you using the details provided.\n\nAA100XTech",
+        }),
+        signal: AbortSignal.timeout(8000),
+      });
+    } catch {
+      // A mail failure cannot undo a saved enquiry or become a delivery claim.
+    }
+  }
   return json({ saved: true, notification });
 }

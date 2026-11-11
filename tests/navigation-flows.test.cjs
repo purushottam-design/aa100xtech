@@ -202,6 +202,6 @@ test("header destinations and reversible authentication visibility", () => {
     Array.from(site.joinUsLinks, (item) => item.label),
     ["Jobs"],
   );
-  assert.equal(site.marketingLinks[0].to, "/marketing/social-media-ads");
+  assert.equal(site.marketingLinks[0].to, "/social-media-ads-marketing");
   assert.equal(site.marketingLinks[3].to, "/influencers");
 });

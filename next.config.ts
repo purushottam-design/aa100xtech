@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     // Keep saved app links working while serving only the website interface.
     return [
+      {
+        source: "/marketing/social-media-ads",
+        destination: "/social-media-ads-marketing",
+        permanent: true,
+      },
       { source: "/influencer-programs", destination: "/influencer-partners", permanent: true },
       { source: "/influencers", destination: "/influencer-partners", permanent: true },
       { source: "/app/admin", destination: "/admin/select", permanent: true },

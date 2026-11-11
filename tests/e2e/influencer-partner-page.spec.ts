@@ -6,7 +6,7 @@ test("unified partner sections, existing workflows and creator photography fit a
   test.setTimeout(180_000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/influencers", { waitUntil: "domcontentloaded" });
+  await page.goto("/influencer-partners", { waitUntil: "domcontentloaded" });
   await expect(page).toHaveTitle("Influencer Partner Program | Creators & Brands | AA100XTECH");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
@@ -14,10 +14,15 @@ test("unified partner sections, existing workflows and creator photography fit a
   );
   await expect(page.locator("header")).toHaveCount(1);
   await expect(page.locator("footer")).toHaveCount(1);
-  await expect(page.locator(".uip-portrait img")).toHaveCount(2);
+  await expect(page.locator(".uip-creator-collage img")).toHaveCount(1);
   await expect(page.locator(".uip-program")).toHaveCount(3);
-  await expect(page.locator(".uip-tabs a")).toHaveCount(3);
-  await expect(page.locator(".uip-steps li")).toHaveCount(4);
+  await expect(page.locator(".uip-services > article")).toHaveCount(6);
+  await expect(page.locator(".uip-platform")).toHaveCount(5);
+  await expect(page.locator(".uip-industries > article")).toHaveCount(7);
+  await expect(page.locator(".uip-steps li")).toHaveCount(5);
+  await expect(
+    page.getByRole("form", { name: "Brand campaign inquiry", exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole("form", { name: "Influencer application", exact: true })).toHaveCount(
     0,
   );
@@ -39,7 +44,7 @@ test("unified partner sections, existing workflows and creator photography fit a
     await expect
       .poll(() =>
         page
-          .locator(".uip-portrait img")
+          .locator(".uip-creator-collage img")
           .evaluateAll((images) =>
             images.every(
               (img) =>
@@ -58,21 +63,25 @@ test("unified partner sections, existing workflows and creator photography fit a
     page.locator(".uip-more-paths").getByRole("link", { name: "Explore Regional Partnerships" }),
   ).toHaveAttribute("href", "/partners");
   await page
-    .locator(".uip-hero-copy")
-    .getByRole("link", { name: "Join as Influencer", exact: true })
+    .locator(".uip-opportunities")
+    .getByRole("link", { name: "Apply as Influencer Partner", exact: true })
     .click();
-  await expect(page).toHaveURL(/\/influencer-marketing\/for-influencers$/);
+  await expect(page).toHaveURL(/\/influencer-marketing\/for-influencers$/, { timeout: 20_000 });
   await expect(
     page.getByRole("form", { name: "Influencer application", exact: true }),
   ).toBeVisible();
   await page.goBack();
-  await page.locator(".uip-hero-copy").getByRole("link", { name: "Partner as a Brand" }).click();
+  await page
+    .locator(".uip-hero-copy")
+    .getByRole("link", { name: "Get Customised Influencer Proposal" })
+    .click();
   await expect(page.locator("#uip-brand-form-title")).toBeInViewport();
-  await page.getByLabel("Filter by category", { exact: true }).selectOption("technology");
-  await page.getByRole("button", { name: "Reset filters", exact: true }).click();
-  await expect(page.getByLabel("Filter by category", { exact: true })).toHaveValue("");
+  await expect(page.locator("#creators, #directory")).toHaveCount(0);
+  await expect(page.getByLabel("Filter by category", { exact: true })).toHaveCount(0);
   const final = page.locator(".uip-final");
-  await final.getByRole("link", { name: "Partner as a Brand", exact: true }).click();
+  await final
+    .getByRole("link", { name: "Get Customised Influencer Proposal", exact: true })
+    .click();
   await expect(page.locator("#uip-brand-form-title")).toBeInViewport();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect
