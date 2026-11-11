@@ -18,6 +18,7 @@ import {
   budgets,
   promotions,
   creatorSuccess,
+  creatorPartnershipInterests,
   brandSuccess,
 } from "@/lib/marketing-intake";
 
@@ -231,19 +232,26 @@ function MultiChoice({
   value,
   onChange,
   error,
+  required = true,
 }: {
   label: string;
   options: readonly string[];
   value: string[];
   onChange: (v: string[]) => void;
   error?: string | undefined;
+  required?: boolean;
 }) {
   const instanceId = useId();
   const id = `${label.replace(/\W/g, "")}-${instanceId}`;
   return (
     <fieldset className="sm:col-span-2">
       <legend className="mb-3 text-sm font-medium">
-        {label} <span className="text-primary">*</span>
+        {label}{" "}
+        {required ? (
+          <span className="text-primary">*</span>
+        ) : (
+          <span className="text-muted-foreground">(Optional)</span>
+        )}
       </legend>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {options.map((o) => (
@@ -296,6 +304,7 @@ export function MarketingIntakeForm({
     ),
     [selected, setSelected] = useState<string[]>(creator ? [] : ["Instagram"]),
     [types, setTypes] = useState<string[]>([]),
+    [interests, setInterests] = useState<string[]>([]),
     [privacy, setPrivacy] = useState(false),
     [consent, setConsent] = useState(false),
     [errors, setErrors] = useState<Record<string, string>>({}),
@@ -344,6 +353,7 @@ export function MarketingIntakeForm({
           average_views: number("average_views"),
           engagement: number("engagement"),
           publication_consent: consent,
+          partnership_interests: interests,
         }
       : {
           ...common,
@@ -545,9 +555,34 @@ export function MarketingIntakeForm({
                     help: "",
                     placeholder: "Describe your content, audience and collaboration interests?",
                   })}
+                  <MultiChoice
+                    label="Partnership Interests"
+                    options={creatorPartnershipInterests}
+                    value={interests}
+                    onChange={setInterests}
+                    required={false}
+                    error={errors["partnership_interests"]}
+                  />
                   <details className="intake-additional">
                     <summary>Additional creator details (optional)</summary>
                     <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      {field({ name: "creator_name", label: "Creator / Influencer Name" })}
+                      {field({
+                        name: "primary_platform",
+                        label: "Primary Platform",
+                        options: selected,
+                      })}
+                      {field({
+                        name: "portfolio_url",
+                        label: "Portfolio Website",
+                        type: "url",
+                        placeholder: "https://yourdomain.com",
+                      })}
+                      {field({
+                        name: "joining_reason",
+                        label: "Why Do You Want to Join AA100XTech?",
+                        type: "textarea",
+                      })}
                       {creatorFields[1]!.slice(1).map(field)}
                       {field(creatorFields[2]![1]!)}
                       <div className="sm:col-span-2">

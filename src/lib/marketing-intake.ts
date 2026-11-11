@@ -25,7 +25,33 @@ export const categories = [
   "News & Media",
   "Comedy",
   "Fitness",
+  "Business",
+  "Entertainment",
   "Other",
+] as const;
+export const creatorPartnershipInterests = [
+  "Personal Branding",
+  "Portfolio Website",
+  "Professional Email Accounts",
+  "Creator Application",
+  "Microdrama",
+  "Image & Video Resources",
+  "AI Prompt Resources",
+  "Website Hosting",
+  "Application Hosting",
+  "Domain Support",
+  "Brand Collaboration Opportunities",
+  "Creator Website",
+  "Image Production",
+  "Video Production",
+  "AI Image Prompts",
+  "AI Video Prompts",
+  "Songs / Music",
+  "Music Albums",
+  "Music Videos",
+  "Digital Distribution",
+  "Original IP Development",
+  "Audience Growth Support",
 ] as const;
 export const objectives = [
   "Brand Awareness",
@@ -129,6 +155,14 @@ export const creatorIntakeSchema = z.object({
   engagement: z.number().min(0).max(100).nullable(),
   collaboration: z.enum(["Paid", "Barter", "Affiliate", "Open to All"]),
   previous_collaborations: optional(),
+  creator_name: optional(120),
+  primary_platform: z.union([z.enum(platforms), z.literal("")]).default(""),
+  portfolio_url: z.union([publicUrl, z.literal("")]).default(""),
+  joining_reason: optional(1500),
+  partnership_interests: z
+    .array(z.enum(creatorPartnershipInterests))
+    .max(creatorPartnershipInterests.length)
+    .default([]),
   biography: optional(1200),
   publication_consent: z.boolean().default(false),
 });
