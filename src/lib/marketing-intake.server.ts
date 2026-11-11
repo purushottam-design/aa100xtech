@@ -141,7 +141,7 @@ export async function submitMarketingIntake(request: Request, kind: "creator" | 
       const profile = (platform: string) => c.profiles.find((p) => p.platform === platform);
       payload = {
         ...details,
-        display_name: c.full_name,
+        display_name: c.creator_name || c.full_name,
         processing_consent: true,
         consent_version: "2026-11-05",
         media_kit: uploaded,
@@ -149,7 +149,7 @@ export async function submitMarketingIntake(request: Request, kind: "creator" | 
         cover_image: null,
         gallery: [],
         video_urls: [],
-        portfolio_url: "",
+        portfolio_url: c.portfolio_url,
         platforms: c.profiles.map((p) => p.platform).join(", "),
         handle: c.profiles[0]!.url,
         socials: {
@@ -190,8 +190,8 @@ export async function submitMarketingIntake(request: Request, kind: "creator" | 
       await supabaseAdmin.storage.from(kitBucket).remove([uploaded]);
       uploaded = null;
     }
-    if (kind === "brand" && saved.data.created)
-      await notifyBrand(saved.data.reference, data.email, payload);
+    if (saved.data.created)
+      await notifyMarketingIntake(kind, saved.data.reference, data.email, payload);
     return Response.json(
       { ok: true, reference: saved.data.reference },
       { status: saved.data.created ? 201 : 200, headers: { "cache-control": "no-store" } },
@@ -205,7 +205,12 @@ export async function submitMarketingIntake(request: Request, kind: "creator" | 
     return marketingRequestError(error, operation);
   }
 }
-async function notifyBrand(id: string, email: string, payload: Record<string, unknown>) {
+async function notifyMarketingIntake(
+  kind: "creator" | "brand",
+  id: string,
+  email: string,
+  payload: Record<string, unknown>,
+) {
   let notification_status = "not_configured";
   if (process.env["RESEND_API_KEY"] && process.env["NOTIFICATION_FROM_EMAIL"]) {
     try {
@@ -221,7 +226,10 @@ async function notifyBrand(id: string, email: string, payload: Record<string, un
           from: process.env["NOTIFICATION_FROM_EMAIL"],
           to: [settings.email || site.email],
           reply_to: email,
-          subject: `AA100XTECH campaign inquiry ${id}`,
+          subject:
+            kind === "creator"
+              ? `AA100XTECH influencer application ${id}`
+              : `AA100XTECH campaign inquiry ${id}`,
           text: JSON.stringify(payload, null, 2),
         }),
         signal: AbortSignal.timeout(8000),
@@ -231,12 +239,13 @@ async function notifyBrand(id: string, email: string, payload: Record<string, un
       notification_status = "failed";
     }
   }
-  await marketingAdmin
-    .from("brand_campaign_inquiries")
-    .update({ notification_status })
-    .eq("id", id)
-    .then(
-      () => undefined,
-      () => undefined,
-    );
+  if (kind === "brand")
+    await marketingAdmin
+      .from("brand_campaign_inquiries")
+      .update({ notification_status })
+      .eq("id", id)
+      .then(
+        () => undefined,
+        () => undefined,
+      );
 }

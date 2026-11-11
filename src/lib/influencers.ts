@@ -154,6 +154,10 @@ export type InfluencerApplication = {
     average_views?: number | null;
     engagement?: number | null;
     collaboration?: string;
+    creator_name?: string;
+    primary_platform?: string;
+    joining_reason?: string;
+    partnership_interests?: string[];
     profile_image: string | null;
     cover_image: string | null;
     gallery: string[];

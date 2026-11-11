@@ -19,7 +19,7 @@ test("navbar preserves the requested primary order and existing submenu destinat
   );
   assert.deepEqual(
     Array.from(join, (link) => link.label),
-    ["Jobs", "Request an Account"],
+    ["Jobs", "Join Us Influencer", "Request an Account"],
   );
   const marketing = headerNavigation.find((item) => item.label === "Marketing").items;
   assert.deepEqual(

@@ -8,3 +8,7 @@ These stock photographs illustrate content creation. They must not be presented 
 Both source pages identify these as free stock photographs. Pexels license: https://www.pexels.com/license/
 
 Downloaded on 2026-10-26 and converted to WebP with metadata removed. `creator-podcast.webp` is 1200 x 1500; `creator-filmmaker.webp` is 1200 x 1067. Combined image size is approximately 125 KB.
+
+## Join Us creator hero
+
+`join-creator-hero.webp` was generated with the built-in image generation tool on 2026-11-11 for the Join Us → Influencer page. It depicts a fictional creator in a bright studio and does not represent an actual AA100XTech partner or testimonial. The generation prompt is recorded in `.migration/join-influencer-hero-prompt.txt`. Optimized to 1536 × 1024 WebP for the website.

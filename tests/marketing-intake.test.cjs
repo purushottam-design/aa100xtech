@@ -1,7 +1,9 @@
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 const load = require("./helpers/load-server.cjs");
-const { creatorIntakeSchema, brandIntakeSchema, budgets } = load("src/lib/marketing-intake.ts");
+const { creatorIntakeSchema, brandIntakeSchema, budgets, creatorPartnershipInterests } = load(
+  "src/lib/marketing-intake.ts",
+);
 const token = "00000000-0000-4000-8000-000000000001";
 const common = {
   email: "fixture@example.test",
@@ -89,10 +91,76 @@ test("brand choices, numeric limits, dates and privacy validate server-side", ()
   ])
     assert.equal(brandIntakeSchema.safeParse({ ...brand, ...patch }).success, false);
 });
-function server({ allowed = true, failure = null, created = true } = {}) {
+test("creator partnership interests and goals validate without changing existing applications", async () => {
+  const application = {
+    ...creator,
+    creator_name: "Test Creator Studio",
+    primary_platform: "Instagram",
+    portfolio_url: "https://example.test/portfolio",
+    joining_reason: "I want support building a professional creator presence.",
+    partnership_interests: ["Portfolio Website", "Domain Support", "AI Prompt Resources"],
+  };
+  const s = server();
+  assert.equal((await s.submit(application)).status, 201);
+  const payload = s.writes[0].args.p_payload;
+  assert.equal(payload.display_name, application.creator_name);
+  assert.equal(payload.portfolio_url, application.portfolio_url);
+  assert.equal(payload.joining_reason, application.joining_reason);
+  assert.deepEqual(Array.from(payload.partnership_interests), application.partnership_interests);
+  for (const patch of [
+    { partnership_interests: ["Guaranteed free services"] },
+    { primary_platform: "Invalid platform" },
+    { portfolio_url: "javascript:alert(1)" },
+    { joining_reason: "x".repeat(1501) },
+  ]) {
+    assert.equal(creatorIntakeSchema.safeParse({ ...application, ...patch }).success, false);
+  }
+  assert.deepEqual(Array.from(creatorIntakeSchema.parse(creator).partnership_interests), []);
+});
+test("expanded program interests preserve legacy choices and save multi-package selections", async () => {
+  const requested = [
+    "Creator Website",
+    "Image Production",
+    "Video Production",
+    "AI Image Prompts",
+    "AI Video Prompts",
+    "Songs / Music",
+    "Music Albums",
+    "Music Videos",
+    "Digital Distribution",
+    "Original IP Development",
+    "Audience Growth Support",
+  ];
+  for (const interest of requested)
+    assert.ok(creatorPartnershipInterests.includes(interest), interest);
+  const allInterests = Array.from(creatorPartnershipInterests);
+  assert.equal(new Set(allInterests).size, allInterests.length);
+  const s = server();
+  assert.equal((await s.submit({ ...creator, partnership_interests: allInterests })).status, 201);
+  assert.deepEqual(Array.from(s.writes[0].args.p_payload.partnership_interests), allInterests);
+  for (const legacy of [
+    "Microdrama",
+    "Creator Application",
+    "Domain Support",
+    "AI Prompt Resources",
+    "Application Hosting",
+  ])
+    assert.equal(
+      creatorIntakeSchema.safeParse({ ...creator, partnership_interests: [legacy] }).success,
+      true,
+    );
+});
+function server({
+  allowed = true,
+  failure = null,
+  created = true,
+  notifications = false,
+  mailFailure = false,
+} = {}) {
   const writes = [],
     uploads = [],
-    removed = [];
+    removed = [],
+    mail = [];
   const db = {
     rpc: async (name, args) => {
       writes.push({ name, args });
@@ -137,7 +205,21 @@ function server({ allowed = true, failure = null, created = true } = {}) {
       File,
       FormData,
       process: {
-        env: { SUPABASE_SERVICE_ROLE_KEY: "synthetic-test-secret", NODE_ENV: "production" },
+        env: {
+          SUPABASE_SERVICE_ROLE_KEY: "synthetic-test-secret",
+          NODE_ENV: "production",
+          ...(notifications
+            ? {
+                RESEND_API_KEY: "synthetic-test-key",
+                NOTIFICATION_FROM_EMAIL: "website@example.test",
+              }
+            : {}),
+        },
+      },
+      fetch: async (url, options) => {
+        mail.push({ url, body: JSON.parse(options.body), headers: options.headers });
+        if (mailFailure) throw new Error("Mail unavailable");
+        return new Response("{}", { status: 200 });
       },
     },
   );
@@ -154,8 +236,27 @@ function server({ allowed = true, failure = null, created = true } = {}) {
       kind,
     );
   };
-  return { submit, writes, uploads, removed };
+  return { submit, writes, uploads, removed, mail };
 }
+test("creator admin notifications follow confirmed new saves and cannot undo a saved application", async () => {
+  const s = server({ notifications: true });
+  assert.equal((await s.submit(creator)).status, 201);
+  assert.equal(s.writes.length, 1);
+  assert.equal(s.mail.length, 1);
+  assert.equal(s.mail[0].body.subject, `AA100XTECH influencer application ${token}`);
+  assert.deepEqual(Array.from(s.mail[0].body.to), ["admin@example.test"]);
+  assert.equal(s.mail[0].headers["Idempotency-Key"], token);
+  const duplicate = server({ notifications: true, created: false });
+  assert.equal((await duplicate.submit(creator)).status, 200);
+  assert.equal(duplicate.mail.length, 0);
+  const failedSave = server({ notifications: true, failure: { code: "42P01" } });
+  assert.equal((await failedSave.submit(creator)).status, 503);
+  assert.equal(failedSave.mail.length, 0);
+  assert.equal(
+    (await server({ notifications: true, mailFailure: true }).submit(creator)).status,
+    201,
+  );
+});
 test("real handler saves only validated private data, returns DB receipt, and does not publish profiles", async () => {
   const s = server();
   const res = await s.submit(creator);

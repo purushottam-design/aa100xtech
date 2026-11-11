@@ -350,6 +350,28 @@ function ApplicationEditor({
           <p>Collaboration: {d.collaboration || "Not supplied"}</p>
         </section>
       )}
+      {!!(d?.partnership_interests?.length || d?.joining_reason || d?.primary_platform) && (
+        <section className="space-y-3 rounded-xl border border-border p-4 text-sm">
+          <h3 className="font-semibold">Creator partnership interests</h3>
+          {d.primary_platform && (
+            <p>
+              <strong>Primary platform:</strong> {d.primary_platform}
+            </p>
+          )}
+          {!!d.partnership_interests?.length && (
+            <ul className="list-inside list-disc space-y-1">
+              {d.partnership_interests.map((interest) => (
+                <li key={interest}>{interest}</li>
+              ))}
+            </ul>
+          )}
+          {d.joining_reason && (
+            <p className="whitespace-pre-line">
+              <strong>Why they want to join:</strong> {d.joining_reason}
+            </p>
+          )}
+        </section>
+      )}
       {d?.media_kit && (
         <Button
           type="button"
@@ -376,6 +398,16 @@ function ApplicationEditor({
           Download private media kit
         </Button>
       )}
+      {d?.portfolio_url && (
+        <a
+          href={d.portfolio_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block break-all text-sm text-primary underline"
+        >
+          Submitted portfolio
+        </a>
+      )}
       {d?.biography && (
         <section className="space-y-3 text-sm">
           <h3 className="font-semibold">Submitted biography & content</h3>
@@ -383,16 +415,6 @@ function ApplicationEditor({
           <p>
             {d.category} · {d.specialization}
           </p>
-          {d.portfolio_url && (
-            <a
-              href={d.portfolio_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block break-all text-primary underline"
-            >
-              Submitted portfolio
-            </a>
-          )}
           {d.video_urls?.map((url, index) => (
             <a
               key={url}
