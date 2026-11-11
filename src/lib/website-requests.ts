@@ -2,6 +2,7 @@ import { z } from "zod";
 import { inquiryOptions } from "@/data/business-plans";
 import { campaignDetailsSchema } from "./campaign-enquiry";
 import { socialAdProposalSchema } from "./social-ad-proposal";
+import { partnershipProposalSchema } from "./influencer-partnership";
 
 export const websiteRequestSchema = z
   .object({
@@ -24,8 +25,24 @@ export const websiteRequestSchema = z
     startedAt: z.number().int().positive(),
     campaign: campaignDetailsSchema.optional(),
     socialAds: socialAdProposalSchema.optional(),
+    partnership: partnershipProposalSchema.optional(),
   })
   .superRefine((data, ctx) => {
+    if (data.selectedPlan === "influencer-partnership" && !data.partnership)
+      ctx.addIssue({
+        code: "custom",
+        path: ["partnership"],
+        message: "Complete your partnership package details and privacy consent",
+      });
+    if (
+      data.partnership &&
+      (data.kind !== "influencer" || data.selectedPlan !== "influencer-partnership")
+    )
+      ctx.addIssue({
+        code: "custom",
+        path: ["partnership"],
+        message: "Choose the Influencer Partnership service",
+      });
     if (data.socialAds && (data.kind !== "proposal" || data.selectedPlan !== "social-media-ads"))
       ctx.addIssue({
         code: "custom",

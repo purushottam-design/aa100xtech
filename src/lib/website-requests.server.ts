@@ -102,7 +102,7 @@ export async function saveWebsiteRequest(request: Request, requireSocialAds = fa
       { saved: false, message: "Complete the advertising proposal form and privacy consent." },
       400,
     );
-  const { website: _trap, startedAt, campaign, socialAds, ...data } = parsed.data;
+  const { website: _trap, startedAt, campaign, socialAds, partnership, ...data } = parsed.data;
   if (Date.now() - startedAt < 2000 || startedAt > Date.now())
     return json(
       {
@@ -176,6 +176,7 @@ export async function saveWebsiteRequest(request: Request, requireSocialAds = fa
     filePath,
     ...(campaign ? { campaign: JSON.stringify(campaign) } : {}),
     ...(socialAds ? { socialAds: JSON.stringify(socialAds), status: "New" } : {}),
+    ...(partnership ? { partnership: JSON.stringify(partnership) } : {}),
   };
   const recipient = data.kind === "career" ? site.hrEmail : (await publicSiteSettings()).email;
   const { data: created, error } = await db.rpc("submit_website_request", {
@@ -188,6 +189,7 @@ export async function saveWebsiteRequest(request: Request, requireSocialAds = fa
         fileDigest,
         ...(campaign ? { campaign } : {}),
         ...(socialAds ? { socialAds } : {}),
+        ...(partnership ? { partnership } : {}),
       }),
     ),
     sender_hash: digest(data.email.toLowerCase()),

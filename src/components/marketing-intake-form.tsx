@@ -9,6 +9,7 @@ import { CheckCircle2, Loader2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { partnershipInterestGroups } from "@/data/influencer-partnership";
 import {
   brandIntakeSchema,
   creatorIntakeSchema,
@@ -285,11 +286,13 @@ export function MarketingIntakeForm({
   embedded = false,
   selectedCreator,
   onClearCreator,
+  partnership = false,
 }: {
   kind: "creator" | "brand";
   embedded?: boolean;
   selectedCreator?: CreatorListing | null;
   onClearCreator?: () => void;
+  partnership?: boolean;
 }) {
   const creator = kind === "creator";
   const instanceId = useId();
@@ -354,6 +357,7 @@ export function MarketingIntakeForm({
           engagement: number("engagement"),
           publication_consent: consent,
           partnership_interests: interests,
+          ...(partnership ? { partnership_application: true } : {}),
         }
       : {
           ...common,
@@ -434,6 +438,11 @@ export function MarketingIntakeForm({
           <p className="mt-4 leading-relaxed text-muted-foreground">
             {creator ? creatorSuccess : brandSuccess}
           </p>
+          {partnership && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Submitting an application does not automatically guarantee partnership approval.
+            </p>
+          )}
           <p className="mt-6 break-all rounded-xl bg-secondary p-4 text-sm">
             Your reference: <strong>{reference}</strong>
           </p>
@@ -492,11 +501,19 @@ export function MarketingIntakeForm({
           }
         >
           {creator && <Users size={23} strokeWidth={1.7} aria-hidden="true" />}
-          <h2>{creator ? "Join Our Influencer Network" : "Start Your Influencer Campaign"}</h2>
+          <h2>
+            {partnership
+              ? "Share Your Creator Profile"
+              : creator
+                ? "Join Our Influencer Network"
+                : "Start Your Influencer Campaign"}
+          </h2>
           <p>
-            {creator
-              ? "Collaborate with brands. Grow your influence."
-              : "Tell us about your brand and campaign requirements."}
+            {partnership
+              ? "Share your creator profile and partnership interests. Our team will review your information and contact you regarding suitable next steps."
+              : creator
+                ? "Collaborate with brands. Grow your influence."
+                : "Tell us about your brand and campaign requirements."}
           </p>
         </div>
         <form
@@ -515,10 +532,27 @@ export function MarketingIntakeForm({
                 </Button>
               </div>
             )}
-            <div className="grid gap-x-3 gap-y-4 sm:grid-cols-2">{primary.map(field)}</div>
+            <div className="grid gap-x-3 gap-y-4 sm:grid-cols-2">
+              {primary.map((f) =>
+                field(
+                  partnership && f.name === "phone"
+                    ? { ...f, label: "Mobile Number" }
+                    : partnership && ["city", "state", "country"].includes(f.name)
+                      ? { ...f, required: true }
+                      : f,
+                ),
+              )}
+              {partnership && field({ name: "whatsapp", label: "WhatsApp Number", type: "tel" })}
+            </div>
             <div className="mt-4 space-y-4">
               {creator ? (
                 <>
+                  {partnership &&
+                    field({
+                      name: "creator_name",
+                      label: "Influencer / Creator Name",
+                      required: true,
+                    })}
                   <MultiChoice
                     label="Social Media Platforms"
                     options={platforms}
@@ -548,6 +582,20 @@ export function MarketingIntakeForm({
                       })}
                     </div>
                   ))}
+                  {partnership &&
+                    field({
+                      name: "primary_platform",
+                      label: "Primary Social Media Platform",
+                      options: selected,
+                      required: true,
+                    })}
+                  {partnership &&
+                    field({
+                      name: "portfolio_url",
+                      label: "Portfolio / Media Kit URL",
+                      type: "url",
+                      placeholder: "https://yourdomain.com",
+                    })}
                   {field({ ...creatorFields[2]![0]!, wide: true })}
                   {field({
                     ...creatorFields[2]![2]!,
@@ -555,36 +603,91 @@ export function MarketingIntakeForm({
                     help: "",
                     placeholder: "Describe your content, audience and collaboration interests?",
                   })}
-                  <MultiChoice
-                    label="Partnership Interests"
-                    options={creatorPartnershipInterests}
-                    value={interests}
-                    onChange={setInterests}
-                    required={false}
-                    error={errors["partnership_interests"]}
-                  />
-                  <details className="intake-additional">
-                    <summary>Additional creator details (optional)</summary>
-                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                      {field({ name: "creator_name", label: "Creator / Influencer Name" })}
+                  {partnership ? (
+                    partnershipInterestGroups.map((group) => (
+                      <MultiChoice
+                        key={group.name}
+                        label={`Partnership Interests – ${group.name}`}
+                        options={group.services}
+                        value={interests}
+                        onChange={(next) =>
+                          setInterests([
+                            ...interests.filter(
+                              (value) => !(group.services as readonly string[]).includes(value),
+                            ),
+                            ...next.filter((value) =>
+                              (group.services as readonly string[]).includes(value),
+                            ),
+                          ])
+                        }
+                        required={false}
+                        error={errors["partnership_interests"]}
+                      />
+                    ))
+                  ) : (
+                    <MultiChoice
+                      label="Partnership Interests"
+                      options={creatorPartnershipInterests}
+                      value={interests}
+                      onChange={setInterests}
+                      required={false}
+                      error={errors["partnership_interests"]}
+                    />
+                  )}
+                  {partnership && (
+                    <>
                       {field({
-                        name: "primary_platform",
-                        label: "Primary Platform",
-                        options: selected,
-                      })}
-                      {field({
-                        name: "portfolio_url",
-                        label: "Portfolio Website",
-                        type: "url",
-                        placeholder: "https://yourdomain.com",
+                        name: "creator_goals",
+                        label: "What Are Your Creator Goals?",
+                        type: "textarea",
+                        required: true,
                       })}
                       {field({
                         name: "joining_reason",
-                        label: "Why Do You Want to Join AA100XTech?",
+                        label: "Why Do You Want to Partner with AA100XTech?",
+                        type: "textarea",
+                        required: true,
+                      })}
+                      {field({
+                        name: "project_requirements",
+                        label: "Expected Project Requirements",
+                        type: "textarea",
+                        required: true,
+                      })}
+                      {field(creatorFields[2]![1]!)}
+                      {field({
+                        name: "additional_message",
+                        label: "Additional Message",
                         type: "textarea",
                       })}
+                    </>
+                  )}
+                  <details className="intake-additional">
+                    <summary>Additional creator details (optional)</summary>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      {!partnership &&
+                        field({ name: "creator_name", label: "Creator / Influencer Name" })}
+                      {!partnership &&
+                        field({
+                          name: "primary_platform",
+                          label: "Primary Platform",
+                          options: selected,
+                        })}
+                      {!partnership &&
+                        field({
+                          name: "portfolio_url",
+                          label: "Portfolio Website",
+                          type: "url",
+                          placeholder: "https://yourdomain.com",
+                        })}
+                      {!partnership &&
+                        field({
+                          name: "joining_reason",
+                          label: "Why Do You Want to Join AA100XTech?",
+                          type: "textarea",
+                        })}
                       {creatorFields[1]!.slice(1).map(field)}
-                      {field(creatorFields[2]![1]!)}
+                      {!partnership && field(creatorFields[2]![1]!)}
                       <div className="sm:col-span-2">
                         <label htmlFor={kitId}>Portfolio / Media Kit Upload</label>
                         <Input
@@ -724,6 +827,8 @@ export function MarketingIntakeForm({
                   <Loader2 className="size-4 animate-spin motion-reduce:animate-none" />
                   Submitting…
                 </>
+              ) : partnership ? (
+                "Submit Partnership Application"
               ) : creator ? (
                 "Submit Influencer Application"
               ) : (

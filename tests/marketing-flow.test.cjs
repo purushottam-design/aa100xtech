@@ -244,6 +244,15 @@ test("all four form variants persist through the real save function as service_r
       collaboration: "Paid",
       biography: "Synthetic creator for local persistence verification.",
       publication_consent: false,
+      partnership_application: true,
+      creator_name: "Synthetic Creator Studio",
+      primary_platform: "Instagram",
+      partnership_interests: ["Portfolio Website", "Songs / Music", "Microdrama"],
+      creator_goals: "Build a professional portfolio and original content.",
+      joining_reason: "Explore creative and technical support.",
+      project_requirements: "A portfolio website and music video.",
+      whatsapp: "+910000000001",
+      additional_message: "Discuss scope before starting.",
     };
     const brand = {
       ...common,
@@ -267,6 +276,21 @@ test("all four form variants persist through the real save function as service_r
     assert.equal((await submit("creator", creator)).status, 201);
     assert.equal((await submit("brand", legacyBrand, "campaign-enquiry")).status, 201);
     assert.equal((await submit("creator", legacyCreator, "partner-application")).status, 201);
+    const partnershipData = (
+      await query(
+        "SELECT influencer_data FROM partner_applications WHERE influencer_data->>'partnership_application'='true'",
+      )
+    ).rows[0].influencer_data;
+    for (const field of [
+      "creator_name",
+      "creator_goals",
+      "joining_reason",
+      "project_requirements",
+      "whatsapp",
+      "additional_message",
+    ])
+      assert.equal(partnershipData[field], creator[field]);
+    assert.deepEqual(partnershipData.partnership_interests, creator.partnership_interests);
     const repeated = await submit("brand", brand);
     assert.equal(repeated.status, 200);
     assert.equal((await repeated.json()).reference, receipt.reference);

@@ -12,6 +12,7 @@ const staticPaths = [
   "/business-plans",
   "/proposal",
   "/influencer-partners",
+  "/partnership-for-influencers",
   "/join-us/influencer",
   "/blog",
   "/services",

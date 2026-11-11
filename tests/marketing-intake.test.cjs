@@ -238,6 +238,37 @@ function server({
   };
   return { submit, writes, uploads, removed, mail };
 }
+
+test("dedicated creator partnership details persist privately through the existing application handler", async () => {
+  const application = {
+    ...creator,
+    partnership_application: true,
+    creator_name: "Synthetic Creator Studio",
+    primary_platform: "Instagram",
+    partnership_interests: ["Portfolio Website", "Songs / Music", "Microdrama"],
+    creator_goals: "Build a creator portfolio and original content.",
+    joining_reason: "Develop a professional identity and creative projects.",
+    project_requirements: "A portfolio website and original short-form content.",
+    whatsapp: "+919876543210",
+    additional_message: "Please discuss scope before starting.",
+  };
+  const s = server();
+  assert.equal((await s.submit(application)).status, 201);
+  assert.equal(s.writes[0].name, "save_marketing_intake");
+  const payload = s.writes[0].args.p_payload;
+  for (const key of [
+    "creator_goals",
+    "joining_reason",
+    "project_requirements",
+    "whatsapp",
+    "additional_message",
+  ])
+    assert.equal(payload[key], application[key]);
+  assert.equal(payload.publication_consent, false);
+  assert.equal(payload.processing_consent, true);
+  assert.equal((await s.submit({ ...application, privacy: false })).status, 400);
+  assert.equal(s.writes.length, 1);
+});
 test("creator admin notifications follow confirmed new saves and cannot undo a saved application", async () => {
   const s = server({ notifications: true });
   assert.equal((await s.submit(creator)).status, 201);

@@ -370,6 +370,21 @@ function ApplicationEditor({
               <strong>Why they want to join:</strong> {d.joining_reason}
             </p>
           )}
+          {(
+            [
+              ["WhatsApp", d.whatsapp],
+              ["Creator goals", d.creator_goals],
+              ["Project requirements", d.project_requirements],
+              ["Additional message", d.additional_message],
+            ] as const
+          ).map(
+            ([label, value]) =>
+              value && (
+                <p className="whitespace-pre-line" key={label}>
+                  <strong>{label}:</strong> {value}
+                </p>
+              ),
+          )}
         </section>
       )}
       {d?.media_kit && (
