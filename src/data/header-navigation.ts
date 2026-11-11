@@ -23,6 +23,7 @@ export function headerLinkActive(link: HeaderLink, pathname: string) {
 
 const joinItems: readonly HeaderLink[] = [
   ...joinUsLinks,
+  { to: "/partnership-for-influencers", label: "PARTNERSHIP FOR INFLUENCERS" },
   { to: "/request-access", label: "Request an Account" },
 ];
 

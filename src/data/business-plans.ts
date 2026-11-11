@@ -112,6 +112,7 @@ export const inquiryOptions = [
     name: p.name as string,
   })),
   { id: "influencer-marketing", name: "Influencer Marketing" },
+  { id: "influencer-partnership", name: "Influencer Partnership" },
   { id: "viral-influencer-marketing", name: "Viral Influencer Marketing" },
   { id: "social-media-ads", name: "Social Media Ads Marketing" },
   ...services

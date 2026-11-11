@@ -1,0 +1,1172 @@
+.pfi-page {
+  --pfi-ink: var(--text-primary);
+  --pfi-orange: var(--brand-orange);
+  color: var(--pfi-ink);
+  background: var(--background);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.pfi-page :is(h1, h2, h3, h4) {
+  color: var(--pfi-ink);
+  font-weight: 800;
+}
+.pfi-page p {
+  margin: 0;
+}
+.pfi-container {
+  width: min(1320px, calc(100% - 64px));
+  margin-inline: auto;
+}
+.pfi-page .pfi-label {
+  display: table;
+  width: fit-content;
+  border-radius: 20px;
+  padding: 3px 13px;
+  background: linear-gradient(100deg, var(--brand-light-gold), #ffd17a);
+  color: var(--pfi-ink);
+  font-size: 10px;
+  line-height: 1.45;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+.pfi-heading h2 {
+  margin: 7px 0 14px;
+  font-size: clamp(22px, 2vw, 29px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.pfi-heading + p,
+.pfi-about p + p {
+  margin-top: 10px;
+}
+.pfi-section {
+  padding-block: 25px;
+}
+.pfi-section-top {
+  display: flex;
+  gap: 30px;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.pfi-section-top .pfi-heading {
+  max-width: 76%;
+}
+.pfi-section-top > p {
+  max-width: 320px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+.pfi-card {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(140deg, white 20%, var(--brand-light) 130%);
+  box-shadow: 0 3px 7px rgb(132 82 0 / 6%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.pfi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgb(245 158 11 / 10%);
+}
+.pfi-card > svg,
+.pfi-small-card > svg {
+  color: var(--pfi-orange);
+  stroke-width: 1.7;
+}
+.pfi-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pfi-page .pfi-actions > a {
+  padding-inline: 16px;
+  min-height: 43px;
+  height: auto;
+  font-size: 12px;
+  color: var(--pfi-ink);
+}
+.pfi-page .pfi-actions > a svg {
+  width: 15px;
+  height: 15px;
+}
+.pfi-hero {
+  overflow: clip;
+  background: linear-gradient(125deg, white 35%, var(--brand-cream) 90%);
+  border-bottom: 1px solid var(--brand-light);
+}
+.pfi-hero-grid {
+  display: grid;
+  grid-template-columns: 1.08fr 1fr;
+  align-items: center;
+  gap: 24px;
+}
+.pfi-hero-copy {
+  position: relative;
+  padding-block: 34px;
+  z-index: 1;
+  animation: pfi-enter 0.6s ease both;
+}
+.pfi-hero h1 {
+  margin: 8px 0 16px;
+  font-size: clamp(30px, 3.1vw, 44px);
+  line-height: 1.055;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+.pfi-hero h1 span {
+  display: block;
+  width: fit-content;
+  background: var(--brand-text-gradient);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.pfi-hero-intro {
+  max-width: 620px;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.pfi-hero .pfi-hero-detail {
+  max-width: 620px;
+  margin-top: 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.pfi-hero .pfi-hero-statement {
+  margin-block: 18px 15px;
+  padding-left: 12px;
+  border-left: 3px solid var(--brand-deep-orange);
+  font-size: 15px;
+  line-height: 1.3;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+.pfi-highlights {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 22px;
+}
+.pfi-highlights li {
+  display: flex;
+  align-items: start;
+  gap: 7px;
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.pfi-highlights svg {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--pfi-orange);
+}
+.pfi-hero-visual {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  animation: pfi-enter 0.75s ease both;
+}
+.pfi-hero-visual > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 46% 46% 24px 24px;
+  mix-blend-mode: multiply;
+}
+.pfi-social {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 8px 15px rgb(38 26 3 / 14%);
+  transform: rotate(-8deg);
+}
+.pfi-social svg {
+  width: 33px;
+  height: 33px;
+}
+.pfi-social-instagram {
+  top: 8%;
+  left: 9%;
+  background: radial-gradient(circle at 25% 100%, #ffdb6a 5%, #f45940 38%, #cc2cab 65%, #783cdd);
+}
+.pfi-social-youtube {
+  top: 34%;
+  left: -4%;
+  background: #f32419;
+  transform: rotate(8deg);
+}
+.pfi-visual-note {
+  position: absolute;
+  bottom: 8%;
+  right: 1%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 19px 11px 11px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: var(--shadow-soft);
+  font-size: 11px;
+}
+.pfi-visual-note strong {
+  display: block;
+  font-size: 15px;
+}
+.pfi-note-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--brand-deep-orange);
+  background: var(--brand-light);
+}
+.pfi-about {
+  display: grid;
+  grid-template-columns: 0.86fr 1.14fr;
+  gap: 30px;
+  align-items: center;
+  padding-top: 30px;
+}
+.pfi-about > div:first-child {
+  padding-right: 22px;
+  border-right: 1px solid var(--border);
+  font-size: 13px;
+}
+.pfi-about-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.pfi-about-card {
+  padding: 22px 18px;
+  height: 100%;
+}
+.pfi-about-card > svg {
+  width: 41px;
+  height: 41px;
+  margin-bottom: 12px;
+}
+.pfi-about-card h3 {
+  font-size: 14px;
+  line-height: 1.2;
+  margin-bottom: 9px;
+  letter-spacing: -0.035em;
+}
+.pfi-about-card p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.pfi-benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+.pfi-benefit {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 17px;
+}
+.pfi-benefit > svg {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  margin-top: 2px;
+}
+.pfi-benefit h3 {
+  font-size: 14px;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  letter-spacing: -0.035em;
+}
+.pfi-benefit p {
+  font-size: 12px;
+  line-height: 1.45;
+}
+.pfi-benefit details {
+  margin-top: 7px;
+}
+.pfi-benefit summary {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--brand-deep-orange);
+  cursor: pointer;
+}
+.pfi-benefit summary svg {
+  width: 12px;
+  height: 12px;
+}
+.pfi-benefit details[open] p {
+  margin-top: 8px;
+}
+.pfi-page .pfi-scope-note {
+  display: flex;
+  align-items: start;
+  gap: 7px;
+  margin-top: 14px;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.pfi-scope-note svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--brand-deep-orange);
+}
+.pfi-program-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.pfi-package {
+  padding: 22px;
+  background: linear-gradient(135deg, white 0%, var(--brand-cream) 40%, var(--brand-light) 100%);
+}
+.pfi-package-top {
+  display: flex;
+  gap: 15px;
+  align-items: start;
+}
+.pfi-package-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  background: var(--brand-button-gradient);
+  border-radius: 13px;
+  color: white;
+  box-shadow: 0 6px 10px rgb(245 158 11 / 18%);
+}
+.pfi-package-icon svg {
+  width: 37px;
+  height: 37px;
+  stroke-width: 1.7;
+}
+.pfi-package-top > div {
+  min-width: 0;
+}
+.pfi-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-light-gold);
+  color: var(--brand-deep-orange);
+  border-radius: 7px;
+  padding: 1px 7px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.pfi-package h3 {
+  font-size: 19px;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+.pfi-package-top p {
+  font-size: 12px;
+  line-height: 1.35;
+  margin-top: 5px;
+  min-height: 33px;
+}
+.pfi-page .pfi-package-intro {
+  margin-block: 15px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  min-height: 56px;
+}
+.pfi-package-services {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.pfi-package-services li {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+}
+.pfi-package-services svg {
+  width: 15px;
+  height: 15px;
+  color: var(--pfi-orange);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pfi-package-services strong {
+  font-weight: 700;
+}
+.pfi-package-services li > span > span {
+  font-size: 11px;
+}
+.pfi-package-details > summary {
+  list-style: none;
+  width: 100%;
+  height: auto;
+  min-height: 42px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--pfi-ink);
+  background-image: var(--brand-button-gradient);
+  border-radius: 12px;
+}
+.pfi-package-details > summary::-webkit-details-marker {
+  display: none;
+}
+.pfi-package-details[open] > summary svg {
+  transform: rotate(90deg);
+}
+.pfi-package-expanded {
+  display: grid;
+  gap: 16px;
+  padding-top: 20px;
+  font-size: 12px;
+}
+.pfi-package-expanded h4 {
+  margin-bottom: 5px;
+}
+.pfi-package-expanded ul {
+  display: grid;
+  gap: 5px;
+}
+.pfi-package-expanded li {
+  display: flex;
+  gap: 7px;
+  align-items: start;
+}
+.pfi-package-expanded li svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--brand-deep-orange);
+}
+.pfi-package-expanded a {
+  font-size: 11px;
+  padding-inline: 10px;
+  white-space: normal;
+  height: auto;
+  min-height: 40px;
+}
+.pfi-why-process {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 30px;
+}
+.pfi-process {
+  padding-left: 26px;
+  border-left: 1px solid var(--border);
+}
+.pfi-why > p {
+  font-size: 12px;
+  max-width: 520px;
+}
+.pfi-why-content {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+.pfi-check-list {
+  display: grid;
+  gap: 9px;
+}
+.pfi-check-list li {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  font-size: 12px;
+}
+.pfi-check-list svg {
+  color: var(--pfi-orange);
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pfi-check-list li strong {
+  font-weight: 600;
+}
+.pfi-why .pfi-check-list li > span > span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.pfi-partnership-art {
+  display: grid;
+  justify-items: center;
+  padding-block: 20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    var(--brand-light-gold),
+    var(--brand-cream) 67%,
+    transparent 70%
+  );
+  transform: rotate(-10deg);
+}
+.pfi-partnership-art svg {
+  width: 82px;
+  height: 82px;
+  color: var(--pfi-orange);
+  stroke-width: 1.8;
+  filter: drop-shadow(2px 4px 0 var(--brand-light-gold));
+}
+.pfi-partnership-art svg:last-child {
+  width: 100px;
+  height: 100px;
+  margin-top: -12px;
+}
+.pfi-timeline {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  padding-top: 25px;
+}
+.pfi-timeline li {
+  position: relative;
+  min-width: 0;
+  padding: 29px 8px 15px;
+  border: 1px solid var(--border);
+  background: linear-gradient(140deg, white, var(--brand-cream));
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 7px rgb(132 82 0 / 5%);
+}
+.pfi-step-number {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 50%;
+  background: linear-gradient(120deg, var(--brand-light-gold), var(--brand-gold));
+}
+.pfi-timeline h3 {
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.pfi-timeline p {
+  margin-top: 8px;
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.pfi-step-arrow {
+  position: absolute;
+  top: 42px;
+  right: -15px;
+  width: 15px;
+  height: 15px;
+  color: var(--brand-deep-orange);
+  z-index: 1;
+}
+.pfi-audience-support {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 30px;
+}
+.pfi-audience-support > div > p {
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+.pfi-support {
+  padding-left: 26px;
+  border-left: 1px solid var(--border);
+}
+.pfi-audience-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.pfi-support-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.pfi-small-card {
+  text-align: center;
+  padding: 15px 8px;
+  border-radius: 15px;
+}
+.pfi-small-card svg {
+  width: 29px;
+  height: 29px;
+  margin: 0 auto 9px;
+}
+.pfi-small-card h3 {
+  font-size: 11px;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+.pfi-small-card p {
+  margin-top: 8px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+.pfi-pricing-faq {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: 42px;
+}
+.pfi-pricing-copy {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.pfi-page .pfi-quotation {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: var(--brand-light);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pfi-pricing-copy p {
+  font-size: 12px;
+}
+.pfi-pricing-copy .pfi-check-list {
+  margin-top: 14px;
+}
+.pfi-pricing-copy li {
+  font-size: 11px;
+}
+.pfi-clipboard {
+  color: var(--pfi-orange);
+  background: radial-gradient(
+    ellipse,
+    var(--brand-light-gold),
+    var(--brand-cream) 67%,
+    transparent 70%
+  );
+  transform: rotate(10deg);
+}
+.pfi-clipboard svg {
+  width: 110px;
+  height: 135px;
+  stroke-width: 1.7;
+  filter: drop-shadow(4px 6px 1px var(--brand-light-gold));
+}
+.pfi-pricing > a {
+  padding-inline: 16px;
+  font-size: 12px;
+  height: auto;
+  min-height: 43px;
+  white-space: normal;
+}
+.pfi-faq {
+  border-left: 1px solid var(--border);
+  padding-left: 30px;
+}
+.pfi-page .pfi-faq .marketing-faq > div {
+  border-bottom: 1px solid var(--border);
+}
+.pfi-page .pfi-faq .marketing-faq button {
+  font-size: 12px;
+  padding-block: 10px;
+  gap: 15px;
+  line-height: 1.3;
+  font-weight: 500;
+}
+.pfi-page .pfi-faq .marketing-faq button > svg {
+  color: var(--brand-deep-orange);
+  flex-shrink: 0;
+}
+.pfi-page .pfi-faq .marketing-faq [role="region"] {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.pfi-final {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.8fr 1fr;
+  gap: 35px;
+  align-items: center;
+  overflow: hidden;
+  margin: 15px -25px 48px;
+  border: 1px solid var(--brand-light);
+  border-radius: 24px;
+  padding: 28px 145px 28px 30px;
+  background: linear-gradient(110deg, var(--brand-light), white 45%, var(--brand-light));
+}
+.pfi-final .pfi-label {
+  background: transparent;
+  padding: 0;
+  color: var(--brand-deep-orange);
+  font-size: 9px;
+}
+.pfi-final h2 {
+  margin-top: 9px;
+  font-size: clamp(22px, 2vw, 29px);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+.pfi-final h2 span {
+  display: block;
+  color: var(--brand-deep-orange);
+  margin-top: 4px;
+}
+.pfi-final p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.pfi-final .pfi-actions {
+  margin-top: 15px;
+  gap: 8px;
+}
+.pfi-final .pfi-actions > a {
+  font-size: 10px;
+  min-height: 37px;
+  padding-inline: 12px;
+}
+.pfi-final-art {
+  position: absolute;
+  width: 95px;
+  height: 110px;
+  right: 28px;
+  bottom: 25px;
+  color: var(--brand-orange);
+  transform: rotate(-8deg);
+  stroke-width: 1.5;
+  filter: drop-shadow(4px 5px 0 var(--brand-light-gold));
+}
+.pfi-page :is(a, summary):focus-visible {
+  outline: 2px solid var(--brand-deep-orange);
+  outline-offset: 4px;
+}
+@keyframes pfi-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (min-width: 1600px) {
+  .pfi-hero-copy {
+    padding-block: 45px;
+  }
+}
+@media (max-width: 1150px) {
+  .pfi-container {
+    width: calc(100% - 48px);
+  }
+  .pfi-hero-grid {
+    gap: 20px;
+    grid-template-columns: 1.1fr 1fr;
+  }
+  .pfi-highlights {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pfi-hero h1 {
+    font-size: 34px;
+  }
+  .pfi-about {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .pfi-about > div:first-child {
+    border: 0;
+    padding-right: 0;
+  }
+  .pfi-about > div:first-child p {
+    max-width: 850px;
+  }
+  .pfi-benefit-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .pfi-program-grid {
+    gap: 14px;
+  }
+  .pfi-package {
+    padding: 17px;
+  }
+  .pfi-package-top {
+    gap: 10px;
+  }
+  .pfi-package-icon {
+    width: 43px;
+    height: 43px;
+  }
+  .pfi-package-icon svg {
+    width: 29px;
+    height: 29px;
+  }
+  .pfi-package h3 {
+    font-size: 16px;
+  }
+  .pfi-why-process,
+  .pfi-audience-support {
+    grid-template-columns: 1fr;
+  }
+  .pfi-process,
+  .pfi-support {
+    border: 0;
+    padding-left: 0;
+  }
+  .pfi-why-content {
+    grid-template-columns: 1fr 170px;
+  }
+  .pfi-timeline {
+    gap: 20px;
+  }
+  .pfi-timeline li {
+    padding: 30px 13px 20px;
+  }
+  .pfi-timeline h3 {
+    font-size: 14px;
+  }
+  .pfi-timeline p {
+    font-size: 12px;
+  }
+  .pfi-step-arrow {
+    right: -20px;
+    width: 20px;
+  }
+  .pfi-audience-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .pfi-small-card h3 {
+    font-size: 12px;
+  }
+  .pfi-small-card p {
+    font-size: 11px;
+  }
+  .pfi-pricing-faq {
+    gap: 25px;
+  }
+  .pfi-pricing-copy {
+    grid-template-columns: 1fr;
+  }
+  .pfi-clipboard {
+    display: none;
+  }
+  .pfi-final {
+    margin-inline: 0;
+    padding-right: 115px;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .pfi-final-art {
+    width: 70px;
+    right: 20px;
+  }
+}
+@media (max-width: 899px) {
+  .pfi-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .pfi-hero-copy {
+    padding-top: 30px;
+    padding-bottom: 18px;
+  }
+  .pfi-hero h1 {
+    font-size: clamp(34px, 5.5vw, 45px);
+    max-width: 720px;
+  }
+  .pfi-hero-visual {
+    width: min(520px, 95%);
+    margin-inline: auto;
+  }
+  .pfi-highlights {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .pfi-section-top {
+    display: block;
+  }
+  .pfi-section-top .pfi-heading {
+    max-width: none;
+  }
+  .pfi-section-top > p {
+    max-width: 660px;
+  }
+  .pfi-benefit-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pfi-program-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pfi-package:last-child {
+    grid-column: 1 / -1;
+  }
+  .pfi-package-intro {
+    min-height: 0;
+  }
+  .pfi-audience-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .pfi-pricing-faq {
+    grid-template-columns: 1fr;
+  }
+  .pfi-faq {
+    border: 0;
+    padding-left: 0;
+  }
+  .pfi-pricing-copy {
+    grid-template-columns: 1fr 140px;
+  }
+  .pfi-clipboard {
+    display: block;
+  }
+  .pfi-final {
+    grid-template-columns: 1fr;
+    padding: 25px 100px 25px 25px;
+  }
+}
+@media (max-width: 600px) {
+  .pfi-container {
+    width: calc(100% - 36px);
+  }
+  .pfi-page {
+    font-size: 13px;
+  }
+  .pfi-section {
+    padding-block: 22px;
+  }
+  .pfi-heading h2 {
+    font-size: 25px;
+    line-height: 1.1;
+  }
+  .pfi-hero h1 {
+    font-size: clamp(31px, 8.5vw, 43px);
+  }
+  .pfi-hero-intro {
+    font-size: 14px;
+  }
+  .pfi-hero .pfi-hero-detail {
+    font-size: 12px;
+  }
+  .pfi-hero .pfi-hero-statement {
+    font-size: 14px;
+  }
+  .pfi-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pfi-page .pfi-actions > a {
+    font-size: 12px;
+    padding: 12px 8px;
+    white-space: normal;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .pfi-highlights {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  .pfi-highlights li {
+    font-size: 11px;
+  }
+  .pfi-hero-visual {
+    margin-top: 10px;
+  }
+  .pfi-social {
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+  }
+  .pfi-social svg {
+    width: 27px;
+    height: 27px;
+  }
+  .pfi-social-youtube {
+    left: -2%;
+  }
+  .pfi-visual-note {
+    bottom: 6%;
+    right: -1%;
+    padding: 8px 12px 8px 8px;
+    gap: 7px;
+  }
+  .pfi-visual-note strong {
+    font-size: 12px;
+  }
+  .pfi-note-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .pfi-note-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .pfi-about-cards,
+  .pfi-benefit-grid,
+  .pfi-program-grid {
+    grid-template-columns: 1fr;
+  }
+  .pfi-about-card {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    column-gap: 15px;
+    padding: 18px;
+  }
+  .pfi-about-card > svg {
+    grid-row: span 2;
+    margin: 0;
+  }
+  .pfi-about-card h3 {
+    margin-bottom: 5px;
+    font-size: 15px;
+  }
+  .pfi-about-card p {
+    font-size: 13px;
+  }
+  .pfi-benefit {
+    padding: 18px;
+    gap: 16px;
+  }
+  .pfi-benefit h3 {
+    font-size: 15px;
+  }
+  .pfi-benefit p {
+    font-size: 13px;
+  }
+  .pfi-benefit summary {
+    font-size: 11px;
+  }
+  .pfi-package {
+    padding: 22px;
+  }
+  .pfi-package:last-child {
+    grid-column: auto;
+  }
+  .pfi-package h3 {
+    font-size: 19px;
+  }
+  .pfi-package-top p {
+    min-height: 0;
+  }
+  .pfi-package-services {
+    font-size: 13px;
+    gap: 9px;
+  }
+  .pfi-package-icon {
+    width: 51px;
+    height: 51px;
+  }
+  .pfi-why-content {
+    grid-template-columns: 1fr;
+  }
+  .pfi-partnership-art {
+    width: 150px;
+    margin-inline: auto;
+  }
+  .pfi-timeline {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-left: 20px;
+    border-left: 1px solid var(--brand-light-gold);
+    margin-left: 12px;
+  }
+  .pfi-timeline li {
+    padding: 20px 20px 20px 28px;
+    text-align: left;
+  }
+  .pfi-step-number {
+    top: 17px;
+    left: -20px;
+  }
+  .pfi-timeline h3 {
+    font-size: 15px;
+  }
+  .pfi-timeline p {
+    font-size: 13px;
+  }
+  .pfi-step-arrow {
+    top: auto;
+    right: 50%;
+    bottom: -25px;
+    transform: rotate(90deg);
+  }
+  .pfi-audience-grid,
+  .pfi-support-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .pfi-small-card {
+    padding: 18px 12px;
+  }
+  .pfi-small-card h3 {
+    font-size: 13px;
+  }
+  .pfi-small-card p {
+    font-size: 12px;
+  }
+  .pfi-pricing-copy {
+    grid-template-columns: 1fr;
+  }
+  .pfi-clipboard {
+    display: none;
+  }
+  .pfi-pricing > a {
+    width: 100%;
+    padding: 12px 9px;
+    line-height: 1.4;
+  }
+  .pfi-page .pfi-faq .marketing-faq button {
+    font-size: 13px;
+    padding-block: 13px;
+  }
+  .pfi-final {
+    padding: 24px;
+    border-radius: 20px;
+    gap: 18px;
+    margin-bottom: 30px;
+  }
+  .pfi-final h2 {
+    font-size: 27px;
+  }
+  .pfi-final .pfi-actions > a {
+    font-size: 12px;
+  }
+  .pfi-final-art {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pfi-page *,
+  .pfi-page *::before,
+  .pfi-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .pfi-card:hover {
+    transform: none;
+  }
+}

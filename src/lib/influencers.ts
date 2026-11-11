@@ -17,6 +17,9 @@ export const influencerCategories = [
   "Food",
   "News & Media",
   "Comedy",
+  "Beauty",
+  "Music",
+  "Acting",
 ] as const;
 export const applicationPath = "/partners/apply?opportunity=paid-promotion";
 export const mediaBucket = "influencer-media";
@@ -157,6 +160,10 @@ export type InfluencerApplication = {
     creator_name?: string;
     primary_platform?: string;
     joining_reason?: string;
+    whatsapp?: string;
+    creator_goals?: string;
+    project_requirements?: string;
+    additional_message?: string;
     partnership_interests?: string[];
     profile_image: string | null;
     cover_image: string | null;

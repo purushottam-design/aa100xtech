@@ -82,6 +82,9 @@ test("SQL Editor recovery saves a PDF application through the real handler and r
       "src/lib/website-requests.server.ts",
       {
         "@/integrations/supabase/client.server": { supabaseAdmin: adapter },
+        "@/lib/public-site.server": {
+          publicSiteSettings: async () => ({ email: "admin@example.test" }),
+        },
       },
       { File, FormData, process: { env: { NODE_ENV: "production" } } },
     );
@@ -123,6 +126,46 @@ test("SQL Editor recovery saves a PDF application through the real handler and r
     assert.equal(candidate.full_name, input.name);
     assert.ok(objects.has(candidate.file_path));
     assert.equal((await db.query("SELECT count(*) AS n FROM website_requests")).rows[0].n, 1);
+
+    const partnership = {
+      ...input,
+      id: "00000000-0000-4000-8000-000000000003",
+      kind: "influencer",
+      selectedPlan: "influencer-partnership",
+      requirements: "An original music video and creator website.",
+      message: "Service: Influencer Partnership\nPackage: Content & Music",
+      partnership: {
+        package: "content-music",
+        services: ["Music Videos", "Portfolio Website"],
+        budget: "To discuss",
+        timeline: "Next month",
+        privacy: true,
+      },
+    };
+    const partnershipRequest = () => {
+      const form = new FormData();
+      form.set("data", JSON.stringify(partnership));
+      return new Request("https://aa100xtech.com/api/website/requests", {
+        method: "POST",
+        headers: { origin: "https://aa100xtech.com", "x-aa-rpc": "1" },
+        body: form,
+      });
+    };
+    assert.equal((await (await saveWebsiteRequest(partnershipRequest())).json()).saved, true);
+    assert.equal(
+      (await (await saveWebsiteRequest(partnershipRequest())).json()).notification,
+      "previously_saved",
+    );
+    const savedProposal = (
+      await db.query("SELECT payload FROM website_requests WHERE id=$1", [partnership.id])
+    ).rows[0].payload;
+    assert.equal(savedProposal.selectedPlan, "influencer-partnership");
+    assert.deepEqual(JSON.parse(savedProposal.partnership), partnership.partnership);
+    assert.equal(
+      (await db.query("SELECT count(*) AS n FROM website_requests WHERE id=$1", [partnership.id]))
+        .rows[0].n,
+      1,
+    );
 
     for (const role of ["anon", "authenticated"]) {
       await db.exec(`SET ROLE ${role}`);

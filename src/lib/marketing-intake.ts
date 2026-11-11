@@ -27,6 +27,9 @@ export const categories = [
   "Fitness",
   "Business",
   "Entertainment",
+  "Beauty",
+  "Music",
+  "Acting",
   "Other",
 ] as const;
 export const creatorPartnershipInterests = [
@@ -134,38 +137,76 @@ export const socialProfile = z
       }),
     { path: ["url"], message: "Use a URL for the selected platform" },
   );
-export const creatorIntakeSchema = z.object({
-  ...base,
-  full_name: required(),
-  city: optional(80),
-  state: optional(80),
-  country: optional(80),
-  profiles: z
-    .array(socialProfile)
-    .min(1, "Select at least one platform")
-    .max(10)
-    .refine(
-      (v) => new Set(v.map((p) => p.platform)).size === v.length,
-      "Select each platform once",
-    ),
-  category: z.enum(categories),
-  audience_location: optional(250),
-  language: optional(120),
-  average_views: count,
-  engagement: z.number().min(0).max(100).nullable(),
-  collaboration: z.enum(["Paid", "Barter", "Affiliate", "Open to All"]),
-  previous_collaborations: optional(),
-  creator_name: optional(120),
-  primary_platform: z.union([z.enum(platforms), z.literal("")]).default(""),
-  portfolio_url: z.union([publicUrl, z.literal("")]).default(""),
-  joining_reason: optional(1500),
-  partnership_interests: z
-    .array(z.enum(creatorPartnershipInterests))
-    .max(creatorPartnershipInterests.length)
-    .default([]),
-  biography: optional(1200),
-  publication_consent: z.boolean().default(false),
-});
+export const creatorIntakeSchema = z
+  .object({
+    ...base,
+    full_name: required(),
+    city: optional(80),
+    state: optional(80),
+    country: optional(80),
+    profiles: z
+      .array(socialProfile)
+      .min(1, "Select at least one platform")
+      .max(10)
+      .refine(
+        (v) => new Set(v.map((p) => p.platform)).size === v.length,
+        "Select each platform once",
+      ),
+    category: z.enum(categories),
+    audience_location: optional(250),
+    language: optional(120),
+    average_views: count,
+    engagement: z.number().min(0).max(100).nullable(),
+    collaboration: z.enum(["Paid", "Barter", "Affiliate", "Open to All"]),
+    previous_collaborations: optional(),
+    creator_name: optional(120),
+    primary_platform: z.union([z.enum(platforms), z.literal("")]).default(""),
+    portfolio_url: z.union([publicUrl, z.literal("")]).default(""),
+    joining_reason: optional(1500),
+    whatsapp: z.union([phone, z.literal("")]).optional(),
+    creator_goals: optional(1500).optional(),
+    project_requirements: optional(2000).optional(),
+    additional_message: optional(1500).optional(),
+    partnership_application: z.literal(true).optional(),
+    partnership_interests: z
+      .array(z.enum(creatorPartnershipInterests))
+      .max(creatorPartnershipInterests.length)
+      .default([]),
+    biography: optional(1200),
+    publication_consent: z.boolean().default(false),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.partnership_application) return;
+    for (const key of [
+      "creator_name",
+      "city",
+      "state",
+      "country",
+      "primary_platform",
+      "creator_goals",
+      "joining_reason",
+      "project_requirements",
+    ] as const) {
+      if ((data[key]?.trim().length ?? 0) < 2)
+        ctx.addIssue({
+          code: "custom",
+          path: [key],
+          message: "Please complete this partnership detail",
+        });
+    }
+    if (!data.profiles.some((profile) => profile.platform === data.primary_platform))
+      ctx.addIssue({
+        code: "custom",
+        path: ["primary_platform"],
+        message: "Choose one of your supplied social profiles",
+      });
+    if (!data.partnership_interests.length)
+      ctx.addIssue({
+        code: "custom",
+        path: ["partnership_interests"],
+        message: "Select at least one partnership interest",
+      });
+  });
 export const brandIntakeSchema = z.object({
   ...base,
   company: required(),

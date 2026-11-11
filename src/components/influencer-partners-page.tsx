@@ -36,9 +36,8 @@ import {
 import { MarketingIntakeForm } from "./marketing-intake-form";
 import { MarketingFaq } from "./marketing-service-faq";
 import { clients } from "@/data/site";
-import { consultationPlans } from "@/data/consultations";
 
-const startingPrice = Math.min(...consultationPlans.map((plan) => plan.price));
+const startingPrice = 6100;
 const services = [
   {
     icon: Search,
