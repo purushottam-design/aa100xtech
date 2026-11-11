@@ -20,7 +20,7 @@ export const projects: Project[] = [
   },
   {
     slug: "picempire",
-    name: "CreatorsMove365.ai",
+    name: "creatormoves365.ai",
     category: "AI Platform",
     description:
       "AI-powered creative platform for modern image experiences and generation workflows.",

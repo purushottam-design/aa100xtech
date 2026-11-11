@@ -3,7 +3,6 @@ import { InfluencerPartnersPage } from "@/components/influencer-partners-page";
 import { InfluencerCreativeServices } from "@/components/influencer-creative-services";
 import { InfluencerProgramDetails } from "@/components/influencer-program-details";
 import { getInfluencerProgram } from "@/lib/influencer-program.server";
-import { creatorListing } from "@/lib/creator-discovery";
 import { withSocialMetadata } from "@/lib/page-metadata";
 import "./influencer-partners.css";
 
@@ -19,8 +18,6 @@ export default async function Page() {
   const program = await getInfluencerProgram();
   return (
     <InfluencerPartnersPage
-      profiles={program.profiles.map(creatorListing)}
-      unavailable={program.unavailable}
       programDetails={<InfluencerProgramDetails program={program} />}
       creativeServices={<InfluencerCreativeServices />}
     />

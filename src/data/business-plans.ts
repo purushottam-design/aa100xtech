@@ -1,3 +1,5 @@
+import { services } from "./services";
+
 // Approved names stay separate: no inferred mapping between these packages.
 export type BusinessPlan = {
   id: string;
@@ -111,5 +113,9 @@ export const inquiryOptions = [
   })),
   { id: "influencer-marketing", name: "Influencer Marketing" },
   { id: "viral-influencer-marketing", name: "Viral Influencer Marketing" },
+  { id: "social-media-ads", name: "Social Media Ads Marketing" },
+  ...services
+    .filter((service) => service.slug !== "influencer-marketing")
+    .map((service) => ({ id: service.slug, name: service.title })),
   { id: "other", name: "Other requirements" },
 ];

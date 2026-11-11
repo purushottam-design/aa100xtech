@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { inquiryOptions } from "@/data/business-plans";
 import { campaignDetailsSchema } from "./campaign-enquiry";
+import { socialAdProposalSchema } from "./social-ad-proposal";
 
 export const websiteRequestSchema = z
   .object({
@@ -22,8 +23,17 @@ export const websiteRequestSchema = z
     website: z.string().max(0).default(""),
     startedAt: z.number().int().positive(),
     campaign: campaignDetailsSchema.optional(),
+    socialAds: socialAdProposalSchema.optional(),
   })
   .superRefine((data, ctx) => {
+    if (data.socialAds && (data.kind !== "proposal" || data.selectedPlan !== "social-media-ads"))
+      ctx.addIssue({
+        code: "custom",
+        path: ["socialAds"],
+        message: "Choose the social media ads proposal service.",
+      });
+    if (data.socialAds && data.company.length < 2)
+      ctx.addIssue({ code: "custom", path: ["company"], message: "Enter your business name." });
     if (data.campaign && data.kind !== "influencer")
       ctx.addIssue({
         code: "custom",
@@ -78,12 +88,15 @@ export async function submitWebsiteRequest(input: WebsiteRequestInput, file?: Fi
   const form = new FormData();
   form.set("data", JSON.stringify(parsed.data));
   if (file?.size) form.set("attachment", file);
-  const response = await fetch("/api/website/requests", {
-    method: "POST",
-    headers: { "x-aa-rpc": "1" },
-    body: form,
-    signal: AbortSignal.timeout(30_000),
-  });
+  const response = await fetch(
+    parsed.data.socialAds ? "/api/website/social-ads" : "/api/website/requests",
+    {
+      method: "POST",
+      headers: { "x-aa-rpc": "1" },
+      body: form,
+      signal: AbortSignal.timeout(30_000),
+    },
+  );
   const result = await response.json();
   if (!response.ok || !result.saved)
     throw new Error(result.message ?? "Your request could not be saved. Please try again.");

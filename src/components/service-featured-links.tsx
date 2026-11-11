@@ -1,6 +1,5 @@
 import { ArrowUpRight, Fingerprint } from "lucide-react";
 import { Link } from "@/lib/navigation";
-import { BeTheOneNavLink } from "./be-the-one-nav-link";
 
 export function ServiceFeaturedLinks({
   onNavigate,
@@ -12,7 +11,7 @@ export function ServiceFeaturedLinks({
   const external = /^https?:\/\//.test(prideHref);
 
   return (
-    <div className="mb-3 grid grid-cols-1 gap-3 xl:grid-cols-2 [&>a]:mb-0 [&>a]:min-h-16">
+    <div className="mb-3 [&>a]:min-h-16">
       <Link
         to={prideHref}
         onClick={onNavigate}
@@ -23,10 +22,9 @@ export function ServiceFeaturedLinks({
         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-amber-300/60 bg-white/80 text-amber-700">
           <Fingerprint className="size-5" aria-hidden="true" />
         </span>
-        <span>My Name My Pride</span>
+        <span>My Name My Pride / Be The One</span>
         <ArrowUpRight className="ml-auto size-4 shrink-0 text-amber-700" aria-hidden="true" />
       </Link>
-      <BeTheOneNavLink onNavigate={onNavigate} />
     </div>
   );
 }

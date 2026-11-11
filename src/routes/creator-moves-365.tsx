@@ -147,7 +147,7 @@ function CreatorMoves365Page() {
               rel="noopener noreferrer"
               className="underline underline-offset-4"
             >
-              Explore CreatorMoves365.ai (opens in a new tab)
+              Explore creatormoves365.ai (opens in a new tab)
             </a>
             <a
               href="https://creatormoves365.com/"
@@ -155,7 +155,7 @@ function CreatorMoves365Page() {
               rel="noopener noreferrer"
               className="underline underline-offset-4"
             >
-              Explore CreatorMoves365.com (opens in a new tab)
+              Explore creatormoves365.com (opens in a new tab)
             </a>
           </div>
 

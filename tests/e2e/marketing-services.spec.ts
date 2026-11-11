@@ -9,6 +9,8 @@ for (const width of [390, 768, 1440]) {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     for (const service of marketingServices) {
+      // Paid social has a dedicated page and its own complete browser coverage.
+      if (service.slug === "social-media-ads") continue;
       const response = await page.goto(marketingServiceHref(service));
       expect(response?.status()).toBe(200);
       await expect(page).toHaveTitle(service.title);

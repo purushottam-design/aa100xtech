@@ -150,6 +150,96 @@
   font-size: 0.7rem;
   color: var(--text-secondary);
 }
+.marketing-slide-image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+}
+.marketing-slide-image img {
+  user-select: none;
+}
+.marketing-slide-count {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  background: #fffaf0f2;
+  color: var(--heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.marketing-slide-arrows {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.marketing-slide-arrows button,
+.marketing-slider-pause {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--heading);
+  background: #fffaf0f2;
+  cursor: pointer;
+}
+.marketing-slide-arrows button:hover,
+.marketing-slider-pause:hover {
+  background: var(--brand-gold);
+}
+.marketing-slide-arrows svg,
+.marketing-slider-pause svg {
+  width: 1rem;
+  height: 1rem;
+}
+.marketing-slider-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 2.75rem;
+  margin: 0.6rem 0.5rem 0;
+}
+.marketing-slide-dots {
+  display: flex;
+}
+.marketing-slide-dots button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2.75rem;
+  cursor: pointer;
+}
+.marketing-slide-dots button::after {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 1rem;
+  background: #d9bc8c;
+  transition:
+    width 0.2s,
+    background 0.2s;
+}
+.marketing-slide-dots button[aria-current="true"]::after {
+  width: 1.4rem;
+  background: var(--brand-deep-orange);
+}
+.marketing-hero-slider button:focus-visible {
+  outline: 2px solid var(--brand-deep-orange);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marketing-slide-dots button::after {
+    transition: none;
+  }
+}
 .marketing-caption-line {
   width: 1.75rem;
   height: 1px;

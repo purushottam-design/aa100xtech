@@ -38,7 +38,7 @@ export const showAuthButtons = true;
 export const joinUsLinks = [{ to: "/careers", label: "Jobs" }] as const;
 
 export const marketingLinks = [
-  { to: "/marketing/social-media-ads", label: "Social Media Ads Marketing" },
+  { to: "/social-media-ads-marketing", label: "Social Media Ads Marketing" },
   { to: "/marketing/banner-marketing", label: "Banner Marketing" },
   { to: "/marketing/newspaper-marketing", label: "Newspaper Marketing" },
   {
@@ -95,8 +95,8 @@ export const clients = [
   },
   { name: "EcoBlossom Creations", url: "https://ecoblossomcreations.com/" },
   { name: "Tasty Foods Delights", url: "https://tastyfoodsdelights.com/" },
-  { name: "CreatorsMove365.ai", url: "https://creatormoves365.ai/" },
-  { name: "CreatorsMove365.com", url: "https://creatormoves365.com/" },
+  { name: "creatormoves365.ai", url: "https://creatormoves365.ai/" },
+  { name: "creatormoves365.com", url: "https://creatormoves365.com/" },
   {
     name: "Shakti Sphere Lifestyle",
     url: "https://shaktispherelifestyle.com/",

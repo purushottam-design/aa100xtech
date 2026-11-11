@@ -1,4 +1,6 @@
-import { saveWebsiteRequest } from "@/lib/website-requests.server";
+import { saveWebsiteRequest, validWebsiteOrigin } from "@/lib/website-requests.server";
+import { enquiryStatuses } from "@/lib/social-ad-proposal";
+import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { websiteAdmin } from "@/lib/website-database.server";
 import { authorize } from "@/lib/rbac.server";
@@ -71,10 +73,72 @@ export async function GET(request: Request) {
     if (readError)
       return Response.json({ message: "Requests are temporarily unavailable." }, { status: 503 });
     return Response.json(
-      { rows },
+      {
+        rows,
+        canEditLeads: canReadLeads && (access.isSuper || access.permissions.includes("leads.edit")),
+      },
       { headers: { "cache-control": "no-store", vary: "Authorization" } },
     );
   } catch {
     return Response.json({ message: "Access denied." }, { status: 403 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  if (!validWebsiteOrigin(request))
+    return Response.json({ message: "Cross-site request rejected." }, { status: 403 });
+  const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/)?.[1];
+  if (!token) return Response.json({ message: "Sign in required." }, { status: 401 });
+  try {
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !data.user)
+      return Response.json({ message: "Sign in required." }, { status: 401 });
+    const access = await authorize(data.user.id);
+    if (
+      !access.isSuper &&
+      !(access.permissions.includes("leads.view") && access.permissions.includes("leads.edit"))
+    )
+      return Response.json({ message: "Access denied." }, { status: 403 });
+    const parsed = z
+      .object({ id: z.string().uuid(), status: z.enum(enquiryStatuses) })
+      .strict()
+      .safeParse(await request.json());
+    if (!parsed.success)
+      return Response.json({ message: "Choose a valid enquiry and status." }, { status: 400 });
+    const current = await websiteAdmin
+      .from("website_requests")
+      .select("payload")
+      .eq("id", parsed.data.id)
+      .eq("kind", "proposal")
+      .maybeSingle();
+    if (current.error)
+      return Response.json({ message: "Enquiry could not be loaded." }, { status: 503 });
+    if (!current.data?.payload["socialAds"])
+      return Response.json({ message: "Advertising proposal not found." }, { status: 404 });
+    // Compare the full payload so a concurrent update cannot overwrite another admin's change.
+    const result = await websiteAdmin
+      .from("website_requests")
+      .update({ payload: { ...current.data.payload, status: parsed.data.status } })
+      .eq("id", parsed.data.id)
+      .eq("kind", "proposal")
+      .filter("payload", "eq", JSON.stringify(current.data.payload))
+      .select("id")
+      .maybeSingle();
+    if (result.error)
+      return Response.json(
+        { message: "Status could not be saved. Please try again." },
+        { status: 503 },
+      );
+    if (!result.data)
+      return Response.json(
+        { message: "This enquiry changed. Refresh the inbox and try again." },
+        { status: 409 },
+      );
+    return Response.json({ saved: true }, { headers: { "cache-control": "no-store" } });
+  } catch {
+    return Response.json(
+      { message: "Status could not be saved. Please try again." },
+      { status: 503 },
+    );
   }
 }
