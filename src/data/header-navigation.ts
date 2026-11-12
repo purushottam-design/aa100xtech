@@ -23,7 +23,6 @@ export function headerLinkActive(link: HeaderLink, pathname: string) {
 
 const joinItems: readonly HeaderLink[] = [
   ...joinUsLinks,
-  { to: "/partnership-for-influencers", label: "PARTNERSHIP FOR INFLUENCERS" },
   { to: "/request-access", label: "Request an Account" },
 ];
 
@@ -45,12 +44,12 @@ export const moreItems: readonly HeaderLink[] = [
   // { to: "/partners/apply", label: "Become a Partner" },
 ];
 
-// Header-only configuration: footer navigation and every existing route stay intact.
+// Primary navigation shared by desktop and mobile headers.
 export const headerNavigation = [
   { kind: "link", to: "/", label: "Home" },
   { kind: "services", label: "Services" },
   { kind: "link", to: "/clients", label: "Our Top Clients" },
-  { kind: "link", to: "https://theamanlife.com/", label: "Founder" },
+  { kind: "link", to: "/partnership-for-influencers", label: "Partnership for Influencers" },
   { kind: "dropdown", label: "Marketing", items: marketingLinks as readonly HeaderLink[] },
   { kind: "dropdown", label: "Join Us", items: joinItems },
 ] as const;

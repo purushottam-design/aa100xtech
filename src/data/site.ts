@@ -16,7 +16,7 @@ export const site = {
   phoneApprovalPending: false,
   gstin: "10ABCCA6080A1ZH",
   domain: "www.aa100xtech.com",
-  myNameMyPrideUrl: "https://mynamemypride.com",
+  myNameMyPrideUrl: "https://timely-longma-3d5d3d.netlify.app/",
 } as const;
 
 export const navLinks: readonly { to: string; label: string; href?: string }[] = [
