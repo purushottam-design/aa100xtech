@@ -9,7 +9,7 @@ const { headerNavigation, headerHref, headerLinkActive, moreItems } = load(
 test("navbar preserves the requested primary order and existing submenu destinations", () => {
   assert.deepEqual(
     Array.from(headerNavigation, (item) => item.label),
-    ["Home", "Services", "Our Top Clients", "Founder", "Marketing", "Join Us"],
+    ["Home", "Services", "Our Top Clients", "Partnership for Influencers", "Marketing", "Join Us"],
   );
   const join = headerNavigation.find((item) => item.label === "Join Us").items;
   assert.ok(join.some((link) => link.to === "/careers"));

@@ -15,7 +15,7 @@ const footerServices = [
   "advertising-management",
   "ai-solutions",
 ];
-const companyLinks = [...navLinks, ...moreLinks].filter(
+const companyLinks = [...navLinks, ...moreLinks, { to: "https://theamanlife.com/", label: "Founder" }].filter(
   (link) => !programLinks.some((program) => program.to === link.to),
 );
 
