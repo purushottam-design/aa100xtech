@@ -153,6 +153,9 @@ function handler(
   const api = load(
     "src/lib/backend/handlers/consultations.ts",
     {
+      "@/integrations/supabase/auth-middleware": {
+        requireSupabaseAuth: async () => ({ userId: "fixture-customer" }),
+      },
       "@/integrations/supabase/client.server": { supabaseAdmin: client },
       "@/lib/payment-database.server": {
         associatePaymentCustomer: async () => {},

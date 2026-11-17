@@ -1,4 +1,5 @@
 import { saveWebsiteRequest, validWebsiteOrigin } from "@/lib/website-requests.server";
+import { websiteSessionError } from "@/lib/website-session.server";
 import { enquiryStatuses } from "@/lib/social-ad-proposal";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
@@ -7,6 +8,8 @@ import { authorize } from "@/lib/rbac.server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
+  const denied = await websiteSessionError(request);
+  if (denied) return denied;
   try {
     return await saveWebsiteRequest(request);
   } catch {

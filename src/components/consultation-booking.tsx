@@ -11,8 +11,11 @@ import {
   type ReactNode,
 } from "react";
 import { ArrowRight, Check, CreditCard, Loader2, ShieldCheck, XCircle } from "lucide-react";
-import { Link } from "@/lib/navigation";
+import { Link, useNavigate } from "@/lib/navigation";
+import { loginHref } from "@/lib/auth-navigation";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { usePathname } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -129,6 +132,8 @@ function loadRazorpay() {
 
 export function ConsultationProvider({ children }: { children: ReactNode }) {
   const { session } = useSession();
+  const navigate = useNavigate();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>("plans");
   const [planId, setPlanId] = useState<string | null>(null);
@@ -156,6 +161,21 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
   const submissionInFlight = useRef(false);
   const submissionRevision = useRef(0);
   const bookingAttempt = useRef<ConsultationAttempt | null>(null);
+  const bookingUserId = useRef<string | null>(null);
+
+  useEffect(() => {
+    const nextUserId = session?.user.id ?? null;
+    if (bookingUserId.current && bookingUserId.current !== nextUserId) {
+      submissionRevision.current += 1;
+      setIsOpen(false);
+      setForm(emptyForm());
+      setOrder(null);
+      setCheckout(null);
+      setPendingVerification(null);
+      draftCheckout.current = null;
+    }
+    bookingUserId.current = nextUserId;
+  }, [session?.user.id]);
 
   const applyIciciStatus = useCallback((result: IciciCheckoutStatus) => {
     setPlanId(result.booking.planId);
@@ -300,15 +320,42 @@ export function ConsultationProvider({ children }: { children: ReactNode }) {
 
   const plan = planId ? (getConsultationPlan(planId) ?? null) : null;
 
-  const open = useCallback((id?: string) => {
-    setIsOpen(true);
-    if (id) {
-      setPlanId(id);
-      setStep("details");
-    } else {
-      setStep("plans");
-    }
-  }, []);
+  const open = useCallback(
+    (id?: string) => {
+      void (async () => {
+        const { data, error } = await supabase.auth
+          .getUser()
+          .catch(() => ({ data: { user: null }, error: true }));
+        const user = data.user;
+        if (error || !user) {
+          const next = new URL(window.location.href);
+          next.searchParams.set("book", id || "plans");
+          toast.info("Please log in or create an account to book a consultation.");
+          navigate({ to: loginHref(next.pathname + next.search + next.hash) });
+          return;
+        }
+        setForm((previous) => ({ ...previous, email: previous.email || user.email || "" }));
+        setIsOpen(true);
+        if (id && getConsultationPlan(id)) {
+          setPlanId(id);
+          setStep("details");
+        } else {
+          setStep("plans");
+        }
+      })();
+    },
+    [navigate],
+  );
+
+  useEffect(() => {
+    if (!session) return;
+    const current = new URL(window.location.href);
+    const requested = current.searchParams.get("book");
+    if (!requested) return;
+    current.searchParams.delete("book");
+    window.history.replaceState(null, "", current.pathname + current.search + current.hash);
+    open(requested === "plans" ? undefined : requested);
+  }, [session, open, pathname]);
 
   const value = useMemo<Ctx>(() => ({ open }), [open]);
 

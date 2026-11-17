@@ -29,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PANEL_PATH, panelsForRoles } from "@/lib/admin-panels";
 import { getMyAccount } from "@/lib/accounts.functions";
 import { recordAdminLogin } from "@/lib/admin-management.functions";
+import { authReturnPath } from "@/lib/auth-navigation";
 
 export default AuthPage;
 
@@ -80,7 +81,8 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
+      if (data.session)
+        navigate({ to: authReturnPath(window.location.search) ?? "/dashboard", replace: true });
     });
   }, [navigate]);
 
@@ -137,6 +139,13 @@ function AuthPage() {
       // Role-based admin routing: one admin role opens its dashboard directly,
       // several roles show the "Continue as" selection screen.
       const panels = panelsForRoles(roles);
+      const returnTo = authReturnPath(window.location.search);
+      if (returnTo) {
+        setBusy(false);
+        toast.success("Signed in");
+        navigate({ to: returnTo, replace: true });
+        return;
+      }
       if (panels.length === 1) {
         setBusy(false);
         toast.success("Signed in");
@@ -155,7 +164,7 @@ function AuthPage() {
 
     setBusy(false);
     toast.success("Signed in");
-    navigate({ to: "/dashboard", replace: true });
+    navigate({ to: authReturnPath(window.location.search) ?? "/dashboard", replace: true });
   }
 
   return (
@@ -167,8 +176,8 @@ function AuthPage() {
             Welcome to <span className={styles["brand"]}>AA100X Tech</span>
           </h1>
           <p className={styles["introCopy"]}>
-            Create your account first — choose your account type, set an email and password, and you
-            can sign in straight away on Company, Interviews, Marketing or Business login.
+            Log in to book a consultation and use website features. New here? Create your account
+            once, then use the same email and password every time you return.
           </p>
           <p className={styles["guide"]}>
             Admin ya super admin ho?{" "}
@@ -180,7 +189,10 @@ function AuthPage() {
 
         <div className="mt-10 flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-start">
           {/* Sign in — first on mobile, right column on desktop */}
-          <Card className={`surface-card order-1 lg:order-2 ${styles["card"]}`}>
+          <Card
+            id="login"
+            className={`surface-card order-1 scroll-mt-28 lg:order-2 ${styles["card"]}`}
+          >
             <CardHeader className={styles["cardHeader"]}>
               <span className={styles["cardIcon"]}>
                 <LogIn className="size-5" aria-hidden="true" />
@@ -272,7 +284,10 @@ function AuthPage() {
           </Card>
 
           {/* Sign up request — second on mobile, left column on desktop */}
-          <Card className={`surface-card order-2 lg:order-1 ${styles["card"]}`}>
+          <Card
+            id="signup"
+            className={`surface-card order-2 scroll-mt-28 lg:order-1 ${styles["card"]}`}
+          >
             <CardHeader className={styles["cardHeader"]}>
               <span className={styles["cardIcon"]}>
                 <UserRoundPlus className="size-5" aria-hidden="true" />

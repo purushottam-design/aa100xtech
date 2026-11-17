@@ -11,6 +11,8 @@
     "preview": "node scripts/next.cjs start",
     "diagnose:influencers": "node scripts/next.cjs diagnose-influencers",
     "diagnose:marketing": "node scripts/next.cjs diagnose-marketing",
+    "partners:preflight": "node scripts/next.cjs partners-preflight",
+    "partners:inventory": "node scripts/partner-workspace/inventory.cjs",
     "repair:marketing": "node scripts/next.cjs repair-marketing",
     "diagnose:website": "node scripts/next.cjs diagnose-website",
     "repair:influencers": "node scripts/next.cjs repair-influencers",

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { usePublicSite } from "@/hooks/use-public-site";
+import { customerActionHeaders, redirectExpiredCustomerSession } from "@/lib/customer-action-auth";
 import "@/app/influencers/influencers.css";
 import {
   influencerApplicationSchema,
@@ -107,9 +108,10 @@ export function InfluencerApplicationForm() {
     try {
       const response = await fetch("/api/influencers/apply", {
         method: "POST",
-        headers: { "x-aa-rpc": "1" },
+        headers: await customerActionHeaders(),
         body,
       });
+      redirectExpiredCustomerSession(response);
       const result = await response.json();
       if (!response.ok) throw new Error(result.error ?? "Could not save your application");
       form.reset();

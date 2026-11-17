@@ -1,10 +1,13 @@
+import { customerActionHeaders, redirectExpiredCustomerSession } from "@/lib/customer-action-auth";
+
 export async function submitMarketingForm(kind: "creator" | "brand", body: FormData) {
   const response = await fetch(`/api/marketing/${kind}`, {
     method: "POST",
-    headers: { "x-aa-rpc": "1" },
+    headers: await customerActionHeaders(),
     body,
     signal: AbortSignal.timeout(30_000),
   });
+  redirectExpiredCustomerSession(response);
   let result: { ok?: unknown; reference?: unknown; error?: unknown };
   try {
     result = await response.json();

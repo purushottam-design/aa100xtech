@@ -20,6 +20,8 @@ const staticPaths = [
   "/clients",
   "/portfolio",
   "/be-the-one",
+  "/one-identity-one-world-one-person",
+  "/security-identity-defect",
   "/creator-moves-365",
   "/influencer-success-program",
   "/influencer-marketing",

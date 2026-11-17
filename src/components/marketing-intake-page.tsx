@@ -1,11 +1,17 @@
 import Link from "next/link";
 import { MarketingIntakeForm } from "./marketing-intake-form";
+import { PartnerCampaignPackages } from "./partner-campaign-packages";
+import type { PartnerCampaignPackageId } from "@/data/partner-campaign-packages";
 export function MarketingIntakePage({
   kind,
   partnership = false,
+  campaignOffers = false,
+  campaignPackageId,
 }: {
   kind: "creator" | "brand";
   partnership?: boolean;
+  campaignOffers?: boolean;
+  campaignPackageId?: PartnerCampaignPackageId | undefined;
 }) {
   const creator = kind === "creator";
   return (
@@ -27,7 +33,14 @@ export function MarketingIntakePage({
               : "Grow Your Brand With the Right Influencers"}
         </h1>
       </div>
-      <MarketingIntakeForm kind={kind} partnership={partnership} />
+      {!creator && campaignOffers && <PartnerCampaignPackages />}
+      <div className={campaignOffers ? "pt-10" : undefined}>
+        <MarketingIntakeForm
+          kind={kind}
+          partnership={partnership}
+          campaignPackageId={campaignPackageId}
+        />
+      </div>
     </div>
   );
 }

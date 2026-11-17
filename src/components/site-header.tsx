@@ -27,6 +27,7 @@ import {
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/hooks/use-session";
+import { authReturnPath } from "@/lib/auth-navigation";
 
 const navClass =
   "site-nav-trigger relative whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
@@ -189,6 +190,10 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const { session, loading } = useSession();
   const pathname = usePathname();
+  const [authNext, setAuthNext] = useState<string | null>(null);
+  useEffect(() => {
+    setAuthNext(pathname === "/auth" ? authReturnPath(window.location.search) : null);
+  }, [pathname]);
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
     const scroll = () => setScrolled(window.scrollY > 8);
@@ -257,9 +262,18 @@ export function SiteHeader() {
                 <HeaderDropdown label="My account" items={accountLinks} />
               </div>
             ) : (
-              <Button asChild className="hidden whitespace-nowrap sm:inline-flex">
-                <Link to="/auth">Sign in / Sign up</Link>
-              </Button>
+              <div className="hidden items-center gap-2 sm:flex">
+                <Button asChild variant="outline">
+                  <Link to="/auth" hash="login" search={{ next: authNext }}>
+                    Login
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/auth" hash="signup" search={{ next: authNext }}>
+                    Sign up
+                  </Link>
+                </Button>
+              </div>
             ))}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -364,11 +378,28 @@ export function SiteHeader() {
                 )}
                 <CurrencySelector className="mt-3 w-full justify-start" />
                 {showAuthButtons && !loading && !session && (
-                  <Button asChild className="mt-2">
-                    <Link to="/auth" onClick={() => setOpen(false)}>
-                      Sign in / Sign up
-                    </Link>
-                  </Button>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <Button asChild variant="outline">
+                      <Link
+                        to="/auth"
+                        hash="login"
+                        search={{ next: authNext }}
+                        onClick={() => setOpen(false)}
+                      >
+                        Login
+                      </Link>
+                    </Button>
+                    <Button asChild>
+                      <Link
+                        to="/auth"
+                        hash="signup"
+                        search={{ next: authNext }}
+                        onClick={() => setOpen(false)}
+                      >
+                        Sign up
+                      </Link>
+                    </Button>
+                  </div>
                 )}
               </nav>
             </SheetContent>

@@ -60,6 +60,7 @@ test("same partner request ID uses the existing primary key and cannot create a 
   const route = load(
     "src/app/api/influencers/apply/route.ts",
     {
+      "@/lib/website-session.server": { websiteSessionError: async () => null },
       "@/lib/influencers": schema,
       "@/integrations/supabase/client.server": { supabaseAdmin: {} },
       "@/lib/influencer-database.server": {

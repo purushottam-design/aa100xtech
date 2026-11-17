@@ -1,0 +1,3709 @@
+{
+  "formatVersion": 1,
+  "specification": {
+    "file": "prd/AA100XTech_Partners_Complete_Integration_PRD.md",
+    "sha256": "053d8a407070673cf6a0b67e760c16ac3a45b7595e282c6b0081c3273e4a27ef"
+  },
+  "source": {
+    "lovableProjectId": "596d7dbe-aa8e-4a98-9859-a133b7678ff6",
+    "auditedCommit": "dd09e0b44087c823624aab423b4c0275cb7a67bd",
+    "configuredProjectRefFromPrd": "hvcznonjilfmyizlmlkq",
+    "actualSourceReviewed": false
+  },
+  "completion": {
+    "complete": false,
+    "implementedPrivateRoutes": 0,
+    "implementedSourceOperations": 0,
+    "reconciledLiveTables": 0,
+    "productionCutoverReady": false
+  },
+  "counts": {
+    "privateRoutes": 46,
+    "publicAndSpecialRoutes": 12,
+    "tables": 56,
+    "operations": 173,
+    "operationModules": 25,
+    "existingPages": 71
+  },
+  "additionalObligations": [
+    "Public/source asset and motion parity; native login and recovery aliases",
+    "Master-auth reconciliation, canonical account links and logged bootstrap",
+    "Shared identity-safe removals, resets and credential issuance",
+    "Atomic approvals/drafts/sharing from source migrations 055–057",
+    "Private storage migration and freshly authorized signed links",
+    "Durable idempotent intake-to-CRM bridge with visible retries",
+    "Source health, protected follow-up cron and external AI/Sheets providers",
+    "Staging rehearsal, role/ownership tests, rollback and production approval"
+  ],
+  "publicImplementation": {
+    "status": "partial",
+    "requirements": ["FR-23 (campaign offer subset)", "FR-24 (native package context subset)"],
+    "files": [
+      "src/data/partner-campaign-packages.ts",
+      "src/components/partner-campaign-packages.tsx",
+      "src/app/influencer-marketing/for-brands/page.tsx",
+      "src/lib/marketing-form.server.ts"
+    ],
+    "implemented": [
+      "Four distinct campaign offers with written-confirmation and whole-campaign quantity qualifiers",
+      "Allowlisted package selection through the existing native enquiry",
+      "Server-derived offer snapshot persisted by the existing idempotent AA receipt RPC",
+      "Selected offer scope displayed in the existing brand inquiry inbox"
+    ],
+    "outstanding": [
+      "Review source public content, assets and motion",
+      "Durable intake-to-CRM bridge after source/schema discovery",
+      "Actual source workflow and route parity"
+    ]
+  },
+  "publicAndSpecialRoutes": [
+    {
+      "sourceEntry": "/",
+      "proposedDisposition": "Merge relevant editorial/product sections into existing /creator-moves-365 and corporate partnership sections; preserve corporate home.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "/brands",
+      "proposedDisposition": "Existing /influencer-marketing/for-brands, source package/marketing content plus native form.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "/influencers",
+      "proposedDisposition": "Integrate editorial showcase sections within existing AA influencer marketing pages; preserve current AA root redirect and real publication gates.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "/auth, /login",
+      "proposedDisposition": "Existing master /auth with safe workspace return path; keep source fallback/login aliases scoped.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "/forgot-password",
+      "proposedDisposition": "Existing shared recovery or new /auth/forgot-password if needed.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "/reset-password",
+      "proposedDisposition": "Existing shared recovery or new /auth/reset-password if needed.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "/access",
+      "proposedDisposition": "Namespaced no-access/pending support view; no public staff signup.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "Retired /list, /influencer-demo, /admin-login",
+      "proposedDisposition": "Safe login/equivalent redirects when resolving old source-domain links; do not introduce obsolete public data views.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "/api/match-creators",
+      "proposedDisposition": "/api/partner-workspace/ai/match-creators.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "Source cm365-api/<operation>",
+      "proposedDisposition": "Native allowlisted AA /api/partner-workspace/<operation>; same business behavior and access checks.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "Source cm365-api/health",
+      "proposedDisposition": "Safe native health capability; do not report healthy when required master resources fail.",
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceEntry": "Source cm365-api/cron/follow-ups",
+      "proposedDisposition": "Authenticated job-secret protected native cron endpoint/job on the master.",
+      "status": "pending-source-review",
+      "verification": null
+    }
+  ],
+  "privateRoutes": [
+    {
+      "sourceRoute": "/activity",
+      "targetRoute": "/partner-workspace/activity",
+      "proposedTargetFile": "src/app/partner-workspace/activity/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/admin",
+      "targetRoute": "/partner-workspace/admin",
+      "proposedTargetFile": "src/app/partner-workspace/admin/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/allocations",
+      "targetRoute": "/partner-workspace/allocations",
+      "proposedTargetFile": "src/app/partner-workspace/allocations/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/campaigns",
+      "targetRoute": "/partner-workspace/campaigns",
+      "proposedTargetFile": "src/app/partner-workspace/campaigns/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/companies",
+      "targetRoute": "/partner-workspace/companies",
+      "proposedTargetFile": "src/app/partner-workspace/companies/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/contact",
+      "targetRoute": "/partner-workspace/contact",
+      "proposedTargetFile": "src/app/partner-workspace/contact/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/creator",
+      "targetRoute": "/partner-workspace/creator",
+      "proposedTargetFile": "src/app/partner-workspace/creator/page.tsx",
+      "audience": "Linked creator; own data",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/creators/[id]",
+      "targetRoute": "/partner-workspace/creators/[id]",
+      "proposedTargetFile": "src/app/partner-workspace/creators/[id]/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/creators",
+      "targetRoute": "/partner-workspace/creators",
+      "proposedTargetFile": "src/app/partner-workspace/creators/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/dashboard",
+      "targetRoute": "/partner-workspace/dashboard",
+      "proposedTargetFile": "src/app/partner-workspace/dashboard/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/deal-approvals",
+      "targetRoute": "/partner-workspace/deal-approvals",
+      "proposedTargetFile": "src/app/partner-workspace/deal-approvals/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/duplicates",
+      "targetRoute": "/partner-workspace/duplicates",
+      "proposedTargetFile": "src/app/partner-workspace/duplicates/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/follow-ups",
+      "targetRoute": "/partner-workspace/follow-ups",
+      "proposedTargetFile": "src/app/partner-workspace/follow-ups/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/gamer-leads",
+      "targetRoute": "/partner-workspace/gamer-leads",
+      "proposedTargetFile": "src/app/partner-workspace/gamer-leads/page.tsx",
+      "audience": "Admin / gamer Lead Team",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/import",
+      "targetRoute": "/partner-workspace/import",
+      "proposedTargetFile": "src/app/partner-workspace/import/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/imtm-create",
+      "targetRoute": "/partner-workspace/imtm-create",
+      "proposedTargetFile": "src/app/partner-workspace/imtm-create/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/imtm",
+      "targetRoute": "/partner-workspace/imtm",
+      "proposedTargetFile": "src/app/partner-workspace/imtm/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/influencer-logins",
+      "targetRoute": "/partner-workspace/influencer-logins",
+      "proposedTargetFile": "src/app/partner-workspace/influencer-logins/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/influencers/[id]",
+      "targetRoute": "/partner-workspace/influencers/[id]",
+      "proposedTargetFile": "src/app/partner-workspace/influencers/[id]/page.tsx",
+      "audience": "Admin / assigned IMTM",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/inventory",
+      "targetRoute": "/partner-workspace/inventory",
+      "proposedTargetFile": "src/app/partner-workspace/inventory/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/lead-add",
+      "targetRoute": "/partner-workspace/lead-add",
+      "proposedTargetFile": "src/app/partner-workspace/lead-add/page.tsx",
+      "audience": "Influencer Lead Team; source admin controls preserved",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/lead-dashboard",
+      "targetRoute": "/partner-workspace/lead-dashboard",
+      "proposedTargetFile": "src/app/partner-workspace/lead-dashboard/page.tsx",
+      "audience": "Influencer Lead Team; source admin controls preserved",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/lead-import",
+      "targetRoute": "/partner-workspace/lead-import",
+      "proposedTargetFile": "src/app/partner-workspace/lead-import/page.tsx",
+      "audience": "Influencer Lead Team; source admin controls preserved",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/lead-overview",
+      "targetRoute": "/partner-workspace/lead-overview",
+      "proposedTargetFile": "src/app/partner-workspace/lead-overview/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/lead-team",
+      "targetRoute": "/partner-workspace/lead-team",
+      "proposedTargetFile": "src/app/partner-workspace/lead-team/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/leads/[id]",
+      "targetRoute": "/partner-workspace/leads/[id]",
+      "proposedTargetFile": "src/app/partner-workspace/leads/[id]/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/matchmaker",
+      "targetRoute": "/partner-workspace/matchmaker",
+      "proposedTargetFile": "src/app/partner-workspace/matchmaker/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/me",
+      "targetRoute": "/partner-workspace/me",
+      "proposedTargetFile": "src/app/partner-workspace/me/page.tsx",
+      "audience": "All approved memberships; own profile",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/my-collaborations",
+      "targetRoute": "/partner-workspace/my-collaborations",
+      "proposedTargetFile": "src/app/partner-workspace/my-collaborations/page.tsx",
+      "audience": "Linked creator; own data",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/my-influencers",
+      "targetRoute": "/partner-workspace/my-influencers",
+      "proposedTargetFile": "src/app/partner-workspace/my-influencers/page.tsx",
+      "audience": "Admin / assigned IMTM",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/my-leads",
+      "targetRoute": "/partner-workspace/my-leads",
+      "proposedTargetFile": "src/app/partner-workspace/my-leads/page.tsx",
+      "audience": "Influencer Lead Team; source admin controls preserved",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/my-notifications",
+      "targetRoute": "/partner-workspace/my-notifications",
+      "proposedTargetFile": "src/app/partner-workspace/my-notifications/page.tsx",
+      "audience": "Linked creator; own data",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/my-shipments",
+      "targetRoute": "/partner-workspace/my-shipments",
+      "proposedTargetFile": "src/app/partner-workspace/my-shipments/page.tsx",
+      "audience": "Linked creator; own data",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/my-tasks",
+      "targetRoute": "/partner-workspace/my-tasks",
+      "proposedTargetFile": "src/app/partner-workspace/my-tasks/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/overview",
+      "targetRoute": "/partner-workspace/overview",
+      "proposedTargetFile": "src/app/partner-workspace/overview/page.tsx",
+      "audience": "Admin / assigned IMTM",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/ownership",
+      "targetRoute": "/partner-workspace/ownership",
+      "proposedTargetFile": "src/app/partner-workspace/ownership/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/panel",
+      "targetRoute": "/partner-workspace/panel",
+      "proposedTargetFile": "src/app/partner-workspace/panel/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/permissions",
+      "targetRoute": "/partner-workspace/permissions",
+      "proposedTargetFile": "src/app/partner-workspace/permissions/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/products",
+      "targetRoute": "/partner-workspace/products",
+      "proposedTargetFile": "src/app/partner-workspace/products/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/projects",
+      "targetRoute": "/partner-workspace/projects",
+      "proposedTargetFile": "src/app/partner-workspace/projects/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/reports",
+      "targetRoute": "/partner-workspace/reports",
+      "proposedTargetFile": "src/app/partner-workspace/reports/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/settings",
+      "targetRoute": "/partner-workspace/settings",
+      "proposedTargetFile": "src/app/partner-workspace/settings/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/shipments",
+      "targetRoute": "/partner-workspace/shipments",
+      "proposedTargetFile": "src/app/partner-workspace/shipments/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/submissions",
+      "targetRoute": "/partner-workspace/submissions",
+      "proposedTargetFile": "src/app/partner-workspace/submissions/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/team-accounts",
+      "targetRoute": "/partner-workspace/team-accounts",
+      "proposedTargetFile": "src/app/partner-workspace/team-accounts/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "sourceRoute": "/team",
+      "targetRoute": "/partner-workspace/team",
+      "proposedTargetFile": "src/app/partner-workspace/team/page.tsx",
+      "audience": "Admin route; preserve source handler checks",
+      "implementation": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    }
+  ],
+  "tables": [
+    {
+      "sourceTable": "activity_logs",
+      "proposedTargetTable": "cm365_activity_logs",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "ai_usage_events",
+      "proposedTargetTable": "cm365_ai_usage_events",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "campaign_creators",
+      "proposedTargetTable": "cm365_campaign_creators",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "campaigns",
+      "proposedTargetTable": "cm365_campaigns",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "cm365_bulk_revert_runs",
+      "proposedTargetTable": "cm365_bulk_revert_runs",
+      "rule": "Preserve app-specific name; check target conflicts.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "cm365_duplicate_attempts",
+      "proposedTargetTable": "cm365_duplicate_attempts",
+      "rule": "Active duplicate-attempt workflow.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "cm365_memberships",
+      "proposedTargetTable": "cm365_memberships",
+      "rule": "Canonical Partners membership; mapped master Auth id.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "cm365_role_changes",
+      "proposedTargetTable": "cm365_role_changes",
+      "rule": "Preserve app-specific name; check target conflicts.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "companies",
+      "proposedTargetTable": "cm365_companies",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "contact_attempts",
+      "proposedTargetTable": "cm365_contact_attempts",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "contact_requests",
+      "proposedTargetTable": "cm365_contact_requests",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "creator_applications",
+      "proposedTargetTable": "cm365_creator_applications",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "deal_approval_events",
+      "proposedTargetTable": "cm365_deal_approval_events",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "deal_approvals",
+      "proposedTargetTable": "cm365_deal_approvals",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "deal_deliverables",
+      "proposedTargetTable": "cm365_deal_deliverables",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "deals",
+      "proposedTargetTable": "cm365_deals",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "deliverables",
+      "proposedTargetTable": "cm365_deliverables",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "duplicate_attempts",
+      "proposedTargetTable": "cm365_legacy_duplicate_attempts",
+      "rule": "Legacy table; keep distinct from active cm365_duplicate_attempts.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "follow_up_alerts",
+      "proposedTargetTable": "cm365_follow_up_alerts",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "follow_up_tasks",
+      "proposedTargetTable": "cm365_follow_up_tasks",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "gamer_leads",
+      "proposedTargetTable": "cm365_gamer_leads",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "imtm_deals",
+      "proposedTargetTable": "cm365_imtm_deals",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "imtm_members",
+      "proposedTargetTable": "cm365_imtm_members",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "imtm_profiles",
+      "proposedTargetTable": "cm365_imtm_profiles",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_accounts",
+      "proposedTargetTable": "cm365_influencer_accounts",
+      "rule": "Canonical account link; do not restore retired local-password login.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_assignment_history",
+      "proposedTargetTable": "cm365_influencer_assignment_history",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_comm_log",
+      "proposedTargetTable": "cm365_influencer_comm_log",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_deal_drafts",
+      "proposedTargetTable": "cm365_influencer_deal_drafts",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_files",
+      "proposedTargetTable": "cm365_influencer_files",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_identities",
+      "proposedTargetTable": "cm365_influencer_identities",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_leads",
+      "proposedTargetTable": "cm365_influencer_leads",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_message_reads",
+      "proposedTargetTable": "cm365_influencer_message_reads",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_messages",
+      "proposedTargetTable": "cm365_influencer_messages",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_notes",
+      "proposedTargetTable": "cm365_influencer_notes",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencer_self_profiles",
+      "proposedTargetTable": "cm365_influencer_self_profiles",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "influencers",
+      "proposedTargetTable": "cm365_influencers",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "inventory_movements",
+      "proposedTargetTable": "cm365_inventory_movements",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "lead_team_accounts",
+      "proposedTargetTable": "cm365_lead_team_accounts",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "legacy_duplicate_reviews",
+      "proposedTargetTable": "cm365_legacy_duplicate_reviews",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "login_issuances",
+      "proposedTargetTable": "cm365_login_issuances",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "notifications",
+      "proposedTargetTable": "cm365_notifications",
+      "rule": "Partner visibility/read state; keep distinct from AA notifications.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "outreach_log",
+      "proposedTargetTable": "cm365_outreach_log",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "partner_inquiries",
+      "proposedTargetTable": "cm365_partner_inquiries",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "product_allocations",
+      "proposedTargetTable": "cm365_product_allocations",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "products",
+      "proposedTargetTable": "cm365_products",
+      "rule": "Operational/stock catalog; do not merge into AA commercial products.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "profiles",
+      "proposedTargetTable": "cm365_profiles",
+      "rule": "Partner-specific profile; shared Auth id, separate AA profile.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "project_participants",
+      "proposedTargetTable": "cm365_project_participants",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "projects",
+      "proposedTargetTable": "cm365_projects",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "shipment_events",
+      "proposedTargetTable": "cm365_shipment_events",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "shipment_items",
+      "proposedTargetTable": "cm365_shipment_items",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "shipments",
+      "proposedTargetTable": "cm365_shipments",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "staff_permissions",
+      "proposedTargetTable": "cm365_staff_permissions",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "submissions",
+      "proposedTargetTable": "cm365_submissions",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "team_accounts",
+      "proposedTargetTable": "cm365_team_accounts",
+      "rule": "Canonical account link; do not restore retired local-password login.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "user_roles",
+      "proposedTargetTable": "cm365_legacy_user_roles",
+      "rule": "Historical provenance only; active role comes from memberships.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    },
+    {
+      "sourceTable": "workspace_settings",
+      "proposedTargetTable": "cm365_workspace_settings",
+      "rule": "Imported Partners data; preserve AA names.",
+      "sourceLiveSchema": null,
+      "targetLiveSchema": null,
+      "migration": null,
+      "status": "pending-live-schema-reconciliation",
+      "verification": null
+    }
+  ],
+  "operations": [
+    {
+      "key": "accounts.getMe",
+      "module": "accounts",
+      "operation": "getMe",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.listInfluencerAccounts",
+      "module": "accounts",
+      "operation": "listInfluencerAccounts",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.createInfluencerAccount",
+      "module": "accounts",
+      "operation": "createInfluencerAccount",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.updateInfluencerAccount",
+      "module": "accounts",
+      "operation": "updateInfluencerAccount",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.setInfluencerAccountStatus",
+      "module": "accounts",
+      "operation": "setInfluencerAccountStatus",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.deleteInfluencerAccount",
+      "module": "accounts",
+      "operation": "deleteInfluencerAccount",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.getMyInfluencerAccount",
+      "module": "accounts",
+      "operation": "getMyInfluencerAccount",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.saveMyInfluencerAccount",
+      "module": "accounts",
+      "operation": "saveMyInfluencerAccount",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.listAdmins",
+      "module": "accounts",
+      "operation": "listAdmins",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.listMemberships",
+      "module": "accounts",
+      "operation": "listMemberships",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.setMembership",
+      "module": "accounts",
+      "operation": "setMembership",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.getAccessState",
+      "module": "accounts",
+      "operation": "getAccessState",
+      "sourceAccessClass": "authenticated",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.requestAccess",
+      "module": "accounts",
+      "operation": "requestAccess",
+      "sourceAccessClass": "authenticated",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.listAccessRequests",
+      "module": "accounts",
+      "operation": "listAccessRequests",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "accounts.decideAccessRequest",
+      "module": "accounts",
+      "operation": "decideAccessRequest",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/accounts.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ai.reserveAiMatch",
+      "module": "ai",
+      "operation": "reserveAiMatch",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/ai.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "approvals.submitDealForApproval",
+      "module": "approvals",
+      "operation": "submitDealForApproval",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/approvals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "approvals.getDealApprovalHistory",
+      "module": "approvals",
+      "operation": "getDealApprovalHistory",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/approvals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "approvals.countPendingApprovals",
+      "module": "approvals",
+      "operation": "countPendingApprovals",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/approvals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "approvals.listDealApprovals",
+      "module": "approvals",
+      "operation": "listDealApprovals",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/approvals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "approvals.decideDealApproval",
+      "module": "approvals",
+      "operation": "decideDealApproval",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/approvals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "approvals.reopenDealApproval",
+      "module": "approvals",
+      "operation": "reopenDealApproval",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/approvals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "bulk-revert.previewBulkRevert",
+      "module": "bulk-revert",
+      "operation": "previewBulkRevert",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/bulk-revert.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "bulk-revert.runBulkRevert",
+      "module": "bulk-revert",
+      "operation": "runBulkRevert",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/bulk-revert.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "creator.getCreatorHome",
+      "module": "creator",
+      "operation": "getCreatorHome",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/creator.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "creator.listMyCollaborations",
+      "module": "creator",
+      "operation": "listMyCollaborations",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/creator.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "creator.listMyShipments",
+      "module": "creator",
+      "operation": "listMyShipments",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/creator.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "creator.listMyNotifications",
+      "module": "creator",
+      "operation": "listMyNotifications",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/creator.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "creator.markMyNotificationRead",
+      "module": "creator",
+      "operation": "markMyNotificationRead",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/creator.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "creator.markAllMyNotificationsRead",
+      "module": "creator",
+      "operation": "markAllMyNotificationsRead",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/creator.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "credentials.getInfluencerLoginState",
+      "module": "credentials",
+      "operation": "getInfluencerLoginState",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/credentials.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "credentials.listLoginCandidates",
+      "module": "credentials",
+      "operation": "listLoginCandidates",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/credentials.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "credentials.issueInfluencerLogin",
+      "module": "credentials",
+      "operation": "issueInfluencerLogin",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/credentials.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.listOwnershipOverview",
+      "module": "crm",
+      "operation": "listOwnershipOverview",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.reassignInfluencer",
+      "module": "crm",
+      "operation": "reassignInfluencer",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.resetAssignmentWindow",
+      "module": "crm",
+      "operation": "resetAssignmentWindow",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.listAssignmentHistory",
+      "module": "crm",
+      "operation": "listAssignmentHistory",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.listTeamAccounts",
+      "module": "crm",
+      "operation": "listTeamAccounts",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.saveTeamAccount",
+      "module": "crm",
+      "operation": "saveTeamAccount",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.setTeamAccountActive",
+      "module": "crm",
+      "operation": "setTeamAccountActive",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.deleteTeamAccount",
+      "module": "crm",
+      "operation": "deleteTeamAccount",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.listCrmInfluencers",
+      "module": "crm",
+      "operation": "listCrmInfluencers",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.saveCrmInfluencer",
+      "module": "crm",
+      "operation": "saveCrmInfluencer",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.deleteCrmInfluencer",
+      "module": "crm",
+      "operation": "deleteCrmInfluencer",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.reserveImtmIdentity",
+      "module": "crm",
+      "operation": "reserveImtmIdentity",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.releaseImtmIdentity",
+      "module": "crm",
+      "operation": "releaseImtmIdentity",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.logContactAttempt",
+      "module": "crm",
+      "operation": "logContactAttempt",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.setDealStatus",
+      "module": "crm",
+      "operation": "setDealStatus",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.getCrmInfluencer",
+      "module": "crm",
+      "operation": "getCrmInfluencer",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.listFollowUps",
+      "module": "crm",
+      "operation": "listFollowUps",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.resolveFollowUp",
+      "module": "crm",
+      "operation": "resolveFollowUp",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.createFollowUpTask",
+      "module": "crm",
+      "operation": "createFollowUpTask",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.listMyTasks",
+      "module": "crm",
+      "operation": "listMyTasks",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.updateTaskStatus",
+      "module": "crm",
+      "operation": "updateTaskStatus",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "crm.sweepFollowUps",
+      "module": "crm",
+      "operation": "sweepFollowUps",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/crm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.getDealWorkspace",
+      "module": "deal-workspace",
+      "operation": "getDealWorkspace",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.logCommunication",
+      "module": "deal-workspace",
+      "operation": "logCommunication",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.listCommunications",
+      "module": "deal-workspace",
+      "operation": "listCommunications",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.saveDealDraft",
+      "module": "deal-workspace",
+      "operation": "saveDealDraft",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.submitDealWorkspace",
+      "module": "deal-workspace",
+      "operation": "submitDealWorkspace",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.updateDeliverableProgress",
+      "module": "deal-workspace",
+      "operation": "updateDeliverableProgress",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.setFileShared",
+      "module": "deal-workspace",
+      "operation": "setFileShared",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.getDealDeskSummary",
+      "module": "deal-workspace",
+      "operation": "getDealDeskSummary",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.requestFileUpload",
+      "module": "deal-workspace",
+      "operation": "requestFileUpload",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.confirmFileUpload",
+      "module": "deal-workspace",
+      "operation": "confirmFileUpload",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.getFileUrl",
+      "module": "deal-workspace",
+      "operation": "getFileUrl",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.listMessages",
+      "module": "deal-workspace",
+      "operation": "listMessages",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.sendMessage",
+      "module": "deal-workspace",
+      "operation": "sendMessage",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.markMessagesRead",
+      "module": "deal-workspace",
+      "operation": "markMessagesRead",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.getMessageInbox",
+      "module": "deal-workspace",
+      "operation": "getMessageInbox",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.getMyDealPortal",
+      "module": "deal-workspace",
+      "operation": "getMyDealPortal",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "deal-workspace.submitMyDeliverableLink",
+      "module": "deal-workspace",
+      "operation": "submitMyDeliverableLink",
+      "sourceAccessClass": "influencer",
+      "sourceFile": "supabase/external/edge/_shared/ops/deal-workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "duplicates.listDuplicateAttempts",
+      "module": "duplicates",
+      "operation": "listDuplicateAttempts",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/duplicates.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "duplicates.getDuplicateAttempt",
+      "module": "duplicates",
+      "operation": "getDuplicateAttempt",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/duplicates.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "duplicates.reviewDuplicateAttempt",
+      "module": "duplicates",
+      "operation": "reviewDuplicateAttempt",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/duplicates.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "duplicates.deleteDuplicateAttempts",
+      "module": "duplicates",
+      "operation": "deleteDuplicateAttempts",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/duplicates.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.readGamerSheet",
+      "module": "gamer-leads",
+      "operation": "readGamerSheet",
+      "sourceAccessClass": "gamer",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.listGamerLeads",
+      "module": "gamer-leads",
+      "operation": "listGamerLeads",
+      "sourceAccessClass": "gamer",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.gamerLeadSummary",
+      "module": "gamer-leads",
+      "operation": "gamerLeadSummary",
+      "sourceAccessClass": "gamer",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.createGamerLead",
+      "module": "gamer-leads",
+      "operation": "createGamerLead",
+      "sourceAccessClass": "gamer",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.previewGamerRows",
+      "module": "gamer-leads",
+      "operation": "previewGamerRows",
+      "sourceAccessClass": "gamer",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.importGamerRows",
+      "module": "gamer-leads",
+      "operation": "importGamerRows",
+      "sourceAccessClass": "gamer",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.updateGamerLead",
+      "module": "gamer-leads",
+      "operation": "updateGamerLead",
+      "sourceAccessClass": "gamer",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.deleteGamerLead",
+      "module": "gamer-leads",
+      "operation": "deleteGamerLead",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.exportGamerLeads",
+      "module": "gamer-leads",
+      "operation": "exportGamerLeads",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "gamer-leads.listGamerContributors",
+      "module": "gamer-leads",
+      "operation": "listGamerContributors",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/gamer-leads.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "import.previewImportRows",
+      "module": "import",
+      "operation": "previewImportRows",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/import.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "import.importInfluencerRows",
+      "module": "import",
+      "operation": "importInfluencerRows",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/import.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "import.announceImport",
+      "module": "import",
+      "operation": "announceImport",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/import.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm-logins.listImtmLogins",
+      "module": "imtm-logins",
+      "operation": "listImtmLogins",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm-logins.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm-logins.createImtmLogin",
+      "module": "imtm-logins",
+      "operation": "createImtmLogin",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm-logins.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm-logins.updateImtmLogin",
+      "module": "imtm-logins",
+      "operation": "updateImtmLogin",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm-logins.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm-logins.setImtmLoginPassword",
+      "module": "imtm-logins",
+      "operation": "setImtmLoginPassword",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm-logins.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm-logins.setImtmLoginActive",
+      "module": "imtm-logins",
+      "operation": "setImtmLoginActive",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm-logins.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.listImtm",
+      "module": "imtm",
+      "operation": "listImtm",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.listImtmMembers",
+      "module": "imtm",
+      "operation": "listImtmMembers",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.countImtmProfiles",
+      "module": "imtm",
+      "operation": "countImtmProfiles",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.saveImtmProfile",
+      "module": "imtm",
+      "operation": "saveImtmProfile",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.updateImtmOutreach",
+      "module": "imtm",
+      "operation": "updateImtmOutreach",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.deleteImtmProfile",
+      "module": "imtm",
+      "operation": "deleteImtmProfile",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.saveImtmDeal",
+      "module": "imtm",
+      "operation": "saveImtmDeal",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.decideImtmDeal",
+      "module": "imtm",
+      "operation": "decideImtmDeal",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.signImtmAgreement",
+      "module": "imtm",
+      "operation": "signImtmAgreement",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.saveImtmMember",
+      "module": "imtm",
+      "operation": "saveImtmMember",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "imtm.decideImtmMember",
+      "module": "imtm",
+      "operation": "decideImtmMember",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/imtm.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.listLeadTeamAccounts",
+      "module": "lead-team",
+      "operation": "listLeadTeamAccounts",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.createLeadTeamAccount",
+      "module": "lead-team",
+      "operation": "createLeadTeamAccount",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.updateLeadTeamAccount",
+      "module": "lead-team",
+      "operation": "updateLeadTeamAccount",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.setLeadTeamPassword",
+      "module": "lead-team",
+      "operation": "setLeadTeamPassword",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.setLeadTeamActive",
+      "module": "lead-team",
+      "operation": "setLeadTeamActive",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.listAllLeads",
+      "module": "lead-team",
+      "operation": "listAllLeads",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.getLeadOverview",
+      "module": "lead-team",
+      "operation": "getLeadOverview",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.getLeadDetail",
+      "module": "lead-team",
+      "operation": "getLeadDetail",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.deleteLead",
+      "module": "lead-team",
+      "operation": "deleteLead",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.reviewLead",
+      "module": "lead-team",
+      "operation": "reviewLead",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.adminUpdateLead",
+      "module": "lead-team",
+      "operation": "adminUpdateLead",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.convertLead",
+      "module": "lead-team",
+      "operation": "convertLead",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.createLead",
+      "module": "lead-team",
+      "operation": "createLead",
+      "sourceAccessClass": "lead_team",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.listMyLeads",
+      "module": "lead-team",
+      "operation": "listMyLeads",
+      "sourceAccessClass": "lead_team",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.updateMyLead",
+      "module": "lead-team",
+      "operation": "updateMyLead",
+      "sourceAccessClass": "lead_team",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.myLeadStats",
+      "module": "lead-team",
+      "operation": "myLeadStats",
+      "sourceAccessClass": "lead_team",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.previewLeadRows",
+      "module": "lead-team",
+      "operation": "previewLeadRows",
+      "sourceAccessClass": "lead_team",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.importLeadRows",
+      "module": "lead-team",
+      "operation": "importLeadRows",
+      "sourceAccessClass": "lead_team",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.listMySubmittedLeads",
+      "module": "lead-team",
+      "operation": "listMySubmittedLeads",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "lead-team.readLeadSheet",
+      "module": "lead-team",
+      "operation": "readLeadSheet",
+      "sourceAccessClass": "lead_team",
+      "sourceFile": "supabase/external/edge/_shared/ops/lead-team.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "notifications.listNotifications",
+      "module": "notifications",
+      "operation": "listNotifications",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/notifications.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "notifications.markNotificationRead",
+      "module": "notifications",
+      "operation": "markNotificationRead",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/notifications.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "notifications.markAllNotificationsRead",
+      "module": "notifications",
+      "operation": "markAllNotificationsRead",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/notifications.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.getOpsDashboard",
+      "module": "ops",
+      "operation": "getOpsDashboard",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.getOpsLookups",
+      "module": "ops",
+      "operation": "getOpsLookups",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.listProducts",
+      "module": "ops",
+      "operation": "listProducts",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.saveProduct",
+      "module": "ops",
+      "operation": "saveProduct",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.adjustStock",
+      "module": "ops",
+      "operation": "adjustStock",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.listProjects",
+      "module": "ops",
+      "operation": "listProjects",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.saveProject",
+      "module": "ops",
+      "operation": "saveProject",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.setParticipantStatus",
+      "module": "ops",
+      "operation": "setParticipantStatus",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.listAllocations",
+      "module": "ops",
+      "operation": "listAllocations",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.createAllocation",
+      "module": "ops",
+      "operation": "createAllocation",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.updateAllocation",
+      "module": "ops",
+      "operation": "updateAllocation",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.listOpsInfluencers",
+      "module": "ops",
+      "operation": "listOpsInfluencers",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.assignInfluencer",
+      "module": "ops",
+      "operation": "assignInfluencer",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.listActivity",
+      "module": "ops",
+      "operation": "listActivity",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.getInfluencerDetail",
+      "module": "ops",
+      "operation": "getInfluencerDetail",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.listStaffPermissions",
+      "module": "ops",
+      "operation": "listStaffPermissions",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "ops.saveStaffPermissions",
+      "module": "ops",
+      "operation": "saveStaffPermissions",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/ops.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "profile.getMyProfile",
+      "module": "profile",
+      "operation": "getMyProfile",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/profile.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "profile.saveMyProfile",
+      "module": "profile",
+      "operation": "saveMyProfile",
+      "sourceAccessClass": "any",
+      "sourceFile": "supabase/external/edge/_shared/ops/profile.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "removals.removeImtmAccount",
+      "module": "removals",
+      "operation": "removeImtmAccount",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/removals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "removals.removeLeadTeamAccount",
+      "module": "removals",
+      "operation": "removeLeadTeamAccount",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/removals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "removals.removeInfluencer",
+      "module": "removals",
+      "operation": "removeInfluencer",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/removals.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "reports.getReports",
+      "module": "reports",
+      "operation": "getReports",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/reports.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "revert.revertInfluencerToLead",
+      "module": "revert",
+      "operation": "revertInfluencerToLead",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/revert.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "roles.listRoleAccounts",
+      "module": "roles",
+      "operation": "listRoleAccounts",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/roles.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "roles.changeUserRole",
+      "module": "roles",
+      "operation": "changeUserRole",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/roles.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "settings.getWorkspaceSettings",
+      "module": "settings",
+      "operation": "getWorkspaceSettings",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/settings.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "settings.saveWorkspaceSettings",
+      "module": "settings",
+      "operation": "saveWorkspaceSettings",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/settings.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "sheets.readGoogleSheet",
+      "module": "sheets",
+      "operation": "readGoogleSheet",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/sheets.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "shipments.listShipments",
+      "module": "shipments",
+      "operation": "listShipments",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/shipments.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "shipments.getShipment",
+      "module": "shipments",
+      "operation": "getShipment",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/shipments.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "shipments.saveShipment",
+      "module": "shipments",
+      "operation": "saveShipment",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/shipments.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "shipments.updateShipmentStatus",
+      "module": "shipments",
+      "operation": "updateShipmentStatus",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/shipments.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.getImtmDashboard",
+      "module": "workspace",
+      "operation": "getImtmDashboard",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.listMyRoster",
+      "module": "workspace",
+      "operation": "listMyRoster",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.addMyInfluencer",
+      "module": "workspace",
+      "operation": "addMyInfluencer",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.getInfluencerWorkspace",
+      "module": "workspace",
+      "operation": "getInfluencerWorkspace",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.addInfluencerNote",
+      "module": "workspace",
+      "operation": "addInfluencerNote",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.editInfluencerNote",
+      "module": "workspace",
+      "operation": "editInfluencerNote",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.scheduleFollowUp",
+      "module": "workspace",
+      "operation": "scheduleFollowUp",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.completeFollowUp",
+      "module": "workspace",
+      "operation": "completeFollowUp",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.logContact",
+      "module": "workspace",
+      "operation": "logContact",
+      "sourceAccessClass": "staff",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.getTeamWorkload",
+      "module": "workspace",
+      "operation": "getTeamWorkload",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.getAdminDashboard",
+      "module": "workspace",
+      "operation": "getAdminDashboard",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    },
+    {
+      "key": "workspace.sweepFollowUpReminders",
+      "module": "workspace",
+      "operation": "sweepFollowUpReminders",
+      "sourceAccessClass": "admin",
+      "sourceFile": "supabase/external/edge/_shared/ops/workspace.ts",
+      "targetHandler": null,
+      "authorization": null,
+      "caller": null,
+      "status": "pending-source-review",
+      "verification": null
+    }
+  ],
+  "existingPages": [
+    {
+      "route": "/",
+      "file": "src/app/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/about",
+      "file": "src/app/about/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin",
+      "file": "src/app/(authenticated)/admin/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin-guide",
+      "file": "src/app/admin-guide/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/admins",
+      "file": "src/app/(authenticated)/admin/admins/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/brand-inquiries",
+      "file": "src/app/(authenticated)/admin/brand-inquiries/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/business",
+      "file": "src/app/(authenticated)/admin/business/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/company",
+      "file": "src/app/(authenticated)/admin/company/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/influencers",
+      "file": "src/app/(authenticated)/admin/influencers/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/interview",
+      "file": "src/app/(authenticated)/admin/interview/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/marketing",
+      "file": "src/app/(authenticated)/admin/marketing/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/requests",
+      "file": "src/app/(authenticated)/admin/requests/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/security",
+      "file": "src/app/(authenticated)/admin/security/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/select",
+      "file": "src/app/admin/select/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/settings/email",
+      "file": "src/app/(authenticated)/admin/settings/email/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/settings/general",
+      "file": "src/app/(authenticated)/admin/settings/general/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/settings/website",
+      "file": "src/app/(authenticated)/admin/settings/website/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/admin/super",
+      "file": "src/app/(authenticated)/admin/super/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/affiliate",
+      "file": "src/app/(authenticated)/affiliate/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/affiliate-admin",
+      "file": "src/app/(authenticated)/affiliate-admin/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/affiliates",
+      "file": "src/app/affiliates/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/auth",
+      "file": "src/app/auth/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/be-the-one",
+      "file": "src/app/be-the-one/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/blog",
+      "file": "src/app/blog/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/blog/[slug]",
+      "file": "src/app/blog/[slug]/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/business-plans",
+      "file": "src/app/business-plans/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/careers",
+      "file": "src/app/careers/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/careers/apply",
+      "file": "src/app/careers/apply/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/careers/london",
+      "file": "src/app/careers/london/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/catalog",
+      "file": "src/app/catalog/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/catalog/[id]",
+      "file": "src/app/catalog/[id]/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/clients",
+      "file": "src/app/clients/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/consultation",
+      "file": "src/app/consultation/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/contact",
+      "file": "src/app/contact/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/cookie-policy",
+      "file": "src/app/cookie-policy/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/creator-moves-365",
+      "file": "src/app/creator-moves-365/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/dashboard",
+      "file": "src/app/(authenticated)/dashboard/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/disclaimer",
+      "file": "src/app/disclaimer/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/founders",
+      "file": "src/app/founders/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/home",
+      "file": "src/app/home/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencer-marketing",
+      "file": "src/app/influencer-marketing/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencer-marketing/for-brands",
+      "file": "src/app/influencer-marketing/for-brands/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencer-marketing/for-influencers",
+      "file": "src/app/influencer-marketing/for-influencers/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencer-partners",
+      "file": "src/app/influencer-partners/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencer-programs",
+      "file": "src/app/influencer-programs/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencer-success-program",
+      "file": "src/app/influencer-success-program/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencers",
+      "file": "src/app/influencers/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/influencers/[slug]",
+      "file": "src/app/influencers/[slug]/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/join-us/influencer",
+      "file": "src/app/join-us/influencer/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/marketing/[slug]",
+      "file": "src/app/marketing/[slug]/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/notifications",
+      "file": "src/app/notifications/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/partners",
+      "file": "src/app/partners/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/partners/apply",
+      "file": "src/app/partners/apply/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/partners/plans",
+      "file": "src/app/partners/plans/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/partnership-for-influencers",
+      "file": "src/app/partnership-for-influencers/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/portfolio",
+      "file": "src/app/portfolio/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/privacy-policy",
+      "file": "src/app/privacy-policy/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/profile",
+      "file": "src/app/profile/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/proposal",
+      "file": "src/app/proposal/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/real-estate",
+      "file": "src/app/real-estate/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/refund-policy",
+      "file": "src/app/refund-policy/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/request-access",
+      "file": "src/app/request-access/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/services",
+      "file": "src/app/services/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/services/[slug]",
+      "file": "src/app/services/[slug]/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/services/explore",
+      "file": "src/app/services/explore/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/services/explore/[slug]",
+      "file": "src/app/services/explore/[slug]/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/settings",
+      "file": "src/app/settings/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/shipping-policy",
+      "file": "src/app/shipping-policy/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/social-media-ads-marketing",
+      "file": "src/app/social-media-ads-marketing/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/team",
+      "file": "src/app/(authenticated)/team/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    },
+    {
+      "route": "/terms-and-conditions",
+      "file": "src/app/terms-and-conditions/page.tsx",
+      "status": "preserve-existing-behavior",
+      "verification": null
+    }
+  ]
+}

@@ -11,6 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { partnershipInterestGroups } from "@/data/influencer-partnership";
 import {
+  getPartnerCampaignPackage,
+  partnerCampaignQualification,
+  type PartnerCampaignPackageId,
+} from "@/data/partner-campaign-packages";
+import {
   brandIntakeSchema,
   creatorIntakeSchema,
   platforms,
@@ -287,14 +292,17 @@ export function MarketingIntakeForm({
   selectedCreator,
   onClearCreator,
   partnership = false,
+  campaignPackageId,
 }: {
   kind: "creator" | "brand";
   embedded?: boolean;
   selectedCreator?: CreatorListing | null;
   onClearCreator?: () => void;
   partnership?: boolean;
+  campaignPackageId?: PartnerCampaignPackageId | undefined;
 }) {
   const creator = kind === "creator";
+  const campaignOffer = creator ? undefined : getPartnerCampaignPackage(campaignPackageId);
   const instanceId = useId();
   const privacyErrorId = `privacy-error-${instanceId}`;
   const trapId = `website-trap-${instanceId}`;
@@ -368,6 +376,7 @@ export function MarketingIntakeForm({
           platforms: selected,
           promotions: types,
           influencer_count: number("influencer_count"),
+          ...(campaignOffer ? { campaign_package_id: campaignOffer.id } : {}),
           ...(selectedCreator
             ? {
                 creator: {
@@ -522,6 +531,28 @@ export function MarketingIntakeForm({
           aria-label={creator ? "Influencer application" : "Brand campaign inquiry"}
         >
           <fieldset disabled={busy} className="min-w-0">
+            {campaignOffer && (
+              <div
+                className="mb-5 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm"
+                aria-label="Selected campaign package"
+              >
+                <p>
+                  Selected campaign:{" "}
+                  <strong>
+                    {campaignOffer.name} — {campaignOffer.priceLabel}
+                  </strong>
+                </p>
+                <p className="mt-2 leading-relaxed text-muted-foreground">
+                  {partnerCampaignQualification}
+                </p>
+                <Link
+                  href="/influencer-marketing/for-brands#campaign-packages"
+                  className="mt-2 inline-block font-medium text-primary underline underline-offset-4"
+                >
+                  Change package
+                </Link>
+              </div>
+            )}
             {!creator && selectedCreator && (
               <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-primary/20 p-3 text-sm">
                 <p>

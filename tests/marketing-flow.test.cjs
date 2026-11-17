@@ -268,6 +268,8 @@ test("all four form variants persist through the real save function as service_r
       budget: "Not Decided",
       promotions: ["Instagram Reels"],
     };
+    // Exercise a selected CM365 offer through the existing real persistence RPC.
+    brand.campaign_package_id = "cm365-campaign-growth";
     const first = await submit("brand", brand);
     assert.equal(first.status, 201);
     const receipt = await first.json();
@@ -294,6 +296,14 @@ test("all four form variants persist through the real save function as service_r
     const repeated = await submit("brand", brand);
     assert.equal(repeated.status, 200);
     assert.equal((await repeated.json()).reference, receipt.reference);
+    const storedOffer = (
+      await query(
+        "SELECT data FROM brand_campaign_inquiries WHERE data->>'campaign_package_id'='cm365-campaign-growth'",
+      )
+    ).rows[0].data.campaign_offer;
+    assert.equal(storedOffer.priceLabel, "₹15,999");
+    assert.equal(storedOffer.scopeVersion, "partners-prd-fr23-v1");
+    assert.match(storedOffer.qualification, /whole campaign, not per creator/);
     // Rate limiting applies to new attempts; check the conflicting retry directly in SQL.
     await assert.rejects(
       query("SELECT public.save_marketing_intake($1,$2,$3,$4)", [
@@ -386,7 +396,11 @@ test("shared browser transport requires a database reference and rejects bad res
   ]) {
     const { submitMarketingForm } = load(
       "src/lib/marketing-submission.ts",
-      {},
+      {
+        "@/integrations/supabase/auth-attacher": {
+          attachSupabaseAuth: async () => new Headers({ authorization: "Bearer fixture" }),
+        },
+      },
       { fetch: async () => response, FormData },
     );
     await assert.rejects(submitMarketingForm("brand", new FormData()), error);

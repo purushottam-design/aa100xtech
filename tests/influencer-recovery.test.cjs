@@ -180,6 +180,7 @@ test("a missing submission function fails before uploads or inserts and returns 
   const api = load(
     "src/app/api/influencers/apply/route.ts",
     {
+      "@/lib/website-session.server": { websiteSessionError: async () => null },
       "@/integrations/supabase/client.server": { supabaseAdmin: {} },
       "@/lib/influencer-database.server": {
         influencerAdmin: {
