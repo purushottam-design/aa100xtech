@@ -680,6 +680,7 @@ test("application endpoint saves pending private submissions and reports databas
   let saved,
     fail = false;
   const route = load("src/app/api/influencers/apply/route.ts", {
+    "@/lib/website-session.server": { websiteSessionError: async () => null },
     "@/integrations/supabase/client.server": { supabaseAdmin: {} },
     "@/lib/influencer-database.server": {
       influencerAdmin: {

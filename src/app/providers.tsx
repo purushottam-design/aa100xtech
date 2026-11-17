@@ -9,6 +9,7 @@ import { ExpertCta } from "@/components/expert-cta";
 import { ScrollReveals } from "@/components/scroll-reveals";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SiteAccessGate } from "@/components/site-access-gate";
 import { Toaster } from "@/components/ui/sonner";
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -29,7 +30,7 @@ export function Providers({ children }: { children: ReactNode }) {
             </a>
             <SiteHeader />
             <main id="main-content" tabIndex={-1} className="flex-1">
-              {children}
+              <SiteAccessGate>{children}</SiteAccessGate>
             </main>
             {(pathname === "/" ||
               pathname === "/services" ||

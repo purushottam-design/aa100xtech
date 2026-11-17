@@ -10,6 +10,7 @@ import { influencerApplicationSchema } from "./influencers";
 import { websiteRequestSchema } from "./website-requests";
 import { InfluencerRequestError } from "./influencer-upload.server";
 import { getPublishedInfluencer } from "./influencers.server";
+import { partnerCampaignSnapshot } from "@/data/partner-campaign-packages";
 
 type PreparedIntake = {
   token: string;
@@ -144,5 +145,16 @@ export async function prepareMarketingForm(
     data.creator.name = profile.display_name;
   }
   const { token, startedAt, website_trap: _trap, ...details } = data;
-  return { token, startedAt, email: data.email, creator: null, details };
+  return {
+    token,
+    startedAt,
+    email: data.email,
+    creator: null,
+    details: {
+      ...details,
+      ...(data.campaign_package_id
+        ? { campaign_offer: partnerCampaignSnapshot(data.campaign_package_id) }
+        : {}),
+    },
+  };
 }

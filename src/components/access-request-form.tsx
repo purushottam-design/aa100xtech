@@ -27,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { signUpAccount } from "@/lib/accounts.functions";
 import { useNavigate } from "@/lib/navigation";
+import { authReturnPath } from "@/lib/auth-navigation";
 
 const optionalText = (max: number) =>
   z
@@ -212,8 +213,8 @@ export function AccessRequestForm({
     const d = parsed.data;
     const fullName = composeFullName(d.first_name, d.middle_name, d.last_name);
 
-    const password = value("password");
-    const confirm = value("confirm_password");
+    const password = String(fd.get("password") ?? "");
+    const confirm = String(fd.get("confirm_password") ?? "");
     if (password.length < 8) {
       toast.error("Password must be at least 8 characters.");
       return;
@@ -268,7 +269,7 @@ export function AccessRequestForm({
       existing ? "Signed in to your existing account" : "Account created — you are signed in",
     );
     onSuccess();
-    navigate({ to: "/dashboard", replace: true });
+    navigate({ to: authReturnPath(window.location.search) ?? "/dashboard", replace: true });
   }
 
   const id = (name: string) => `${idPrefix}-${name}`;

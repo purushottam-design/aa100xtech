@@ -200,6 +200,17 @@ function InquiryEditor({ row, edit }: { row: CampaignInquiry; edit: boolean }) {
     ["Number of influencers", d.influencer_count],
     ["Campaign start date", d.start_date],
     ["Budget", d.budget],
+    ...(d.campaign_offer
+      ? ([
+          [
+            "Creator Moves365 campaign package",
+            `${d.campaign_offer.name} — ${d.campaign_offer.priceLabel}`,
+          ],
+          ["Indicative campaign scope", d.campaign_offer.features.join("\n")],
+          ["Campaign scope qualification", d.campaign_offer.qualification],
+          ["Campaign scope version", d.campaign_offer.scopeVersion],
+        ] as [string, unknown][])
+      : []),
     ["Promotion types", d.promotions.join(", ")],
     ["Campaign description", d.description],
     ["Privacy consent", d.privacy ? "Recorded" : "Not recorded"],

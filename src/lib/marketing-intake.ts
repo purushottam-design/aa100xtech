@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { publicUrl } from "./influencers";
 import { campaignDetailsSchema } from "./campaign-enquiry";
+import {
+  partnerCampaignPackageIds,
+  type PartnerCampaignSnapshot,
+} from "@/data/partner-campaign-packages";
 
 export const platforms = [
   "Instagram",
@@ -225,6 +229,7 @@ export const brandIntakeSchema = z.object({
   promotions: z.array(z.enum(promotions)).min(1),
   description: optional(4000),
   creator: campaignDetailsSchema.shape.creator,
+  campaign_package_id: z.enum(partnerCampaignPackageIds).optional(),
 });
 export type CreatorIntake = z.infer<typeof creatorIntakeSchema>;
 export type BrandIntake = z.infer<typeof brandIntakeSchema>;
@@ -237,6 +242,7 @@ export type StoredBrandIntake = Omit<
   objective: string;
   platforms: string[];
   legacy_campaign?: import("./campaign-enquiry").CampaignDetails;
+  campaign_offer?: PartnerCampaignSnapshot;
 };
 export type CampaignInquiry = {
   id: string;

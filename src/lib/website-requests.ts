@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { customerActionHeaders, redirectExpiredCustomerSession } from "@/lib/customer-action-auth";
 import { inquiryOptions } from "@/data/business-plans";
 import { campaignDetailsSchema } from "./campaign-enquiry";
 import { socialAdProposalSchema } from "./social-ad-proposal";
@@ -109,11 +110,12 @@ export async function submitWebsiteRequest(input: WebsiteRequestInput, file?: Fi
     parsed.data.socialAds ? "/api/website/social-ads" : "/api/website/requests",
     {
       method: "POST",
-      headers: { "x-aa-rpc": "1" },
+      headers: await customerActionHeaders(),
       body: form,
       signal: AbortSignal.timeout(30_000),
     },
   );
+  redirectExpiredCustomerSession(response);
   const result = await response.json();
   if (!response.ok || !result.saved)
     throw new Error(result.message ?? "Your request could not be saved. Please try again.");

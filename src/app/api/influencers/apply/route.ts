@@ -1,4 +1,5 @@
 import { createHmac, randomUUID } from "node:crypto";
+import { websiteSessionError } from "@/lib/website-session.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { influencerAdmin } from "@/lib/influencer-database.server";
 import { influencerApplicationSchema, mediaBucket } from "@/lib/influencers";
@@ -12,6 +13,8 @@ import {
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
+  const denied = await websiteSessionError(request);
+  if (denied) return denied;
   const uploaded: string[] = [];
   try {
     assertInfluencerOrigin(request);

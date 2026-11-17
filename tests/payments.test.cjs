@@ -172,6 +172,9 @@ function paymentHarness({
     },
   };
   const api = load("src/lib/backend/handlers/consultations.ts", {
+    "@/integrations/supabase/auth-middleware": {
+      requireSupabaseAuth: async () => ({ userId: "fixture-customer" }),
+    },
     "@/lib/payment-database.server": { associatePaymentCustomer: async () => {} },
     "@/lib/backend/server": { createServerFn },
     "@/data/consultations": plans,

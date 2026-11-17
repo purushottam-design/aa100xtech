@@ -1,5 +1,6 @@
 import "server-only";
 import { createServerFn } from "@/lib/backend/server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { associatePaymentCustomer } from "@/lib/payment-database.server";
 
 import { getConsultationPlan } from "@/data/consultations";
@@ -43,6 +44,7 @@ function bookingStorageFailure(error: unknown, linkingOrder = false) {
 }
 
 export const createConsultationBooking = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => consultationBookingCreationSchema.parse(data))
   .handler(async ({ data }) => {
     const plan = getConsultationPlan(data.planId);
@@ -202,6 +204,7 @@ export const createConsultationBooking = createServerFn({ method: "POST" })
   });
 
 export const verifyConsultationPayment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => consultationPaymentVerificationSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -324,6 +327,7 @@ export const verifyConsultationPayment = createServerFn({ method: "POST" })
   });
 
 export const markConsultationPaymentFailed = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => consultationPaymentFailureSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

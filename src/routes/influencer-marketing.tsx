@@ -589,6 +589,14 @@ export default function InfluencerMarketingPage({
             Final deliverables and fees are agreed before work begins. No guaranteed reach,
             virality, followers or revenue.
           </p>
+          <p className="mt-4 text-center text-sm">
+            <Link
+              to="/influencer-marketing/for-brands#campaign-packages"
+              className="font-semibold text-primary underline underline-offset-4"
+            >
+              Explore Creator Moves365 campaign packages
+            </Link>
+          </p>
         </div>
       </section>
 
