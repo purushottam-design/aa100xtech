@@ -44,7 +44,7 @@ export function ServiceFeaturedLinks({
         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-primary/25 bg-background text-primary">
           <ShieldCheck className="size-5" aria-hidden="true" />
         </span>
-        <span>Security &amp; Identity Defect</span>
+        <span>Security &amp; Identity Defect - AI Fake &amp; Deepfake Content Removal</span>
         <ArrowUpRight className="ml-auto size-4 shrink-0 text-primary" aria-hidden="true" />
       </Link>
     </div>
