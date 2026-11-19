@@ -32,6 +32,7 @@ export function buildServiceNavigation(
   }));
   const other = groups.find((group) => group.id === "other")!;
   for (const service of catalog) {
+    if (service.slug === "one-identity-one-world") continue;
     const group = groups.find((candidate) => candidate.id === service.navigationGroup) ?? other;
     group.items.push({
       title: service.title,

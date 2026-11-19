@@ -1,40 +1,50 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { supabase } from "@/integrations/supabase/client";
-import { loginHref } from "@/lib/auth-navigation";
+import { GuestPagePreview } from "@/components/guest-page-preview";
 
-/** Preserve the original browser-session guard and keep protected views unmounted until verified. */
+/** Guests see a separate preview; protected views stay unmounted until verified. */
 export function ProtectedRoute({ children }: { children: ReactNode }) {
-  const [verified, setVerified] = useState(false);
+  const [access, setAccess] = useState<{
+    path: string;
+    state: "member" | "guest" | "error";
+  } | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     let active = true;
-    setVerified(false);
-    const redirectToLogin = () => {
-      router.replace(
-        loginHref(window.location.pathname + window.location.search + window.location.hash),
-      );
-    };
+    let authChanged = false;
+    setAccess(null);
 
     supabase.auth
       .getUser()
       .then(({ data, error }) => {
-        if (!active) return;
-        if (error || !data.user) redirectToLogin();
-        else setVerified(true);
+        if (!active || authChanged) return;
+        setAccess({
+          path: pathname,
+          state:
+            error &&
+            error.status !== 401 &&
+            error.status !== 403 &&
+            error.name !== "AuthSessionMissingError"
+              ? "error"
+              : !error && data.user
+                ? "member"
+                : "guest",
+        });
       })
       .catch(() => {
-        if (active) redirectToLogin();
+        if (active && !authChanged) setAccess({ path: pathname, state: "error" });
       });
 
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session && active) {
-        setVerified(false);
-        redirectToLogin();
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (active && event !== "INITIAL_SESSION") {
+        authChanged = true;
+        setAccess(session ? null : { path: pathname, state: "guest" });
+        if (session) setAttempt((value) => value + 1);
       }
     });
 
@@ -42,9 +52,20 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
       active = false;
       data.subscription.unsubscribe();
     };
-  }, [pathname, router]);
+  }, [pathname, attempt]);
 
-  return verified ? (
+  if (access?.path === pathname && access.state === "guest")
+    return <GuestPagePreview pathname={pathname} />;
+  if (access?.path === pathname && access.state === "error")
+    return (
+      <div role="alert" className="space-y-3 px-4 py-16 text-center">
+        <p>Unable to check your session. Please try again.</p>
+        <button className="text-primary underline" onClick={() => setAttempt((value) => value + 1)}>
+          Retry
+        </button>
+      </div>
+    );
+  return access?.path === pathname && access.state === "member" ? (
     <>{children}</>
   ) : (
     <p role="status" className="px-4 py-16 text-center text-muted-foreground">

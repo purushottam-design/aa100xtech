@@ -21,18 +21,38 @@ test("login preserves the requested booking, query and section", () => {
     assert.equal(navigation.authReturnPath("?" + new URLSearchParams({ next: unsafe })), null);
 });
 
-test("website functions require login while account creation and policies stay accessible", () => {
+test("public pages allow guest browsing while private account pages require login", () => {
   for (const path of [
+    "/admin",
+    "/admin/settings/website",
+    "/dashboard",
+    "/settings",
+    "/profile",
+    "/notifications",
+    "/team",
+    "/affiliate",
+    "/affiliate-admin",
+    "/partner-workspace/overview",
+    "/services-private",
+  ])
+    assert.equal(navigation.isPublicPage(path), false, path);
+  for (const path of [
+    "/",
+    "/auth",
+    "/request-access",
+    "/privacy-policy",
+    "/terms-and-conditions",
     "/consultation",
     "/contact",
     "/careers/apply",
     "/partners/apply",
     "/services",
-    "/dashboard",
-    "/settings",
+    "/services/website-development",
+    "/services/",
+    "/blog/example",
+    "/influencers/example",
+    "/security-identity-defect",
   ])
-    assert.equal(navigation.isPublicPage(path), false, path);
-  for (const path of ["/", "/auth", "/request-access", "/privacy-policy", "/terms-and-conditions"])
     assert.equal(navigation.isPublicPage(path), true, path);
 });
 
