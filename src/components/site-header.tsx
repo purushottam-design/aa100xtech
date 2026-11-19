@@ -185,7 +185,7 @@ function HeaderDropdown({
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ accountSlot }: { accountSlot?: React.ReactNode } = {}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { session, loading } = useSession();
@@ -255,26 +255,27 @@ export function SiteHeader() {
         </nav>
         <div className="flex shrink-0 items-center gap-2">
           <CurrencySelector className="hidden px-2 xl:inline-flex" />
-          {showAuthButtons &&
-            !loading &&
-            (session ? (
-              <div className="hidden sm:block">
-                <HeaderDropdown label="My account" items={accountLinks} />
-              </div>
-            ) : (
-              <div className="hidden items-center gap-2 sm:flex">
-                <Button asChild variant="outline">
-                  <Link to="/auth" hash="login" search={{ next: authNext }}>
-                    Login
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/auth" hash="signup" search={{ next: authNext }}>
-                    Sign up
-                  </Link>
-                </Button>
-              </div>
-            ))}
+          {accountSlot ??
+            (showAuthButtons &&
+              !loading &&
+              (session ? (
+                <div className="hidden sm:block">
+                  <HeaderDropdown label="My account" items={accountLinks} />
+                </div>
+              ) : (
+                <div className="hidden items-center gap-2 sm:flex">
+                  <Button asChild variant="outline">
+                    <Link to="/auth" hash="login" search={{ next: authNext }}>
+                      Login
+                    </Link>
+                  </Button>
+                  <Button asChild>
+                    <Link to="/auth" hash="signup" search={{ next: authNext }}>
+                      Sign up
+                    </Link>
+                  </Button>
+                </div>
+              )))}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="xl:hidden" aria-label="Open menu">

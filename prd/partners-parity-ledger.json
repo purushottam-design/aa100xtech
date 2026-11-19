@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "specification": {
     "file": "prd/AA100XTech_Partners_Complete_Integration_PRD.md",
-    "sha256": "053d8a407070673cf6a0b67e760c16ac3a45b7595e282c6b0081c3273e4a27ef"
+    "sha256": "b5b2c89109a93020a2c7fdf638d2258cd2050d08c57f7c40bad81423c534461b"
   },
   "source": {
     "lovableProjectId": "596d7dbe-aa8e-4a98-9859-a133b7678ff6",
@@ -25,6 +25,18 @@
     "operationModules": 25,
     "existingPages": 71
   },
+  "nativeFoundation": {
+    "status": "partial-native-implementation-not-source-parity",
+    "checkedOn": "2026-11-19",
+    "routeImplementation": "src/app/partner-workspace/[...workspacePath]/page.tsx",
+    "serverImplementation": "src/lib/partner-workspace/server/operations.ts",
+    "databaseCandidate": "supabase/partner-workspace/001_workspace_candidate.sql",
+    "candidateTableCount": 20,
+    "appliedToLiveDatabase": false,
+    "verifiedSourceOperationParity": 0,
+    "report": "docs/partner-workspace/IMPLEMENTATION_STATUS.md",
+    "note": "All Appendix A paths are allowlisted; several are explicit integration blockers. Candidate workflows are tested in isolation, not reconciled against the unavailable audited source or live master."
+  },
   "additionalObligations": [
     "Public/source asset and motion parity; native login and recovery aliases",
     "Master-auth reconciliation, canonical account links and logged bootstrap",
@@ -37,7 +49,10 @@
   ],
   "publicImplementation": {
     "status": "partial",
-    "requirements": ["FR-23 (campaign offer subset)", "FR-24 (native package context subset)"],
+    "requirements": [
+      "FR-23 (campaign offer subset)",
+      "FR-24 (native package context subset)"
+    ],
     "files": [
       "src/data/partner-campaign-packages.ts",
       "src/components/partner-campaign-packages.tsx",
