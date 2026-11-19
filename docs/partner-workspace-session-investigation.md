@@ -1,5 +1,11 @@
 # Partner Workspace session investigation
 
+## Update — 19 November 2026
+
+The availability-only page described below has been replaced by a native secure workspace foundation. Its layout checks the shared session and approved Partners membership/canonical account, while `/api/partner-workspace/[operation]` independently validates live Auth, membership and RLS. Guests redirect to existing login; backend/schema outages show a retry/setup state rather than missing membership. Historical findings below remain the record of the earlier scoped investigation, not current route availability.
+
+The read-only diagnostic was rerun: runtime browser/server refs still match, master confirmation is still absent, and the configured hostname still returns `ENOTFOUND`. Thus the unreachable backend itself is **not fixed** by UI/code changes. No credentials, project selection or database records were changed. Current scope and verification: [implementation status](partner-workspace/IMPLEMENTATION_STATUS.md).
+
 Checked on 18 November 2026 against the local development checkout at `http://127.0.0.1:3000`.
 
 ## Findings

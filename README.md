@@ -1,5 +1,7 @@
 # AA100XTech — Absolute Advancement 100X Tech
 
+**Current setup:** Next.js App Router 16.4.6, React 19, TypeScript, npm, Node.js 20.9+. The older architecture notes below predate parts of the Next.js migration. For the new workspace, follow [AA100XTech Partner Workspace — Setup, Login & Admin Panel Guide](#aa100xtech-partner-workspace--setup-login--admin-panel-guide) below and its explicit verification statuses.
+
 Marketing + operations website for **Absolute Advancement 100X Tech** (AA100XTech), an IT / digital
 engineering studio based in Patna, India. The site presents services, pricing, portfolio, careers and
 a partner program, and it runs three real transactional systems:
@@ -8,8 +10,7 @@ a partner program, and it runs three real transactional systems:
 2. **Approval-based account system** (supreme admin issues credentials; employees / customers / job seekers sign in)
 3. **Form intake** (partner applications, candidate task submissions with file upload, access requests)
 
-Everything is one full-stack app — there is no separate backend service. Server logic runs as
-TanStack Start **server functions** that execute in the deployed serverless runtime.
+Everything is one full-stack app. Current server logic runs in Next.js route handlers and the existing allowlisted RPC transport. Older TanStack route components are retained behind native App Router pages.
 
 ---
 
@@ -17,22 +18,21 @@ TanStack Start **server functions** that execute in the deployed serverless runt
 
 | Layer | Technology |
 | --- | --- |
-| Framework | TanStack Start v1 (React 19 + TanStack Router, file-based routing, SSR) |
-| Build tool | Vite 8 via `@lovable.dev/vite-tanstack-config` |
+| Framework | Next.js 16.4.6 App Router, React 19.2.4 |
+| Build tool | Next.js webpack via `scripts/next.cjs` |
 | Language | TypeScript |
 | Styling | Tailwind CSS v4 (`src/styles.css`, semantic tokens) |
 | UI kit | shadcn-style components on Radix UI (`src/components/ui/*`), `lucide-react` icons |
 | Data fetching | TanStack Query v5 |
 | Toasts | `sonner` |
 | Validation | `zod` (server), hand-written validators (client) |
-| Backend logic | `createServerFn` from `@tanstack/react-start` |
+| Backend logic | Native Next route handlers plus local `src/lib/backend/server.ts` / allowlisted RPC |
 | Database / Auth / Storage | Supabase (Lovable Cloud) |
 | Payments | Razorpay Orders API + Razorpay Checkout JS |
 | Exchange rates | `open.er-api.com` (public REST) |
-| Deployment | Lovable hosting, serverless (Cloudflare Workers style runtime); SSR entry wrapped by `src/server.ts` |
+| Deployment | Next.js-compatible hosting; preserve the Lovable-connected Git history |
 
-Not detected in the current project: a separate Express/Nest backend, an ORM, an email/SMS sending
-service, analytics, or a test suite.
+Verification tooling includes TypeScript, ESLint, Node tests, isolated PostgreSQL (PGlite) and Playwright. Run the scripts in `package.json`; current Partner Workspace setup and limits are documented in the guide below.
 
 ---
 
@@ -1046,3 +1046,200 @@ password) → us admin ki row me **Permissions** → *Select all* ya zaroorat ke
 App ke **Admin** screen par "Super admin console" card — Dashboard, Reports, Users, Admins, Roles,
 Hierarchy, Support, Notifications, Content, Activity log, Sessions, Two-factor ke direct buttons.
 Ek hi backend, isliye data website jaisa hi. ![App admin](public/guide/app-admin2.png)
+
+# AA100XTech Partner Workspace — Setup, Login & Admin Panel Guide
+
+Yeh guide current **Next.js 16.4.6 / React 19** checkout ke liye hai. Partner Workspace existing website ke andar integrate hua hai. Abhi native dashboard aur core workflow foundation implement hai; **poora source product, live login aur production integration complete nahi hai**. Detailed status: [IMPLEMENTATION_STATUS.md](docs/partner-workspace/IMPLEMENTATION_STATUS.md).
+
+19 November 2026 ke read-only check mein configured development Supabase hostname DNS par `ENOTFOUND` de raha hai. Jab tak intended master project confirm/recover nahi hota aur reviewed schema install nahi hota, authorized real dashboard data load nahi hoga. Screen render hona database integration pass hona nahi hai.
+
+## A. Pehle kya chahiye
+
+- **Node.js 20.9 ya newer**, kyunki `package.json` ka `engines.node` `>=20.9.0` hai. Current supported Node LTS use karein.
+- **npm**; repository mein `package-lock.json` hai. `npm ci` reproducible install karta hai. Windows PowerShell execution-policy error aaye to `npm.cmd` / `npx.cmd` use karein.
+- `.env.example` dekh kar untracked `.env.local` set karein. Real keys README, screenshot, commit ya chat mein paste mat karein.
+- Existing **AA100XTech master Supabase** project, Auth aur source/target schema access. Deployed project ko hosting settings + Supabase dashboard se owner verify kare. Accessible dusra project choose mat karein.
+- Required approved AA migrations aur reconciled `cm365_` schema. Candidate SQL file ko automatic production migration mat samjhein; details section F mein hain.
+- Original Partners source PRD revision aur provider contracts remaining Excel/Sheets, private files, messages aur AI integration ke liye chahiye. AI configuration missing hone par app clear blocker dikhata hai.
+
+## B. Local server kaise start karein
+
+```powershell
+cd 'C:\Users\JUST AMAN\Downloads\aa100xtech'
+node --version
+npm.cmd ci
+npm.cmd run dev
+```
+
+`dev` script Next.js ko `127.0.0.1` par start karta hai. Terminal mein actual port check karein. Default port 3000 busy hua to Next dusra port select kar sakta hai. Isi checkout ka server already running ho to usi ko use karein; doosra parallel dev process start mat karein. Package scripts aur production build is checkout par run karke verify hue hain; clean dependency reinstallation is delivery mein repeat nahi ki gayi.
+
+Development env precedence: shell variables, `.env.development.local`, `.env.local`, `.env.development`, `.env`. Production build/start `.env.production*` precedence use karta hai. Server restart ke bina env change effective nahi ho sakta; `NEXT_PUBLIC_*` deployment values rebuild par embed hote hain.
+
+## C. Kaunsa URL kholna hai
+
+| Page | URL | Kya hoga |
+| --- | --- | --- |
+| Main website | http://127.0.0.1:3000 | Existing AA100XTech website |
+| **Pehle yeh workspace entry kholein** | http://127.0.0.1:3000/partner-workspace | Session aur approved Partners membership check |
+| Admin overview | http://127.0.0.1:3000/partner-workspace/overview | Admin / authorized IMTM dashboard |
+| Existing login | http://127.0.0.1:3000/auth | Wahi existing AA100XTech account login |
+
+Guest workspace entry se `/auth?next=%2Fpartner-workspace#login` par jayega. Existing login safe local return destination preserve karta hai. Approved Admin/IMTM ka home `overview`, influencer collector ka `lead-dashboard`, gamer collector ka `gamer-leads`, linked creator ka `creator` hai. Creator portal ka full workflow abhi pending hai. Missing/pending/disabled membership restricted state dikhati hai; backend failure retry state dikhata hai.
+
+## D. Admin login step by step
+
+1. `npm.cmd run dev` start karein aur terminal ka URL check karein.
+2. `http://127.0.0.1:3000/partner-workspace` kholein.
+3. Existing authorized AA100XTech email/password se `/auth` par sign in karein. Koi demo password ya backdoor account nahi hai.
+4. Authorized operator intended master mein aapki `cm365_memberships` row check kare: role `admin`, status `approved`. Saath mein `cm365_team_accounts` ka same `auth.users.id` linked account active hona chahiye.
+5. Sirf AA Super Admin hona automatic Partners access nahi deta. Initial bootstrap ke liye [audited operator procedure](docs/partner-workspace/PROVISIONING.md) follow karein. Ordinary users ko Admin grant mat karein; shared Auth user/password replace mat karein.
+6. `http://127.0.0.1:3000/partner-workspace/overview` kholein. Sidebar, actual account name/role aur dashboard cards dikhne chahiye.
+7. Dashboard data request successful hone par real records/counts dikhte hain. Database empty hai to `0` aur useful empty states aayenge. Network/schema error ko `0` nahi dikhaya jata.
+8. Current DNS blocker ke saath steps 3–7 ka real backend acceptance complete nahi hua hai. Isko test fixture screenshot dekhkar passed mat mark karein.
+
+## E. Har feature ka route aur current status
+
+Neeche Appendix A ke **sabhi 46 private routes** diye hain. `[id]` ki jagah authorized actual record UUID lagayein. Catch-all route ka allowlisted hona sirf **route existence** hai. `Core` = native screen/API/candidate SQL available, isolated checks available; **real Auth/DB, staging aur production unverified**. `Partial` = basic behavior available, remaining functionality pending. `Pending` = secure route + integration blocker, working source feature nahi.
+
+| Page | Full localhost URL | Feature / kaise test karein | Required Partners role | Current implementation / verification |
+| --- | --- | --- | --- | --- |
+| activity | http://127.0.0.1:3000/partner-workspace/activity | Audit log; saved action verify karein | Admin route; preserve source handler checks | Core; live/staging/production unverified |
+| admin | http://127.0.0.1:3000/partner-workspace/admin | Admin Hub links open karein | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| allocations | http://127.0.0.1:3000/partner-workspace/allocations | Allocation workflow source integration required | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| campaigns | http://127.0.0.1:3000/partner-workspace/campaigns | Campaign create karein, refresh karke list check karein; participants pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| companies | http://127.0.0.1:3000/partner-workspace/companies | Company management source integration required | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| contact | http://127.0.0.1:3000/partner-workspace/contact | Operational contact request inbox source integration required | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| creator | http://127.0.0.1:3000/partner-workspace/creator | Linked creator home; full portal pending | Linked creator; own data | Pending; live/staging/production unverified |
+| creators/[id] | http://127.0.0.1:3000/partner-workspace/creators/[id] | CRM identity, assignment, contacts and basic deal draft review karein | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| creators | http://127.0.0.1:3000/partner-workspace/creators | Search/filter/paginate authorized CRM records | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| dashboard | http://127.0.0.1:3000/partner-workspace/dashboard | Operational dashboard alias; real aggregate query check karein | Admin route; preserve source handler checks | Core; live/staging/production unverified |
+| deal-approvals | http://127.0.0.1:3000/partner-workspace/deal-approvals | Approval list; View se saved revision review karein | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| duplicates | http://127.0.0.1:3000/partner-workspace/duplicates | Source duplicate review/history integration required | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| follow-ups | http://127.0.0.1:3000/partner-workspace/follow-ups | Assigned task due date check/confirm complete karein | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| gamer-leads | http://127.0.0.1:3000/partner-workspace/gamer-leads | Separate gamer lead create/import/list test karein | Admin / gamer Lead Team | Partial; live/staging/production unverified |
+| import | http://127.0.0.1:3000/partner-workspace/import | CSV preview, invalid/duplicate rows aur retry test karein | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| imtm-create | http://127.0.0.1:3000/partner-workspace/imtm-create | Staff provisioning source lifecycle integration required | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| imtm | http://127.0.0.1:3000/partner-workspace/imtm | Active team account listing check karein; provisioning pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| influencer-logins | http://127.0.0.1:3000/partner-workspace/influencer-logins | Creator issuance/source workflow required | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| influencers/[id] | http://127.0.0.1:3000/partner-workspace/influencers/[id] | Current assignment workspace, contact log aur atomic deal submission test karein | Admin / assigned IMTM | Partial; live/staging/production unverified |
+| inventory | http://127.0.0.1:3000/partner-workspace/inventory | Product/SKU create; confirmed stock adjustment + refresh test karein | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| lead-add | http://127.0.0.1:3000/partner-workspace/lead-add | Multiple social accounts ke saath lead save karein | Influencer Lead Team; source admin controls preserved | Core; live/staging/production unverified |
+| lead-dashboard | http://127.0.0.1:3000/partner-workspace/lead-dashboard | Own/admin influencer leads list; view and conversion test karein | Influencer Lead Team; source admin controls preserved | Partial; live/staging/production unverified |
+| lead-import | http://127.0.0.1:3000/partner-workspace/lead-import | Collector CSV preview/import workflow test karein | Influencer Lead Team; source admin controls preserved | Partial; live/staging/production unverified |
+| lead-overview | http://127.0.0.1:3000/partner-workspace/lead-overview | Admin lead-list alias; broader contributor statistics pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| lead-team | http://127.0.0.1:3000/partner-workspace/lead-team | Lead account/domain listing; lifecycle editing pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| leads/[id] | http://127.0.0.1:3000/partner-workspace/leads/[id] | Lead review, admin-only idempotent CRM conversion | Admin route; preserve source handler checks | Core; live/staging/production unverified |
+| matchmaker | http://127.0.0.1:3000/partner-workspace/matchmaker | Configuration blocker; provider/quota integration pending | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| me | http://127.0.0.1:3000/partner-workspace/me | Current identity/role check; shared AA profile link open karein | All approved memberships; own profile | Partial; live/staging/production unverified |
+| my-collaborations | http://127.0.0.1:3000/partner-workspace/my-collaborations | Creator-only projection integration required | Linked creator; own data | Pending; live/staging/production unverified |
+| my-influencers | http://127.0.0.1:3000/partner-workspace/my-influencers | Own assigned roster; reassignment revocation test karein | Admin / assigned IMTM | Core; live/staging/production unverified |
+| my-leads | http://127.0.0.1:3000/partner-workspace/my-leads | Original collector own leads verify karein | Influencer Lead Team; source admin controls preserved | Core; live/staging/production unverified |
+| my-notifications | http://127.0.0.1:3000/partner-workspace/my-notifications | Creator notification inbox integration required | Linked creator; own data | Pending; live/staging/production unverified |
+| my-shipments | http://127.0.0.1:3000/partner-workspace/my-shipments | Creator shipment projection integration required | Linked creator; own data | Pending; live/staging/production unverified |
+| my-tasks | http://127.0.0.1:3000/partner-workspace/my-tasks | Admin follow-up list alias; complete assigned task | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| overview | http://127.0.0.1:3000/partner-workspace/overview | 7/30/90/year filter; chart data/empty state verify karein | Admin / assigned IMTM | Core; live/staging/production unverified |
+| ownership | http://127.0.0.1:3000/partner-workspace/ownership | CRM assignment controls; reset seven-day window confirm karein | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| panel | http://127.0.0.1:3000/partner-workspace/panel | Admin Hub alias | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| permissions | http://127.0.0.1:3000/partner-workspace/permissions | Trusted membership list; read-only; operator changes separately audited | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| products | http://127.0.0.1:3000/partner-workspace/products | Namespaced stock product list/create; commercial AA products unaffected | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| projects | http://127.0.0.1:3000/partner-workspace/projects | Basic project create/list; participants/progress pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| reports | http://127.0.0.1:3000/partner-workspace/reports | Operational overview; source reports/export pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| settings | http://127.0.0.1:3000/partner-workspace/settings | Fixed policies and membership navigation; editing pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| shipments | http://127.0.0.1:3000/partner-workspace/shipments | Admin shipment list only; updates/events/creator projection pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| submissions | http://127.0.0.1:3000/partner-workspace/submissions | Source submissions integration required | Admin route; preserve source handler checks | Pending; live/staging/production unverified |
+| team-accounts | http://127.0.0.1:3000/partner-workspace/team-accounts | Canonical staff account listing; lifecycle changes pending | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+| team | http://127.0.0.1:3000/partner-workspace/team | Team account list alias | Admin route; preserve source handler checks | Partial; live/staging/production unverified |
+
+Extra detail route: `http://127.0.0.1:3000/partner-workspace/deal-approvals/[id]` (Partners Admin) saved immutable terms aur Approve / Reject / Request changes ke liye hai. Koi impactful action automatically execute nahi hota; note aur confirmation chahiye.
+
+Public source routes `/`, brands/influencer marketing pages, existing `/auth`/recovery aur legacy redirect dispositions PRD ki public inventory mein separately tracked hain. Existing `/partners`, `/admin`, `/dashboard` aur influencer public redirects preserve hue hain. Public old source `/api/match-creators`, health aur cron endpoints ko working integrations ke roop mein expose nahi kiya gaya; AI/health/cron source contracts pending hain.
+
+## F. Supabase setup aur migrations
+
+Environment variable names:
+
+| Name | Purpose |
+| --- | --- |
+| `SUPABASE_URL` | Server ka verified AA master URL |
+| `SUPABASE_PUBLISHABLE_KEY` | Same master ki server public/publishable key |
+| `NEXT_PUBLIC_SUPABASE_URL` | Browser ka same master URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Browser publishable/anon key; secret key nahi |
+| `SUPABASE_PROJECT_ID`, `NEXT_PUBLIC_SUPABASE_PROJECT_ID` | Agar configured hain to selected URL ref se match karein |
+| `SUPABASE_SERVICE_ROLE_KEY` | Existing privileged operator/server operations only; browser mein kabhi nahi |
+| `CM365_EXPECTED_MASTER_REF` | Owner-confirmed master ref pin; runtime/build project mismatch fail karta hai |
+
+Runtime workspace requests user bearer token aur RLS use karte hain; dashboard queries ko service-role bypass nahi diya gaya. Source project runtime dependency nahi banaya gaya.
+
+Read-only diagnosis:
+
+```powershell
+node --use-system-ca scripts/partner-workspace/diagnose.cjs
+npm.cmd run partners:preflight
+npm.cmd run partners:inventory -- --check
+```
+
+Diagnostic safe ref/config/key-presence status, DNS, Auth health/settings aur zero-row membership schema request report karta hai. Secrets ya membership rows print nahi karta. Current output: runtime refs consistent, master confirmation pending, DNS `ENOTFOUND`. `PGRST205` mile to exposed schema/table unavailable ho sakti hai; isko missing user membership mat samjhein.
+
+**Migration status:** `supabase/partner-workspace/001_workspace_candidate.sql` mein reviewed-in-isolation **20-table native foundation candidate** hai. Yeh `supabase/migrations/` ke bahar hai, isliye normal migration push se automatically apply nahi hoti. Actual source ke 56 tables aur live destination schema ke saath reconciliation abhi baaki hai. Existing `cm365_` objects ke upar is file ko blindly execute mat karein.
+
+Authorized operator ke steps:
+
+1. Supabase dashboard aur deployed hosting env se actual master URL/ref confirm karein; source aur target ko confuse na karein. Secrets local env mein rakhein.
+2. Source revision/schema/data/Storage ka read-only inventory aur target backup lein. Existing AA migrations/checks preserve karein.
+3. Existing approved AA migrations installed hain ya nahi verify karein. Candidate ko actual source semantics ke saath reconcile karke additive migration review karein. Source demo seeds, conflicting tables aur Auth hooks copy mat karein.
+4. Explicit approval ke baad sirf confirmed staging target par reviewed SQL/migrations apply karein. Supabase SQL Editor ya pinned CLI target use karein. Production DB migration is task mein authorized/executed nahi hui.
+5. `information_schema.tables`, `pg_policies` aur `pg_proc` mein required objects/RLS/function grants check karein. Candidate table names `cm365_` prefix use karte hain; AA commercial `products` untouched hai.
+6. Verified Super Admin bootstrap procedure run karein, phir **normal AA login** se role/ownership tests karein. DB editor/service-role success alone user permission success nahi hai.
+7. Authorized staging record create karke page refresh karein; matching `cm365_` row, originating Auth UUID aur `cm365_activity_logs` event verify karein. Lead submission ko automatic published profile/deal approval mat samjhein.
+8. Rehearsal, reconciliation aur rollback review pass hone ke baad separately production approval lein. Existing users, roles, accounts, payment configuration ya source records delete mat karein.
+
+## G. Common problems aur unka solution
+
+| Problem | Kya check karein |
+| --- | --- |
+| 404 / Page Not Found | Correct repository/server/port aur route spelling check karein. Unknown workspace modules intentionally 404 hain. Dynamic record route mein actual UUID use karein. |
+| Unable to check your session / authentication unavailable | Read-only diagnostic run karein. Current hostname ka DNS `ENOTFOUND` verified hai. Supabase dashboard mein project status/URL verify karein. Connection restore hone par Retry karein; membership remove/recreate mat karein. |
+| Supabase connection error | Browser/server master URL consistency, DNS, TLS/network aur project availability check karein. Random available project par switch mat karein. |
+| Access Denied / membership required | Normal AA user automatic Partners staff nahi hai. Approved `cm365_memberships` role + active canonical account link operator verify kare. Pending/disabled ko ordinary login se bypass nahi kar sakte. |
+| Login redirect loop | Same hostname/port use karein (`127.0.0.1` aur `localhost` ki browser sessions alag hain). Login return path aur Auth redirect config check karein; sign out/in karein. Backend 503 ko guest redirect mein convert mat karein. |
+| Missing tables / `SCHEMA_REQUIRED` | Source/master reconciliation aur reviewed schema installation pending ho sakti hai. Existing migration list check karein. Candidate apply karna automatic fix nahi hai. |
+| Missing env vars / `CONFIGURATION_REQUIRED` | `.env.example` names, effective env precedence aur same-project URLs check karein; server restart/rebuild karein. Keys print ya commit mat karein. |
+| Unauthorized API / 401 | Valid existing login chahiye. Backend live Auth session verify karta hai; expired/revoked token ko refresh/login karein. |
+| Forbidden API / 403 | Correct role/domain/current assignee aur membership activity check karein. UI link visible hona server permission nahi deta. RLS disable mat karein. |
+| Dashboard mein zero records | Successful data response ke saath empty DB ka normal result ho sakta hai. Network/schema error alag alert deta hai. Seeded fake stats ki zaroorat nahi hai. |
+| Changes save nahi hoti | Request error/validation note dekhein; SQL candidate installed aur approved account permissions check karein. Refresh + matching backend row verify karein. |
+| CSV duplicates | Platform + normalized handle unique hai. Existing rows erase nahi hoti. Invalid rows preview mein fix karein; privilege columns hata dein. XLSX/Sheets currently supported claim nahi hai. |
+| Assignment/deal action rejected | Current assignee, seven-day deadline, pending review pause aur saved revision check karein. Stale revision refresh karke dobara review karein. |
+| Dev server start nahi hota | `node --version`, `npm.cmd ci`, terminal errors, occupied port aur existing dev process check karein. PowerShell mein npm.ps1 blocked ho to `npm.cmd` use karein. |
+
+## H. Verification checklist
+
+Har check ke liye alag status record karein: **R** route exists; **UI** screen renders; **DB** authenticated real backend + persistence; **ST** staging accepted; **PROD** production accepted. Browser fixture tests aur isolated PostgreSQL tests `DB/ST/PROD` acceptance nahi hain.
+
+- [ ] Existing Admin login: correct authorized membership home; ordinary AA account restricted.
+- [ ] Dashboard: real counts, empty/error states, 7/30/90/year filter, no invented growth/goal.
+- [ ] Lead creation: multiple manual social accounts, original user ownership, admin review.
+- [ ] Persistence: refresh/new authorized session mein saved records aur audit entry remain.
+- [ ] Import: quoted CSV, invalid rows, duplicates, retry aur row totals; XLSX/Sheets pending mark karein.
+- [ ] CRM: search/platform/location/category/follower filters, paging, safe profile links.
+- [ ] Assignments: current assignee only; seven days; review pause; reassignment old access deny.
+- [ ] Approvals: exact saved revision, note + confirmation, approve/reject/request changes, stale duplicate deny.
+- [ ] Creator permissions: other creators aur staff private notes deny; full portal/issuance pending.
+- [ ] Campaign/project: current basic create/list persistence; participants/deliverables pending.
+- [ ] Inventory: SKU, atomic stock adjustment, negative stock/retry checks; allocations pending.
+- [ ] Reports: authorized operational counts; source reports/export pending.
+- [ ] Logout: profile dropdown → Log out; back navigation/next API request cannot recover private data.
+
+Verified local commands (actual script names):
+
+```powershell
+npm.cmd run typecheck
+node --test tests/partner-workspace-security.test.cjs tests/partner-workspace-diagnostic.test.cjs tests/partners-environment.test.cjs tests/partners-inventory.test.cjs
+npm.cmd run build
+npm.cmd test
+npm.cmd run lint
+$env:PLAYWRIGHT_BASE_URL='http://127.0.0.1:3000'
+npx.cmd playwright test tests/e2e/partner-workspace-availability.spec.ts
+```
+
+Current evidence: typecheck/build + isolated workspace checks pass; browser fixture suite covers 320/375/768/1024/1440 widths, guest/denied/error states, dashboard filters and action navigation. Full repository lint/parity/service-navigation baseline failures are documented in [implementation status](docs/partner-workspace/IMPLEMENTATION_STATUS.md). Live Auth/DB, source reconciliation, staging and production remain unverified. Fixture screenshots: `.migration/partner-workspace/desktop-fixture.png` and `mobile-fixture.png` (generated local artifacts; synthetic identity, intercepted zero data). Main status report and [provisioning guide](docs/partner-workspace/PROVISIONING.md) explain remaining work.

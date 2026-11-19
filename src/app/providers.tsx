@@ -15,12 +15,13 @@ import { Toaster } from "@/components/ui/sonner";
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
   const pathname = usePathname();
+  const workspace = pathname === "/partner-workspace" || pathname.startsWith("/partner-workspace/");
 
   return (
     <QueryClientProvider client={queryClient}>
       <CurrencyProvider>
         <ScrollReveals />
-        <ConsultationProvider>
+        <PageConsultationProvider workspace={workspace}>
           <div className="flex min-h-screen flex-col">
             <a
               href="#main-content"
@@ -28,7 +29,7 @@ export function Providers({ children }: { children: ReactNode }) {
             >
               Skip to content
             </a>
-            <SiteHeader />
+            {!workspace && <SiteHeader />}
             <main id="main-content" tabIndex={-1} className="flex-1">
               <SiteAccessGate>{children}</SiteAccessGate>
             </main>
@@ -39,11 +40,21 @@ export function Providers({ children }: { children: ReactNode }) {
               pathname === "/influencer-marketing" ||
               pathname === "/portfolio" ||
               /^\/services\/[^/]+$/.test(pathname)) && <ExpertCta />}
-            <SiteFooter />
+            {!workspace && <SiteFooter />}
           </div>
-        </ConsultationProvider>
+        </PageConsultationProvider>
         <Toaster />
       </CurrencyProvider>
     </QueryClientProvider>
   );
+}
+
+function PageConsultationProvider({
+  workspace,
+  children,
+}: {
+  workspace: boolean;
+  children: ReactNode;
+}) {
+  return workspace ? <>{children}</> : <ConsultationProvider>{children}</ConsultationProvider>;
 }

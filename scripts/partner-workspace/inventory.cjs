@@ -141,6 +141,18 @@ function buildPartnerInventory(markdown) {
       operationModules: moduleCount,
       existingPages: existingPages.length,
     },
+    nativeFoundation: {
+      status: "partial-native-implementation-not-source-parity",
+      checkedOn: "2026-11-19",
+      routeImplementation: "src/app/partner-workspace/[...workspacePath]/page.tsx",
+      serverImplementation: "src/lib/partner-workspace/server/operations.ts",
+      databaseCandidate: "supabase/partner-workspace/001_workspace_candidate.sql",
+      candidateTableCount: 20,
+      appliedToLiveDatabase: false,
+      verifiedSourceOperationParity: 0,
+      report: "docs/partner-workspace/IMPLEMENTATION_STATUS.md",
+      note: "All Appendix A paths are allowlisted; several are explicit integration blockers. Candidate workflows are tested in isolation, not reconciled against the unavailable audited source or live master.",
+    },
     additionalObligations: [
       "Public/source asset and motion parity; native login and recovery aliases",
       "Master-auth reconciliation, canonical account links and logged bootstrap",
