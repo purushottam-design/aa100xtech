@@ -1,5 +1,15 @@
 # Super Admin authentication investigation and operation
 
+## 19 November 2026 — dashboard sign-in outage
+
+The production screenshot shows `AUTH_SERVICE_UNAVAILABLE`; it does not establish which environment variables are deployed. A fresh read-only local diagnosis confirms that the effective development server and browser both select `ryircgxjsieovvbmprqv.supabase.co`, whose DNS lookup returns `ENOTFOUND` before any Auth response. The remote hosting environment has not been inspected. No live account, project selection, password or role was changed.
+
+Login now distinguishes missing/invalid/mismatched server/browser configuration (`AUTH_CONFIGURATION_REQUIRED`) from a provider/database outage (`AUTH_SERVICE_UNAVAILABLE`) without exposing credentials. An outage remains a failed login; it never creates users, synchronizes environment passwords or bypasses role checks.
+
+To restore service, the authorized operator must verify/recover the existing AA master project in Supabase, set matching server/browser project URLs and that project's keys in the actual hosting environment, and restart/rebuild/redeploy as appropriate. Run `node --use-system-ca scripts/partner-workspace/diagnose.cjs` locally to check DNS/Auth health without attempting a password login. Local `.env` edits do not update the deployed site's environment.
+
+Once Auth is reachable, use the existing account's stored Supabase password. Environment password variables do not create accounts or update stored passwords. Dedicated dashboard accounts require their real database role or the existing operator-provisioned server-owned role marker. Placeholder passwords in configuration are not working administrator credentials. Provisioning/role repair instructions below are privileged operator procedures, not public login behavior.
+
 Investigated against the configured Supabase project and running Next.js development server on 5 November 2026. No real credentials, account identifiers or tokens are included here.
 
 Update on 6 November: the user explicitly requested role repair while preserving the existing dedicated Super Admin password. The operator-only `--role-only` provisioning option was applied and its `supreme_admin` Auth marker verified. Live dashboard login and protected access both passed, and the temporary verification session was revoked. No password reset or database migration was performed. See [the role repair report](admin-provisioning-uat.md#role-repair-on-6-november-2026). Earlier descriptions of the missing marker below are historical findings.

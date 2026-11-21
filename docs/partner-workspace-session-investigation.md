@@ -1,5 +1,7 @@
 # Partner Workspace session investigation
 
+Latest focused recheck: [Supabase configuration audit](partner-workspace/CONFIGURATION_AUDIT.md). It distinguishes effective local settings, failed deployment/management verification, real HTTP checks and fixture-based session tests. No unverified database switch was made.
+
 ## Update — 19 November 2026
 
 The availability-only page described below has been replaced by a native secure workspace foundation. Its layout checks the shared session and approved Partners membership/canonical account, while `/api/partner-workspace/[operation]` independently validates live Auth, membership and RLS. Guests redirect to existing login; backend/schema outages show a retry/setup state rather than missing membership. Historical findings below remain the record of the earlier scoped investigation, not current route availability.

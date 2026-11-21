@@ -228,6 +228,23 @@ test("login validates the requested dashboard before authentication", async () =
   assert.equal(h.calls.passwords, 0);
 });
 
+test("missing, malformed or mismatched Supabase configuration fails before password verification", async () => {
+  for (const env of [
+    { SUPABASE_URL: "" },
+    { SUPABASE_PUBLISHABLE_KEY: "" },
+    { SUPABASE_URL: "not-a-url" },
+    { NEXT_PUBLIC_SUPABASE_URL: "https://different.example.test" },
+  ]) {
+    const h = harness({ env });
+    const result = await h.login();
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "AUTH_CONFIGURATION_REQUIRED");
+    assert.equal(h.calls.passwords, 0);
+    assert.equal(result.session, undefined);
+    assert.doesNotMatch(JSON.stringify(result), /different\.example|stored-password/);
+  }
+});
+
 test("public bootstrap and password-sync calls cannot provision an admin or claim a reserved email", async () => {
   let status;
   const api = load(

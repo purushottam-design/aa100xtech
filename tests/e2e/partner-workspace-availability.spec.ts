@@ -90,26 +90,29 @@ test("workspace guest redirects to existing login with safe return", async ({ pa
     page.getByRole("heading", { name: "Partner Workspace is not yet installed" }),
   ).toHaveCount(0);
 });
-test("backend error remains a retry state, not missing membership", async ({ page }) => {
-  await fixture(page);
-  await page.route("**/api/partner-workspace/access-state", (r) =>
-    r.fulfill({
-      status: 503,
-      json: {
-        error: {
-          code: "AUTH_UNAVAILABLE",
-          message: "Authentication service unavailable. Please retry.",
+for (const path of ["/partner-workspace", "/partner-workspace/overview"])
+  test(`backend error remains a retry state at ${path}, not missing membership`, async ({
+    page,
+  }) => {
+    await fixture(page);
+    await page.route("**/api/partner-workspace/access-state", (r) =>
+      r.fulfill({
+        status: 503,
+        json: {
+          error: {
+            code: "AUTH_UNAVAILABLE",
+            message: "Authentication service unavailable. Please retry.",
+          },
         },
-      },
-    }),
-  );
-  await page.goto("/partner-workspace");
-  await expect(
-    page.getByRole("heading", { name: "Workspace temporarily unavailable" }),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Retry connection" })).toBeVisible();
-  await expect(page.getByText("Partners membership required", { exact: true })).toHaveCount(0);
-});
+      }),
+    );
+    await page.goto(path);
+    await expect(
+      page.getByRole("heading", { name: "Workspace temporarily unavailable" }),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Retry connection" })).toBeVisible();
+    await expect(page.getByText("Partners membership required", { exact: true })).toHaveCount(0);
+  });
 for (const state of ["pending", "disabled", "missing"])
   test(`workspace ${state} state never mounts private modules`, async ({ page }) => {
     await fixture(page, "admin", state);
