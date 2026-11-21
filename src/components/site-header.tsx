@@ -135,7 +135,7 @@ function HeaderDropdown({
         }}
         align="end"
         sideOffset={12}
-        className="site-nav-dropdown max-h-[calc(100dvh-7rem)] w-64 rounded-xl border-primary/15 bg-white p-2 text-foreground shadow-lg shadow-black/10 motion-reduce:animate-none"
+        className="site-nav-dropdown max-h-[calc(100dvh-7rem)] w-80 rounded-xl border-primary/15 bg-white p-2 text-foreground shadow-lg shadow-black/10 motion-reduce:animate-none"
       >
         {items.map((link) =>
           link.children ? (

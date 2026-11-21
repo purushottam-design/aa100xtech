@@ -6,13 +6,25 @@ const { lookup } = require("node:dns/promises");
 const { validateSupabaseIdentity } = require("./environment.cjs");
 
 async function main() {
+  const args = (process.argv ?? []).slice(2);
+  const target = args.length === 1 ? /^--target-ref=([a-z0-9]{20})$/.exec(args[0])?.[1] : undefined;
+  if (args.length && !target) {
+    console.error(
+      "Usage: node scripts/partner-workspace/diagnose.cjs [--target-ref=<owner-confirmed-ref>]",
+    );
+    process.exitCode = 2;
+    return;
+  }
   loadEnvConfig(process.cwd(), true, { info() {}, error() {} });
   const env = process.env;
+  // Explicit read-only probe of an owner-confirmed target. Never rewrites runtime env.
+  const probeUrl = target ? `https://${target}.supabase.co` : env.SUPABASE_URL;
   const identity = validateSupabaseIdentity(env, {
-    expectedMasterRef: env.CM365_EXPECTED_MASTER_REF,
+    expectedMasterRef: target ?? env.CM365_EXPECTED_MASTER_REF,
   });
   const report = {
     mode: "read-only-development-diagnostic",
+    ...(target ? { targetProbeRef: target, runtimeConfigurationChanged: false } : {}),
     identity,
     keyPresence: {
       browser: Boolean(env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
@@ -22,13 +34,13 @@ async function main() {
     dns: "not-checked",
     checks: [],
   };
-  if (identity.runtimeStatus !== "RUNTIME_CONSISTENT") {
+  if (!target && identity.runtimeStatus !== "RUNTIME_CONSISTENT") {
     console.log(JSON.stringify(report, null, 2));
     process.exitCode = 1;
     return;
   }
   try {
-    await lookup(new URL(env.SUPABASE_URL).hostname);
+    await lookup(new URL(probeUrl).hostname);
     report.dns = "resolved";
   } catch (error) {
     report.dns = error.code === "ENOTFOUND" ? "ENOTFOUND" : "lookup-failed";
@@ -50,9 +62,25 @@ async function main() {
       report.checks.push({ name, status: "missing-key" });
       continue;
     }
+    if (target && privileged && key.split(".").length === 3) {
+      try {
+        const claimedRef = JSON.parse(Buffer.from(key.split(".")[1], "base64url")).ref;
+        if (claimedRef && claimedRef !== target) {
+          report.checks.push({ name, status: "credential-project-mismatch" });
+          continue;
+        }
+      } catch {
+        report.checks.push({ name, status: "invalid-credential-format" });
+        continue;
+      }
+    }
     try {
-      const response = await fetch(env.SUPABASE_URL + endpoint, {
-        headers: { apikey: key, ...(privileged ? { Authorization: `Bearer ${key}` } : {}) },
+      const response = await fetch(probeUrl + endpoint, {
+        // Opaque sb_secret_ keys are API keys, not bearer JWTs.
+        headers: {
+          apikey: key,
+          ...(privileged && !key.startsWith("sb_") ? { Authorization: `Bearer ${key}` } : {}),
+        },
         signal: AbortSignal.timeout(10_000),
       });
       const body = await response.json().catch(() => ({}));

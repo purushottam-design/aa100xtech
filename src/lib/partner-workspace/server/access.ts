@@ -65,7 +65,17 @@ export async function authenticate(request: Request) {
     },
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
-  const { data, error } = await db.auth.getUser(token);
+  let verified;
+  try {
+    verified = await db.auth.getUser(token);
+  } catch {
+    throw new ApiError(
+      503,
+      "AUTH_UNAVAILABLE",
+      "Unable to reach AA100XTech authentication. Please retry; your workspace membership has not been changed.",
+    );
+  }
+  const { data, error } = verified;
   if (error) {
     if (error.status === 401 || error.status === 403 || error.name === "AuthSessionMissingError")
       throw new ApiError(401, "SESSION_EXPIRED", "Your session expired. Sign in again.");
@@ -119,7 +129,13 @@ export async function resolveAccess(
     .eq("user_id", user.id)
     .maybeSingle();
   databaseError(accountError);
-  if (!account || !account.active || (role === "influencer" && !account.influencer_id))
+  if (
+    !account ||
+    account.active !== true ||
+    typeof account.id !== "string" ||
+    !account.id ||
+    (role === "influencer" && !account.influencer_id)
+  )
     return { ...denied, state: "disabled" };
   const domain = role === "lead_team" ? account.lead_domain : null;
   if (role === "lead_team" && !["influencer", "gamer"].includes(domain)) return denied;

@@ -191,9 +191,14 @@ function Actions() {
           <small>Starting at ₹{startingPrice.toLocaleString("en-IN")}</small>
         </span>
       </Link>
-      <a className="uip-button uip-button-secondary" href="#brand-enquiry">
-        <span>Get Customised Influencer Proposal</span>
-        <ArrowRight aria-hidden="true" />
+      <a
+        className="uip-button uip-button-secondary"
+        href="https://influencermoves365.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span>Influencer Moves 365</span>
+        <ArrowUpRight aria-hidden="true" />
       </a>
     </div>
   );

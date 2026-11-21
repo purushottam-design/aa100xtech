@@ -10,6 +10,16 @@ function authClient() {
   const url = process.env["SUPABASE_URL"]?.trim();
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]?.trim();
   if (!url || !key) throw new Error("AUTH_CONFIGURATION");
+  const browserUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"]?.trim();
+  try {
+    const parsed = new URL(url);
+    if (!["https:", "http:"].includes(parsed.protocol) || parsed.username || parsed.password)
+      throw new Error("Invalid URL");
+    if (browserUrl && new URL(browserUrl).origin !== parsed.origin)
+      throw new Error("Project mismatch");
+  } catch {
+    throw new Error("AUTH_CONFIGURATION");
+  }
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
@@ -110,15 +120,25 @@ export const dashboardLogin = createServerFn({ method: "POST" })
           refresh_token: result.data.session.refresh_token,
         },
       };
-    } catch {
+    } catch (cause) {
       if (minted && client) await client.auth.signOut({ scope: "local" }).catch(() => undefined);
+      if (cause instanceof Error && cause.message === "AUTH_CONFIGURATION") {
+        console.warn("[Dashboard auth] Missing, invalid or mismatched Supabase configuration.");
+        return {
+          ok: false as const,
+          code: "AUTH_CONFIGURATION_REQUIRED",
+          message:
+            "Administrator sign-in is not configured correctly. Ask the operator to verify the server and browser Supabase settings in the hosting environment.",
+        };
+      }
       console.warn(
         "[Dashboard auth] Sign-in or authorization service unavailable; no session was returned.",
       );
       return {
         ok: false as const,
         code: "AUTH_SERVICE_UNAVAILABLE",
-        message: "The sign-in service is temporarily unavailable. Please try again.",
+        message:
+          "The sign-in service is unavailable. Ask your administrator to check the Supabase connection and hosting configuration, then retry.",
       };
     }
   });

@@ -41,14 +41,14 @@ export const joinUsLinks = [
 ] as const;
 
 export const marketingLinks = [
-  { to: "/social-media-ads-marketing", label: "Social Media Ads Marketing" },
-  { to: "/marketing/banner-marketing", label: "Banner Marketing" },
-  { to: "/marketing/newspaper-marketing", label: "Newspaper Marketing" },
   {
     to: "/influencers",
     label: "Influencer Marketing",
     activePaths: ["/influencer-partners", "/influencer-marketing"],
   },
+  { to: "/social-media-ads-marketing", label: "Social Media Ads Marketing" },
+  { to: "/marketing/banner-marketing", label: "Banner Marketing" },
+  { to: "/marketing/newspaper-marketing", label: "Newspaper Marketing" },
   { to: "/marketing/hoarding-ads", label: "Hoarding Ads" },
   { to: "/marketing/celebrity-marketing", label: "Celebrity Marketing" },
 ] as const;

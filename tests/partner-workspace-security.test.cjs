@@ -369,6 +369,12 @@ test("access resolver distinguishes missing, pending, disabled and schema failur
   assert.equal(approved.state, "approved");
   assert.equal(approved.role, "lead_team");
   assert.equal(approved.domain, "gamer");
+  for (const account of [{ id: ids[1], active: "false" }, { active: true }]) {
+    assert.equal(
+      (await resolveAccess(database({ role: "admin", status: "approved" }, account), user)).state,
+      "disabled",
+    );
+  }
   await assert.rejects(
     resolveAccess(
       database(null, null, { code: "PGRST205", message: "private schema detail" }),
@@ -399,6 +405,7 @@ test("workspace authentication rejects missing sessions, revoked tokens, mismatc
           return {
             auth: {
               async getUser() {
+                if (authResponse.throw) throw new Error("private network detail");
                 return authResponse;
               },
             },
@@ -425,6 +432,11 @@ test("workspace authentication rejects missing sessions, revoked tokens, mismatc
   );
   authResponse = { data: { user: { id: ids[0] } }, error: null };
   assert.equal((await access.authenticate(request("synthetic"))).user.id, ids[0]);
+  authResponse = { throw: true };
+  await assert.rejects(
+    access.authenticate(request("synthetic")),
+    (e) => e.code === "AUTH_UNAVAILABLE" && !e.message.includes("private network"),
+  );
   env.CM365_EXPECTED_MASTER_REF = "bbbbbbbbbbbbbbbbbbbb";
   await assert.rejects(
     access.authenticate(request("synthetic")),

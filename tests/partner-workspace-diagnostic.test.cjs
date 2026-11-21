@@ -6,16 +6,19 @@ async function diagnose({
   dnsError = null,
   runtimeStatus = "RUNTIME_CONSISTENT",
   missingTable = false,
+  serviceKey = "private-fixture-key",
+  targetRef,
 } = {}) {
   const output = [],
     calls = [];
   const processStub = {
+    argv: ["node", "diagnose.cjs", ...(targetRef ? [`--target-ref=${targetRef}`] : [])],
     cwd: () => ".",
     env: {
       SUPABASE_URL: "https://example.supabase.co",
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "public-fixture-key",
       SUPABASE_PUBLISHABLE_KEY: "server-fixture-key",
-      SUPABASE_SERVICE_ROLE_KEY: "private-fixture-key",
+      SUPABASE_SERVICE_ROLE_KEY: serviceKey,
     },
   };
   load(
@@ -85,4 +88,27 @@ test("a missing table is reported as a schema failure, never as an empty members
   assert.equal(result.report.checks[2].status, 404);
   assert.equal(result.exitCode, 1);
   assert.doesNotMatch(result.output, /private server details/);
+});
+
+test("opaque service credentials are never sent as bearer JWTs", async () => {
+  const result = await diagnose({ serviceKey: "sb_secret_fixture" });
+  const schema = result.calls.find((call) => call.url.includes("/rest/v1/"));
+  assert.equal(schema.options.headers.apikey, "sb_secret_fixture");
+  assert.equal(schema.options.headers.Authorization, undefined);
+  assert.doesNotMatch(result.output, /sb_secret_fixture/);
+});
+
+test("explicit target probe never rewrites runtime configuration or sends a mismatched service JWT", async () => {
+  const targetRef = "xkzxtosqaqxxfezicthy";
+  const jwt = `header.${Buffer.from(JSON.stringify({ ref: "ryircgxjsieovvbmprqv" })).toString("base64url")}.signature`;
+  const result = await diagnose({ targetRef, serviceKey: jwt });
+  assert.equal(result.report.targetProbeRef, targetRef);
+  assert.equal(result.report.runtimeConfigurationChanged, false);
+  assert.equal(result.calls.length, 2);
+  assert.ok(
+    result.calls.every((call) => new URL(call.url).hostname === `${targetRef}.supabase.co`),
+  );
+  assert.equal(result.report.checks[2].status, "credential-project-mismatch");
+  assert.equal(result.exitCode, 1);
+  assert.doesNotMatch(result.output, /header\.|signature/);
 });
